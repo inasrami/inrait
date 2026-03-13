@@ -1,47 +1,86 @@
 <template>
-  <footer id="contact" class="bg-black border-t border-border-subtle pt-20 pb-10 px-5 text-[12px] text-text-muted">
-    <div class="max-w-[980px] mx-auto">
+  <footer class="relative overflow-hidden" style="background: #000;">
 
-      <div class="flex flex-wrap gap-16 pb-10 border-b border-border-subtle mb-6">
+    <!-- Gradient overlay top -->
+    <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(164,224,75,0.2), transparent);" />
 
-        <div class="flex flex-col gap-3">
-          <strong class="text-text-main text-[12px] mb-1">Contact INRAIT</strong>
-          <a href="mailto:inkorami27@gmail.com" class="hover:text-text-main hover:underline transition-colors">
-            inkorami27@gmail.com
-          </a>
-          <a href="tel:0876566094" class="hover:text-text-main hover:underline transition-colors">
-            0876 566 094
-          </a>
-          <span>Sofia, Bulgaria</span>
+    <div class="max-w-[1080px] mx-auto px-6 pt-20 pb-10">
+
+      <div class="flex flex-col md:flex-row gap-16 justify-between mb-16">
+
+        <!-- Brand column -->
+        <div class="max-w-[280px]">
+          <RouterLink to="/" class="font-display text-[28px] tracking-wider block mb-4">
+            IN<span style="color: var(--accent)">R</span>AIT
+          </RouterLink>
+          <p class="text-text-muted text-[14px] leading-relaxed mb-6">
+            Pro web engineering from Sofia, Bulgaria. Clean code. Absolute performance. Built to scale.
+          </p>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-accent" style="box-shadow: 0 0 8px var(--accent);" />
+            <span class="text-[13px] text-text-muted">Available for projects</span>
+          </div>
         </div>
 
-        <div class="flex flex-col gap-3">
-          <strong class="text-text-main text-[12px] mb-1">Developer Network</strong>
-          <a
-            href="https://linkedin.com/in/inasrami"
-            target="_blank"
-            rel="noopener"
-            class="hover:text-text-main hover:underline transition-colors"
-          >
-            LinkedIn Profile
-          </a>
-          <a
-            href="https://github.com/inasrami"
-            target="_blank"
-            rel="noopener"
-            class="hover:text-text-main hover:underline transition-colors"
-          >
-            GitHub Repository
-          </a>
-        </div>
+        <!-- Links grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-10">
 
+          <div>
+            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Work</h4>
+            <div class="flex flex-col gap-3">
+              <RouterLink to="/work/barbers-unity" class="footer-link">Barbers Unity</RouterLink>
+              <RouterLink to="/work/shiftease" class="footer-link">ShiftEase</RouterLink>
+              <RouterLink to="/work/hotel-prestige" class="footer-link">Hotel Prestige</RouterLink>
+              <RouterLink to="/work/dna-of-design" class="footer-link">DNA of Design</RouterLink>
+              <RouterLink to="/work/aurum" class="footer-link">Aurum</RouterLink>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Navigate</h4>
+            <div class="flex flex-col gap-3">
+              <a href="/#philosophy" class="footer-link">Philosophy</a>
+              <a href="/#specs" class="footer-link">Stack</a>
+              <a href="/#process" class="footer-link">Process</a>
+              <RouterLink to="/contact" class="footer-link">Contact</RouterLink>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Connect</h4>
+            <div class="flex flex-col gap-3">
+              <a href="https://linkedin.com/in/inasrami" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
+              <a href="https://github.com/inasrami" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+              <a href="mailto:inkorami27@gmail.com" class="footer-link">Email</a>
+              <a href="tel:0876566094" class="footer-link">+359 876 566 094</a>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <div class="flex justify-between flex-wrap gap-2">
-        <p>Copyright © 2026 INRAIT Web Engineering. All rights reserved.</p>
-        <p>Engineered for speed.</p>
+      <!-- Bottom bar -->
+      <div class="h-px mb-8" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
+      <div class="flex flex-wrap justify-between items-center gap-4 text-[12px] text-text-dim">
+        <p>© 2026 INRAIT Web Engineering · Sofia, Bulgaria. All rights reserved.</p>
+        <p>Engineered with precision.</p>
       </div>
 
     </div>
   </footer>
 </template>
+
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
+
+<style scoped>
+.footer-link {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+.footer-link:hover {
+  color: var(--text);
+}
+</style>

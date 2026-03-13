@@ -1,186 +1,326 @@
 <template>
-  <!-- Matches original: padding: 100px 22px 200px, max-width 1080px -->
-  <section id="work" class="px-5 max-w-[1080px] mx-auto" style="padding-top: 100px; padding-bottom: 200px; position: relative;">
+  <section id="work" class="py-32 overflow-hidden">
 
-    <h2 class="font-semibold text-center fade-up" style="font-size: 56px; margin-bottom: 80px; letter-spacing: -0.01em;">
-      Pro level projects.
-    </h2>
+    <!-- Header — full-width padded -->
+    <div class="px-6 max-w-[1080px] mx-auto mb-14">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <div class="mb-4 section-label fade-up">Selected Work</div>
+          <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
+            PROJECTS
+          </h2>
+        </div>
+        <div class="flex items-center gap-4 fade-up" style="transition-delay: 0.1s;">
+          <!-- Drag hint -->
+          <span class="text-text-dim text-[13px] flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Drag to explore
+          </span>
+          <!-- Arrow nav -->
+          <button class="carousel-btn" @click="scroll(-1)" aria-label="Previous">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <button class="carousel-btn" @click="scroll(1)" aria-label="Next">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
 
-    <!-- sticky-card-wrapper: sticky top:120px, stacking z-index, pb:40px -->
+    <!-- Carousel track — bleeds full width -->
     <div
-      v-for="(project, index) in projects"
-      :key="project.id"
-      class="sticky"
-      :style="{
-        top: '120px',
-        zIndex: index + 1,
-        paddingBottom: '40px',
-      }"
+      ref="trackEl"
+      class="carousel-track"
+      @mousedown="onDragStart"
+      @mousemove="onDragMove"
+      @mouseup="onDragEnd"
+      @mouseleave="onDragEnd"
     >
-      <!-- project-card: matches original padding 80px 60px, border-radius 32px, shadow -->
-      <div
-        :ref="el => cardRefs[index] = el"
-        :class="project.darker ? 'bg-[#1D1D1F]' : 'bg-[#111111]'"
-        class="flex flex-col items-center text-center"
-        :style="{
-          borderRadius: '32px',
-          padding: '80px 60px',
-          boxShadow: '0 -10px 40px rgba(0,0,0,0.8)',
-          border: '1px solid #333336',
-          transformOrigin: 'top center',
-          transform: `scale(${cardScales[index]})`,
-          transition: 'transform 0.1s ease-out',
-          willChange: 'transform',
-        }"
+      <!-- Left padding card (spacer) -->
+      <div class="carousel-spacer" />
+
+      <RouterLink
+        v-for="(project, i) in projects"
+        :key="project.id"
+        :to="`/work/${project.slug}`"
+        class="carousel-card"
+        :class="{ 'is-dragging': dragging }"
+        @click.prevent="handleClick(project)"
       >
-        <!-- project-tag -->
-        <span
-          class="font-semibold uppercase text-accent"
-          style="font-size: 14px; letter-spacing: 2px; margin-bottom: 16px; display: block;"
-        >
-          {{ project.tag }}
-        </span>
-
-        <!-- project-title -->
-        <h3 class="font-semibold" style="font-size: 48px; letter-spacing: -0.01em; margin-bottom: 16px;">
-          {{ project.title }}
-        </h3>
-
-        <!-- project-desc -->
-        <p class="text-text-muted" style="font-size: 21px; max-width: 500px; margin-bottom: 40px; line-height: 1.5;">
-          {{ project.description }}
-        </p>
-
-        <!-- btn — matches original .btn .btn-primary / .btn-accent -->
-        <a
-          :href="project.url"
-          target="_blank"
-          rel="noopener"
-          :class="project.btnAccent
-            ? 'bg-accent text-black hover:bg-[#8cc23e]'
-            : 'bg-[#F5F5F7] text-black hover:bg-white'"
-          class="inline-flex items-center justify-center hover:scale-[1.03] transition-all duration-300"
-          style="padding: 14px 28px; border-radius: 980px; font-size: 15px; font-weight: 500; text-decoration: none;"
-        >
-          {{ project.cta }}
-        </a>
-
-        <!-- Project image — replaces original .project-mockup placeholder -->
-        <div
-          class="w-full overflow-hidden"
-          style="max-width: 800px; height: 350px; border-radius: 20px; border: 1px solid #333336; margin-top: 20px; background: #000; position: relative;"
-        >
+        <!-- Image -->
+        <div class="carousel-img-wrap">
           <img
             v-if="project.image"
-            :src="`/images/${project.image}`"
-            :alt="`${project.title} preview`"
-            class="object-cover object-top w-full h-full transition-transform duration-700 ease-out"
-            style="display: block;"
-            @mouseover="e => e.target.style.transform = 'scale(1.03)'"
-            @mouseleave="e => e.target.style.transform = 'scale(1)'"
+            :src="project.image"
+            :alt="project.title"
+            draggable="false"
           />
-          <!-- Fallback while image not yet added -->
           <div
             v-else
             class="flex items-center justify-center w-full h-full"
-            style="color: #444; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;"
+            style="background: var(--surface-3); color: var(--text-dim); font-size: 13px; letter-spacing: 2px; text-transform: uppercase;"
           >
-            {{ project.title }} Preview
+            {{ project.title }}
           </div>
-
-          <!-- Subtle gradient overlay at bottom for depth -->
-          <div
-            class="absolute bottom-0 left-0 w-full pointer-events-none"
-            style="height: 80px; background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);"
-          />
+          <!-- Gradient overlay -->
+          <div class="carousel-overlay" />
+          <!-- Index number -->
+          <span class="carousel-index">{{ String(i + 1).padStart(2, '0') }}</span>
         </div>
 
-      </div>
+        <!-- Info below image -->
+        <div class="carousel-info">
+          <div class="flex items-start justify-between gap-4 mb-2">
+            <h3 class="font-semibold" style="font-size: 22px; letter-spacing: -0.02em; line-height: 1.2;">
+              {{ project.title }}
+            </h3>
+            <span class="text-text-dim text-[12px] mt-1 shrink-0 font-mono">{{ project.year }}</span>
+          </div>
+          <p class="mb-5 text-text-muted" style="font-size: 14px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            {{ project.description }}
+          </p>
+          <div class="flex items-center justify-between">
+            <div class="flex flex-wrap gap-1.5">
+              <span
+                v-for="t in project.stack.slice(0, 2)"
+                :key="t"
+                class="chip"
+                style="font-size: 10px; padding: 3px 8px;"
+              >{{ t }}</span>
+            </div>
+            <span
+              class="flex items-center gap-1 text-[12px] font-medium"
+              :style="`color: ${project.color}`"
+            >
+              Case study
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </div>
+      </RouterLink>
+
+      <!-- Right padding spacer -->
+      <div class="carousel-spacer" />
+    </div>
+
+    <!-- Dot indicators -->
+    <div class="flex justify-center gap-2 mt-10">
+      <button
+        v-for="(project, i) in projects"
+        :key="project.id"
+        class="dot-btn"
+        :class="{ active: activeIndex === i }"
+        @click="scrollToIndex(i)"
+        :aria-label="`Go to ${project.title}`"
+      />
     </div>
 
   </section>
 </template>
 
 <script setup>
-import { reactive, onMounted, onUnmounted } from 'vue'
-import { useFadeUp } from '../composables/useFadeUp'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { projects } from '../data/projects.js'
+import { useFadeUp } from '../composables/useFadeUp.js'
 
 useFadeUp()
 
-const projects = [
-  {
-    id: 'card-1',
-    darker: false,
-    tag: 'Vue.js / Tailwind CSS',
-    title: 'Barbers Unity.',
-    description: 'A complete booking platform architecture allowing dynamic profile management and seamless client scheduling.',
-    url: 'https://barbersunity.com',
-    cta: 'View Platform',
-    btnAccent: false,
-    image: 'barbersUnity.png', // ← replace with your filename in public/images/
-  },
-  {
-    id: 'card-2',
-    darker: true,
-    tag: 'JavaScript / SheetJS',
-    title: 'ShiftEase.',
-    description: 'Intuitive web-based scheduling tool to easily generate, visualize, and export optimized work schedules.',
-    url: 'https://shift-ease-kappa.vercel.app',
-    cta: 'Launch App',
-    btnAccent: false,
-    image: 'shiftEase.png', // ← replace with your filename in public/images/
-  },
-  {
-    id: 'card-3',
-    darker: false,
-    tag: 'Vue 3 / MongoDB',
-    title: 'Hotel Prestige.',
-    description: 'Full-stack hospitality booking system featuring a responsive UI integrated with real-time database management.',
-    url: 'https://hotel-prestige.vercel.app',
-    cta: 'Explore Site',
-    btnAccent: true,
-    image: 'hotelprestige.png', // ← replace with your filename in public/images/
-  },
-  {
-    id: 'card-4',
-    darker: true,
-    tag: 'JavaScript / Computer Vision',
-    title: 'DNA of Design.',
-    description: 'An analytical web application extracting dominant color palettes from any live website using ScreenshotAPI.',
-    url: 'https://github.com/inasrami/dna-of-design.git',
-    cta: 'View GitHub Repo',
-    btnAccent: false,
-    image: 'dnaofdesign.png', // ← replace with your filename in public/images/
-  },
-  {
-    id: 'card-5',
-    darker: true,
-    tag: 'Vue.js / Tailwind CSS',
-    title: 'Aurum.',
-    description: 'A high-end digital experience for a luxury hotel brand, focusing on elegance and atmosphere.',
-    url: 'https://inasrami.github.io/aurum-luxury/',
-    cta: 'Explore Site',
-    btnAccent: false,
-    image: 'aurum.png', // ← replace with your filename in public/images/
-  },
-]
+const router      = useRouter()
+const trackEl     = ref(null)
+const activeIndex = ref(0)
 
-const cardRefs   = reactive([])
-const cardScales = reactive(projects.map(() => 1))
+// ── Drag-to-scroll ────────────────────────────────────────
+const dragging   = ref(false)
+let dragStartX   = 0
+let scrollStartX = 0
+let didDrag      = false
 
-function onScroll() {
-  cardRefs.forEach((card, index) => {
-    if (!card) return
-    const rect = card.parentElement.getBoundingClientRect()
-    if (rect.top <= 120) {
-      const distancePast = 120 - rect.top
-      cardScales[index] = Math.max(0.9, 1 - distancePast * 0.0005)
-    } else {
-      cardScales[index] = 1
-    }
-  })
+function onDragStart(e) {
+  dragging.value = true
+  didDrag        = false
+  dragStartX     = e.clientX
+  scrollStartX   = trackEl.value.scrollLeft
+  trackEl.value.style.cursor = 'grabbing'
 }
 
-onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
+function onDragMove(e) {
+  if (!dragging.value) return
+  const delta = e.clientX - dragStartX
+  if (Math.abs(delta) > 4) didDrag = true
+  trackEl.value.scrollLeft = scrollStartX - delta
+  updateActiveIndex()
+}
+
+function onDragEnd() {
+  dragging.value = false
+  if (trackEl.value) trackEl.value.style.cursor = 'grab'
+}
+
+// Prevent navigation when user was dragging
+function handleClick(project) {
+  if (!didDrag) router.push(`/work/${project.slug}`)
+}
+
+// ── Button scroll ─────────────────────────────────────────
+const CARD_WIDTH = 420 + 20 // card + gap
+
+function scroll(dir) {
+  const next = Math.max(0, Math.min(projects.length - 1, activeIndex.value + dir))
+  scrollToIndex(next)
+}
+
+function scrollToIndex(i) {
+  if (!trackEl.value) return
+  const spacer = 24 // matches carousel-spacer width
+  trackEl.value.scrollTo({
+    left: i * (CARD_WIDTH),
+    behavior: 'smooth',
+  })
+  activeIndex.value = i
+}
+
+// ── Active dot tracking on scroll ────────────────────────
+function updateActiveIndex() {
+  if (!trackEl.value) return
+  const i = Math.round(trackEl.value.scrollLeft / CARD_WIDTH)
+  activeIndex.value = Math.max(0, Math.min(projects.length - 1, i))
+}
+
+onMounted(() => {
+  trackEl.value?.addEventListener('scroll', updateActiveIndex, { passive: true })
+})
+
+onUnmounted(() => {
+  trackEl.value?.removeEventListener('scroll', updateActiveIndex)
+})
 </script>
+
+<style scoped>
+/* ── Track ─────────────────────────────────────────────── */
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+  padding-bottom: 8px;
+  user-select: none;
+}
+
+.carousel-track::-webkit-scrollbar { display: none; }
+
+.carousel-spacer {
+  flex-shrink: 0;
+  width: calc((100vw - 1080px) / 2);
+  min-width: 24px;
+}
+
+/* ── Card ──────────────────────────────────────────────── */
+.carousel-card {
+  flex-shrink: 0;
+  width: 420px;
+  scroll-snap-align: start;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.4s ease,
+              border-color 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.carousel-card:hover:not(.is-dragging) {
+  transform: translateY(-6px);
+  box-shadow: 0 32px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(164,224,75,0.15);
+  border-color: rgba(164,224,75,0.2);
+}
+
+/* ── Image ─────────────────────────────────────────────── */
+.carousel-img-wrap {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  background: var(--surface-3);
+}
+
+.carousel-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+
+.carousel-card:hover:not(.is-dragging) .carousel-img-wrap img {
+  transform: scale(1.05);
+}
+
+.carousel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%);
+}
+
+/* ── Index number ──────────────────────────────────────── */
+.carousel-index {
+  position: absolute;
+  bottom: 14px;
+  right: 18px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.12);
+  pointer-events: none;
+}
+
+/* ── Info ──────────────────────────────────────────────── */
+.carousel-info {
+  padding: 24px 28px 28px;
+}
+
+/* ── Nav buttons ───────────────────────────────────────── */
+.carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.carousel-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(164,224,75,0.06);
+}
+
+/* ── Dots ──────────────────────────────────────────────── */
+.dot-btn {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  border: none;
+  cursor: none;
+  transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease;
+}
+
+.dot-btn.active {
+  background: var(--accent);
+  width: 20px;
+  border-radius: 3px;
+}
+</style>

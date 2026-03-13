@@ -1,29 +1,28 @@
 <template>
-  <div class="bg-bg-base text-text-main min-h-screen overflow-x-hidden">
+  <div style="background: var(--bg);">
 
+    <!-- Custom cursor (hidden on mobile via CSS) -->
+    <CursorEffect />
+
+    <!-- Navigation -->
     <AppNav />
 
-    <main>
-      <HeroSection />
-      <PhilosophySection />
-      <MarqueeStrip />
-      <TechSpecs />
-      <ProjectsSection />
-      <TimelineSection />
-    </main>
+    <!-- Page content with transition -->
+    <RouterView v-slot="{ Component }">
+      <Transition name="page" mode="out-in">
+        <component :is="Component" :key="$route.fullPath" />
+      </Transition>
+    </RouterView>
 
+    <!-- Footer -->
     <AppFooter />
 
   </div>
 </template>
 
 <script setup>
-import AppNav          from './components/AppNav.vue'
-import HeroSection     from './components/HeroSection.vue'
-import PhilosophySection from './components/PhilosophySection.vue'
-import MarqueeStrip    from './components/MarqueeStrip.vue'
-import TechSpecs       from './components/TechSpecs.vue'
-import ProjectsSection from './components/ProjectsSection.vue'
-import TimelineSection from './components/TimelineSection.vue'
-import AppFooter       from './components/AppFooter.vue'
+import { RouterView } from 'vue-router'
+import CursorEffect from './components/CursorEffect.vue'
+import AppNav       from './components/AppNav.vue'
+import AppFooter    from './components/AppFooter.vue'
 </script>

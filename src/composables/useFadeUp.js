@@ -1,11 +1,5 @@
 import { onMounted, onUnmounted } from 'vue'
 
-/**
- * Observes all .fade-up elements in the document and adds .is-visible
- * when they enter the viewport. Safe to call from multiple components —
- * each call creates its own observer that only watches elements not yet
- * observed.
- */
 export function useFadeUp() {
   let observer = null
 
@@ -19,11 +13,10 @@ export function useFadeUp() {
           }
         })
       },
-      { rootMargin: '0px', threshold: 0.12 }
+      { rootMargin: '0px 0px -60px 0px', threshold: 0.08 }
     )
 
-    // Observe any .fade-up that hasn't been activated yet
-    document.querySelectorAll('.fade-up:not(.is-visible)').forEach((el) => {
+    document.querySelectorAll('.fade-up:not(.is-visible), .fade-in:not(.is-visible)').forEach((el) => {
       observer.observe(el)
     })
   })
