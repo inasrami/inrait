@@ -18,7 +18,7 @@
           max-width: 900px;
         "
       >
-        Most websites exist. The best ones<em style="font-style:italic; color: var(--accent);"> speak</em>. I build the kind that make visitors stop scrolling and start trusting — before they've read a single word.
+        Most websites exist. The best ones<em style="font-style:italic; color: var(--accent);"> speak</em>. We build the kind that make visitors stop scrolling and start trusting — before they've read a single word.
       </h2>
 
       <div class="my-16 divider" />
@@ -53,7 +53,7 @@ const textEl = ref(null)
 const pillars = [
   {
     title: 'Speed is design.',
-    body: 'Every millisecond costs conversions. I write lean, optimized code because a beautiful interface that loads slow is a broken interface.',
+    body: 'Every millisecond costs conversions. We write lean, optimized code because a beautiful interface that loads slow is a broken interface.',
     icon: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
   },
   {

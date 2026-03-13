@@ -1,31 +1,31 @@
 <template>
-  <div class="min-h-screen pt-32 pb-40 px-6 relative overflow-hidden">
+  <div class="relative min-h-screen px-6 pt-32 pb-40 overflow-hidden">
 
     <!-- Background glow -->
     <div
-      class="absolute top-1/4 right-0 pointer-events-none"
+      class="absolute right-0 pointer-events-none top-1/4"
       style="width: 600px; height: 600px; background: radial-gradient(ellipse at right, rgba(164,224,75,0.06) 0%, transparent 70%);"
     />
 
     <div class="max-w-[1080px] mx-auto">
 
-      <div class="section-label fade-up mb-6">Get In Touch</div>
+      <div class="mb-6 section-label fade-up">Get In Touch</div>
 
-      <h1 class="font-display fade-up mb-6" style="font-size: clamp(60px, 11vw, 130px); letter-spacing: 0.02em; line-height: 0.95; transition-delay: 0.05s;">
+      <h1 class="mb-6 font-display fade-up" style="font-size: clamp(60px, 11vw, 130px); letter-spacing: 0.02em; line-height: 0.95; transition-delay: 0.05s;">
         LET'S<br/>BUILD IT.
       </h1>
 
       <p class="text-text-muted text-[18px] mb-20 max-w-lg leading-relaxed fade-up" style="font-weight: 300; transition-delay: 0.1s;">
-        Tell me about your project. I'll get back to you within 24 hours.
+        Tell us about your project. We'll get back to you within 24 hours.
       </p>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
 
         <!-- Form -->
         <div class="fade-up" style="transition-delay: 0.15s;">
           <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div class="form-group">
                 <label class="form-label">Your name</label>
                 <input v-model="form.name" type="text" class="form-input" placeholder="Alex Johnson" required />
@@ -80,7 +80,7 @@
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </template>
               <template v-else>
-                Message sent! I'll be in touch soon.
+                Message sent! We'll be in touch soon.
               </template>
             </button>
 
@@ -91,7 +91,7 @@
         <div class="flex flex-col gap-8 fade-up" style="transition-delay: 0.25s;">
 
           <!-- Direct contact -->
-          <div class="card-glass p-8">
+          <div class="p-8 card-glass">
             <h3 class="font-semibold text-[18px] mb-6">Direct contact</h3>
             <div class="flex flex-col gap-5">
               <a href="mailto:inkorami27@gmail.com" class="contact-item" data-cursor>
@@ -127,7 +127,7 @@
           </div>
 
           <!-- Social -->
-          <div class="card-glass p-8">
+          <div class="p-8 card-glass">
             <h3 class="font-semibold text-[18px] mb-6">Find me online</h3>
             <div class="flex flex-col gap-4">
               <a

@@ -1,5 +1,5 @@
 <template>
-  <section class="relative min-h-screen flex flex-col justify-center items-center overflow-hidden grid-bg noise" style="padding-top: 80px;">
+  <section class="relative flex flex-col items-center justify-center min-h-screen overflow-hidden grid-bg noise" style="padding-top: 80px;">
 
     <!-- Ambient glow -->
     <div class="hero-glow" />
@@ -14,15 +14,15 @@
     <div class="relative z-10 text-center px-6 max-w-[1000px] mx-auto">
 
       <!-- Label -->
-      <div class="section-label mx-auto mb-8 fade-in" style="transition-delay: 0.1s">
+      <div class="mx-auto mb-8 section-label fade-in" style="transition-delay: 0.1s">
         Available for projects · Sofia, Bulgaria
       </div>
 
       <!-- Main headline -->
-      <h1 class="font-display leading-none mb-6" style="font-size: clamp(72px, 14vw, 200px); letter-spacing: 0.02em;">
-        <span class="text-gradient block fade-in" style="transition-delay: 0.15s">WEB</span>
+      <h1 class="mb-6 leading-none font-display" style="font-size: clamp(72px, 14vw, 200px); letter-spacing: 0.02em;">
+        <span class="block text-gradient fade-in" style="transition-delay: 0.15s">WEB</span>
         <span class="fade-in" style="color: var(--accent); transition-delay: 0.25s; display: block;">ENGINEERING</span>
-        <span class="text-gradient block fade-in" style="transition-delay: 0.35s">THAT HITS.</span>
+        <span class="block text-gradient fade-in" style="transition-delay: 0.35s">THAT HITS.</span>
       </h1>
 
       <!-- Subheadline -->
@@ -30,17 +30,17 @@
         class="text-text-muted fade-in"
         style="font-size: clamp(17px, 2.5vw, 22px); max-width: 540px; margin: 0 auto 48px; line-height: 1.6; font-weight: 300; transition-delay: 0.5s;"
       >
-        I build fast, scalable, obsessively crafted front-end platforms — the kind clients remember and users keep coming back to.
+        We build fast, scalable, obsessively crafted digital products — the kind clients remember and users keep coming back to.
       </p>
 
       <!-- CTAs -->
-      <div class="flex flex-wrap gap-4 justify-center fade-in" style="transition-delay: 0.65s">
+      <div class="flex flex-wrap justify-center gap-4 fade-in" style="transition-delay: 0.65s">
         <RouterLink to="/contact" class="btn-primary">
           Start a project
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </RouterLink>
         <a href="#work" class="btn-outline" @click.prevent="scrollToWork">
-          See my work
+          See our work
         </a>
       </div>
 
@@ -64,7 +64,7 @@
     </div>
 
     <!-- Scroll arrow -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-arrow opacity-40">
+    <div class="absolute -translate-x-1/2 bottom-8 left-1/2 scroll-arrow opacity-40">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
 

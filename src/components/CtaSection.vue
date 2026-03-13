@@ -1,5 +1,5 @@
 <template>
-  <section class="py-40 px-6 relative overflow-hidden" style="background: var(--surface);">
+  <section class="relative px-6 py-40 overflow-hidden" style="background: var(--surface);">
 
     <!-- Glow -->
     <div
@@ -9,7 +9,7 @@
 
     <div class="max-w-[760px] mx-auto text-center relative z-10">
 
-      <div class="section-label mx-auto mb-8 fade-up">Ready?</div>
+      <div class="mx-auto mb-8 section-label fade-up">Ready?</div>
 
       <h2
         class="font-display fade-up"
@@ -20,10 +20,10 @@
       </h2>
 
       <p class="text-text-muted text-[18px] leading-relaxed mb-12 fade-up" style="transition-delay: 0.2s; max-width: 480px; margin-left: auto; margin-right: auto;">
-        Whether you have a clear vision or just a problem that needs solving — I want to hear it.
+        Whether you have a clear vision or just a problem that needs solving — we want to hear it.
       </p>
 
-      <div class="flex flex-wrap gap-4 justify-center fade-up" style="transition-delay: 0.3s;">
+      <div class="flex flex-wrap justify-center gap-4 fade-up" style="transition-delay: 0.3s;">
         <RouterLink to="/contact" class="btn-primary text-[16px] px-10 py-5">
           Start a project
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
