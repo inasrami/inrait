@@ -14,11 +14,11 @@
             IN<span style="color: var(--accent)">R</span>AIT
           </RouterLink>
           <p class="text-text-muted text-[14px] leading-relaxed mb-6">
-            Pro web engineering from Sofia, Bulgaria. Clean code. Absolute performance. Built to scale.
+            {{ t('footer.tagline') }}
           </p>
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-accent" style="box-shadow: 0 0 8px var(--accent);" />
-            <span class="text-[13px] text-text-muted">Available for projects</span>
+            <span class="text-[13px] text-text-muted">{{ t('footer.available') }}</span>
           </div>
         </div>
 
@@ -26,7 +26,7 @@
         <div class="grid grid-cols-2 gap-10 sm:grid-cols-3">
 
           <div>
-            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Work</h4>
+            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">{{ t('footer.colWork') }}</h4>
             <div class="flex flex-col gap-3">
               <RouterLink to="/work/barbers-unity" class="footer-link">Barbers Unity</RouterLink>
               <RouterLink to="/work/shiftease" class="footer-link">ShiftEase</RouterLink>
@@ -37,18 +37,19 @@
           </div>
 
           <div>
-            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Navigate</h4>
+            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">{{ t('footer.colNav') }}</h4>
             <div class="flex flex-col gap-3">
-              <RouterLink to="/services" class="footer-link">Services</RouterLink>
-              <a href="/#philosophy" class="footer-link">Philosophy</a>
-              <a href="/#specs" class="footer-link">Stack</a>
-              <a href="/#process" class="footer-link">Process</a>
-              <RouterLink to="/contact" class="footer-link">Contact</RouterLink>
+              <RouterLink to="/services" class="footer-link">{{ t('footer.navServices') }}</RouterLink>
+              <RouterLink to="/blog" class="footer-link">{{ t('footer.navBlog') }}</RouterLink>
+              <a href="/#philosophy" class="footer-link">{{ t('footer.navPhilo') }}</a>
+              <a href="/#specs" class="footer-link">{{ t('footer.navStack') }}</a>
+              <a href="/#process" class="footer-link">{{ t('footer.navProcess') }}</a>
+              <RouterLink to="/contact" class="footer-link">{{ t('footer.navContact') }}</RouterLink>
             </div>
           </div>
 
           <div>
-            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Connect</h4>
+            <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">{{ t('footer.colConnect') }}</h4>
             <div class="flex flex-col gap-3">
               <a href="https://linkedin.com/in/inasrami" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
               <a href="https://github.com/inasrami" target="_blank" rel="noopener" class="footer-link">GitHub</a>
@@ -63,11 +64,11 @@
       <!-- Bottom bar -->
       <div class="h-px mb-8" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
       <div class="flex flex-wrap justify-between items-center gap-4 text-[12px] text-text-dim">
-        <p>© 2025 INRAIT Web Engineering · Sofia, Bulgaria. All rights reserved.</p>
+        <p>{{ t('footer.copyright') }}</p>
         <div class="flex items-center gap-4">
-          <RouterLink to="/privacy" class="transition-colors duration-200 hover:text-text-muted">Privacy Policy</RouterLink>
+          <RouterLink to="/privacy" class="transition-colors duration-200 hover:text-text-muted">{{ t('footer.privacy') }}</RouterLink>
           <span>·</span>
-          <p>Engineered with precision.</p>
+          <p>{{ t('footer.engineered') }}</p>
         </div>
       </div>
 
@@ -76,7 +77,9 @@
 </template>
 
 <script setup>
+import { useLanguage } from '../composables/useLanguage.js'
 import { RouterLink } from 'vue-router'
+const { t } = useLanguage()
 </script>
 
 <style scoped>

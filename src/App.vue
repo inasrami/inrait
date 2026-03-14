@@ -1,5 +1,6 @@
 <template>
   <div style="background: var(--bg);">
+    <SiteLoader />
     <CursorEffect />
     <AppNav />
 
@@ -10,8 +11,6 @@
     </RouterView>
 
     <AppFooter />
-
-    <!-- Global components — rendered once, always present -->
     <CookieBanner />
     <WhatsAppButton />
   </div>
@@ -19,9 +18,10 @@
 
 <script setup>
 import { RouterView } from 'vue-router'
-import CursorEffect  from './components/CursorEffect.vue'
-import AppNav        from './components/AppNav.vue'
-import AppFooter     from './components/AppFooter.vue'
-import CookieBanner  from './components/CookieBanner.vue'
+import SiteLoader     from './components/SiteLoader.vue'
+import CursorEffect   from './components/CursorEffect.vue'
+import AppNav         from './components/AppNav.vue'
+import AppFooter      from './components/AppFooter.vue'
+import CookieBanner   from './components/CookieBanner.vue'
 import WhatsAppButton from './components/WhatsAppButton.vue'
 </script>

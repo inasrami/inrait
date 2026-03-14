@@ -2,19 +2,19 @@
   <section id="work" class="py-32 overflow-hidden">
 
     <!-- Header — full-width padded -->
-    <div class="px-6 max-w-[1080px] mx-auto mb-14">
-      <div class="flex flex-wrap items-end justify-between gap-6">
+    <div class="px-6 max-w-[1080px] mx-auto mb-10">
+      <div class="flex flex-wrap items-end justify-between gap-6 mb-8">
         <div>
-          <div class="mb-4 section-label fade-up">Selected Work</div>
+          <div class="mb-4 section-label fade-up">{{ t('projects.label') }}</div>
           <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
-            PROJECTS
+            {{ t('projects.title') }}
           </h2>
         </div>
         <div class="flex items-center gap-4 fade-up" style="transition-delay: 0.1s;">
           <!-- Drag hint -->
           <span class="text-text-dim text-[13px] flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            Drag to explore
+            {{ t('projects.dragHint') }}
           </span>
           <!-- Arrow nav -->
           <button class="carousel-btn" @click="scroll(-1)" aria-label="Previous">
@@ -25,7 +25,30 @@
           </button>
         </div>
       </div>
+
+      <!-- Filter tabs -->
+      <div class="flex flex-wrap items-center gap-2 fade-up" style="transition-delay:0.15s;">
+        <button
+          v-for="f in filters"
+          :key="f.key"
+          class="filter-tab"
+          :class="{ 'filter-tab--active': activeFilter === f.key }"
+          @click="setFilter(f.key)"
+          style="cursor:none;"
+        >
+          {{ f.label }}
+        </button>
+      </div>
     </div>
+          <button class="carousel-btn" @click="scroll(-1)" aria-label="Previous">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <button class="carousel-btn" @click="scroll(1)" aria-label="Next">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+      
+     
+    
 
     <!-- Carousel track — bleeds full width -->
     <div
@@ -40,7 +63,7 @@
       <div class="carousel-spacer" />
 
       <RouterLink
-        v-for="(project, i) in projects"
+        v-for="(project, i) in filteredProjects"
         :key="project.id"
         :to="`/work/${project.slug}`"
         class="carousel-card"
@@ -106,7 +129,7 @@
     <!-- Dot indicators -->
     <div class="flex justify-center gap-2 mt-10">
       <button
-        v-for="(project, i) in projects"
+        v-for="(project, i) in filteredProjects"
         :key="project.id"
         class="dot-btn"
         :class="{ active: activeIndex === i }"
@@ -119,16 +142,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { projects } from '../data/projects.js'
 import { useFadeUp } from '../composables/useFadeUp.js'
+import { useLanguage } from '../composables/useLanguage.js'
 
 useFadeUp()
+const { t } = useLanguage()
 
 const router      = useRouter()
 const trackEl     = ref(null)
 const activeIndex = ref(0)
+const activeFilter = ref('all')
+
+const filters = computed(() => [
+  { key: 'all',        label: t('projects.filter.all')        },
+  { key: 'web',        label: t('projects.filter.web')        },
+  { key: 'design',     label: t('projects.filter.design')     },
+  { key: 'automation', label: t('projects.filter.automation') },
+])
+
+const filteredProjects = computed(() =>
+  activeFilter.value === 'all'
+    ? projects
+    : projects.filter(p => p.category === activeFilter.value)
+)
+
+function setFilter(key) {
+  activeFilter.value = key
+  activeIndex.value = 0
+  // Scroll carousel back to start
+  if (trackEl.value) trackEl.value.scrollTo({ left: 0, behavior: 'smooth' })
+}
 
 // ── Drag-to-scroll ────────────────────────────────────────
 const dragging   = ref(false)
@@ -166,7 +212,7 @@ function handleClick(project) {
 const CARD_WIDTH = 420 + 20 // card + gap
 
 function scroll(dir) {
-  const next = Math.max(0, Math.min(projects.length - 1, activeIndex.value + dir))
+  const next = Math.max(0, Math.min(filteredProjects.value.length - 1, activeIndex.value + dir))
   scrollToIndex(next)
 }
 
@@ -184,7 +230,7 @@ function scrollToIndex(i) {
 function updateActiveIndex() {
   if (!trackEl.value) return
   const i = Math.round(trackEl.value.scrollLeft / CARD_WIDTH)
-  activeIndex.value = Math.max(0, Math.min(projects.length - 1, i))
+  activeIndex.value = Math.max(0, Math.min(filteredProjects.value.length - 1, i))
 }
 
 onMounted(() => {
@@ -198,6 +244,31 @@ onUnmounted(() => {
 
 <style scoped>
 /* ── Track ─────────────────────────────────────────────── */
+
+/* ── Filter tabs ───────────────────────────────────────── */
+.filter-tab {
+  padding: 7px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  cursor: none;
+}
+
+.filter-tab:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.filter-tab--active {
+  color: #000;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
 .carousel-track {
   display: flex;
   gap: 20px;

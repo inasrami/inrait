@@ -76,4 +76,33 @@
     <priority>0.6</priority>
   </url>
 
+
+  <!-- Blog listing -->
+  <url>
+    <loc>https://inrait.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog: Why Hotels Lose Bookings -->
+  <url>
+    <loc>https://inrait.com/blog/why-hotels-lose-bookings</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Blog: n8n Automations -->
+  <url>
+    <loc>https://inrait.com/blog/n8n-automations-small-business</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Blog: Web Design Sofia -->
+  <url>
+    <loc>https://inrait.com/blog/web-design-sofia-what-to-expect</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
 </urlset>
