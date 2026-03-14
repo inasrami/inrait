@@ -6,7 +6,7 @@
 
     <div class="max-w-[1080px] mx-auto px-6 pt-20 pb-10">
 
-      <div class="flex flex-col md:flex-row gap-16 justify-between mb-16">
+      <div class="flex flex-col justify-between gap-16 mb-16 md:flex-row">
 
         <!-- Brand column -->
         <div class="max-w-[280px]">
@@ -23,7 +23,7 @@
         </div>
 
         <!-- Links grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-10">
+        <div class="grid grid-cols-2 gap-10 sm:grid-cols-3">
 
           <div>
             <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Work</h4>
@@ -39,6 +39,7 @@
           <div>
             <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">Navigate</h4>
             <div class="flex flex-col gap-3">
+              <RouterLink to="/services" class="footer-link">Services</RouterLink>
               <a href="/#philosophy" class="footer-link">Philosophy</a>
               <a href="/#specs" class="footer-link">Stack</a>
               <a href="/#process" class="footer-link">Process</a>
@@ -62,8 +63,12 @@
       <!-- Bottom bar -->
       <div class="h-px mb-8" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
       <div class="flex flex-wrap justify-between items-center gap-4 text-[12px] text-text-dim">
-        <p>© 2026 INRAIT Web Engineering · Sofia, Bulgaria. All rights reserved.</p>
-        <p>Engineered with precision.</p>
+        <p>© 2025 INRAIT Web Engineering · Sofia, Bulgaria. All rights reserved.</p>
+        <div class="flex items-center gap-4">
+          <RouterLink to="/privacy" class="transition-colors duration-200 hover:text-text-muted">Privacy Policy</RouterLink>
+          <span>·</span>
+          <p>Engineered with precision.</p>
+        </div>
       </div>
 
     </div>

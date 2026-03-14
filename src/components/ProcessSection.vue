@@ -1,24 +1,24 @@
 <template>
-  <section id="process" class="py-32 px-6 relative overflow-hidden">
+  <section id="process" class="relative px-6 py-32 overflow-hidden">
 
     <!-- Background accent -->
     <div
-      class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none"
+      class="absolute right-0 -translate-y-1/2 pointer-events-none top-1/2"
       style="width: 600px; height: 600px; background: radial-gradient(ellipse at right center, rgba(164,224,75,0.04) 0%, transparent 70%);"
     />
 
     <div class="max-w-[1080px] mx-auto">
 
-      <div class="section-label fade-up mb-4">How We Work</div>
+      <div class="mb-4 section-label fade-up">How We Work</div>
       <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] mb-20" style="letter-spacing:0.02em; line-height:1;">
         THE PROCESS
       </h2>
 
       <!-- Process steps -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-0 relative">
+      <div class="relative grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-0">
 
         <!-- Vertical connector line (desktop) -->
-        <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style="background: linear-gradient(to bottom, transparent, var(--border-strong), transparent);" />
+        <div class="absolute top-0 bottom-0 hidden w-px -translate-x-1/2 md:block left-1/2" style="background: linear-gradient(to bottom, transparent, var(--border-strong), transparent);" />
 
         <div
           v-for="(step, i) in steps"
@@ -30,7 +30,7 @@
           <!-- Number -->
           <div
             class="font-display text-[80px] leading-none mb-4"
-            style="color: transparent; -webkit-text-stroke: 1px rgba(164,224,75,0.2); letter-spacing: 0.02em;"
+            style="color: transparent; -webkit-text-stroke: 2px rgba(164,224,75,0.2); letter-spacing: 0.02em;"
           >
             0{{ i + 1 }}
           </div>

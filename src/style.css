@@ -341,11 +341,13 @@
 }
 
 .nav-link:hover,
-.nav-link.router-link-active {
+.nav-link.router-link-active,
+.nav-link.nav-link--active {
   color: var(--text);
 }
 
 .nav-link.router-link-active::after,
+.nav-link.nav-link--active::after,
 .nav-link:hover::after {
   width: 100%;
 }

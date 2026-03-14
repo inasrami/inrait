@@ -1,20 +1,20 @@
 <template>
-  <section class="py-32 px-6 relative overflow-hidden" style="background: var(--surface);">
+  <section class="relative px-6 py-32 overflow-hidden" style="background: var(--surface);">
 
     <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
 
-    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+    <div class="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none left-1/2 top-1/2"
       style="width:700px;height:400px;background:radial-gradient(ellipse at center, rgba(164,224,75,0.04) 0%, transparent 70%);" />
 
     <div class="max-w-[1080px] mx-auto relative z-10">
 
-      <div class="section-label fade-up mb-4" style="width:fit-content; margin-inline:auto;">Client Results</div>
+      <div class="mb-4 section-label fade-up" style="width:fit-content; margin-inline:auto;">Client Results</div>
       <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] text-center mb-20"
         style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
         TESTIMONIALS
       </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div
           v-for="(t, i) in testimonials"
           :key="t.name"
@@ -46,12 +46,6 @@
         </div>
       </div>
 
-      <!-- Dev note — remove before launch -->
-      <p class="text-center text-[11px] text-text-dim mt-10 fade-up" style="transition-delay:0.4s;">
-        Replace placeholder quotes in
-        <code style="font-size:11px; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px;">TestimonialsSection.vue</code>
-        with real client feedback.
-      </p>
 
     </div>
   </section>
@@ -61,7 +55,7 @@
 import { useFadeUp } from '../composables/useFadeUp'
 useFadeUp()
 
-// Replace these with real client quotes before going live
+
 const testimonials = [
   {
     quote: 'Working with INRAIT was unlike any agency experience we have had. The attention to detail was extraordinary — every interaction on our platform felt intentional. Delivered on time, on budget, zero surprises.',
