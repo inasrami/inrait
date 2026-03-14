@@ -41,5 +41,5 @@ export function useLanguage() {
   const isEN = computed(() => lang.value === 'en')
   const isBG = computed(() => lang.value === 'bg')
 
-  return { t, locale, lang, setLang, toggleLang, isEN, isBG }
+  return { t, locale, lang, currentLanguage: lang, setLang, toggleLang, isEN, isBG }
 }

@@ -298,6 +298,8 @@ export default {
     nextArticle: 'Next article',
     ctaTitle: 'Ready to build something?',
     ctaSub: "Let's talk about your project. We respond within 24 hours.",
+    loading: 'Loading posts…',
+    empty: 'No articles yet.',
     allPosts: 'All articles',
   },
 
