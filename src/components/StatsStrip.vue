@@ -20,13 +20,17 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useFadeUp } from '../composables/useFadeUp'
-useFadeUp()
+import { useLanguage } from '../composables/useLanguage.js'
 
-const stats = [
-  { value: '5+',   label: 'Projects Shipped' },
-  { value: '3+',   label: 'Years of Craft'   },
-  { value: '100%', label: 'Custom Built'      },
-  { value: '∞',    label: 'Pixel Precision'  },
-]
+useFadeUp()
+const { t } = useLanguage()
+
+const stats = computed(() => [
+  { value: '5+',   label: t('stats.projects')     },
+  { value: '3+',   label: t('stats.satisfaction') },
+  { value: '100%', label: t('stats.performance')  },
+  { value: '∞',    label: t('stats.delivery')     },
+])
 </script>

@@ -8,30 +8,35 @@
       <div class="font-display notfound-num">404</div>
 
       <h1 class="font-display text-[clamp(36px,6vw,64px)] mb-6 leading-none" style="letter-spacing:0.02em;">
-        PAGE NOT FOUND
+        {{ t('notFound.title') }}
       </h1>
 
       <p class="text-text-muted text-[17px] max-w-md mx-auto leading-relaxed mb-12" style="font-weight:300;">
-        The page you're looking for doesn't exist or has been moved. Let's get you back on track.
+        {{ t('notFound.sub') }}
       </p>
 
       <div class="flex flex-wrap items-center justify-center gap-4">
         <RouterLink to="/" class="btn-primary px-8 py-4 text-[15px]">
-          Back to home
+          {{ t('notFound.home') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/>
             <polyline points="12 5 19 12 12 19"/>
           </svg>
         </RouterLink>
         <RouterLink to="/contact" class="btn-outline px-8 py-4 text-[15px]">
-          Contact us
+          {{ t('notFound.contact') }}
         </RouterLink>
       </div>
 
       <!-- Quick links -->
       <div class="flex flex-wrap justify-center gap-3 mt-20">
-        <span class="text-[12px] text-text-dim uppercase tracking-widest mr-2 self-center">Or go to:</span>
-        <RouterLink v-for="link in quickLinks" :key="link.to" :to="link.to" class="quick-link">
+        <span class="text-[12px] text-text-dim uppercase tracking-widest mr-2 self-center">{{ t('notFound.orGoTo') }}</span>
+        <RouterLink
+          v-for="link in quickLinks"
+          :key="link.to"
+          :to="link.to"
+          class="quick-link"
+        >
           {{ link.label }}
         </RouterLink>
       </div>
@@ -41,18 +46,20 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSeo } from '../composables/useSeo.js'
+import { useLanguage } from '../composables/useLanguage.js'
 
-useSeo({ title: '404 — Page Not Found', description: 'The page you are looking for does not exist. Return to the INRAIT homepage.', canonical: '/404' })
+const { t } = useLanguage()
 
-const quickLinks = [
-  { to: '/services', label: 'Services' },
-  { to: '/#work',    label: 'Our Work'  },
-  { to: '/#about',   label: 'About'    },
-  { to: '/contact',  label: 'Contact'  },
-  { to: '/privacy',  label: 'Privacy'  },
-]
+useSeo({
+  title:       '404 — Page Not Found',
+  description: 'The page you are looking for does not exist. Return to the INRAIT homepage.',
+  canonical:   '/404',
+})
+
+const quickLinks = computed(() => t('notFound.quickLinks'))
 </script>
 
 <style scoped>

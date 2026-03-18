@@ -15,14 +15,14 @@
 
       <!-- Label -->
       <div class="mx-auto mb-8 section-label fade-in" style="transition-delay: 0.1s">
-        Available for projects · Sofia, Bulgaria
+        {{ t('hero.available') }}
       </div>
 
       <!-- Main headline -->
       <h1 class="mb-6 leading-none font-display" style="font-size: clamp(72px, 14vw, 200px); letter-spacing: 0.02em;">
-        <span class="block text-gradient fade-in" style="transition-delay: 0.15s">WEB</span>
-        <span class="fade-in" style="color: var(--accent); transition-delay: 0.25s; display: block;">ENGINEERING</span>
-        <span class="block text-gradient fade-in" style="transition-delay: 0.35s">THAT HITS.</span>
+        <span class="block text-gradient fade-in" style="transition-delay: 0.15s">{{ t('hero.line1') }}</span>
+        <span class="fade-in" style="color: var(--accent); transition-delay: 0.25s; display: block;">{{ t('hero.line2') }}</span>
+        <span class="block text-gradient fade-in" style="transition-delay: 0.35s">{{ t('hero.line3') }}</span>
       </h1>
 
       <!-- Subheadline -->
@@ -30,17 +30,17 @@
         class="text-text-muted fade-in"
         style="font-size: clamp(17px, 2.5vw, 22px); max-width: 540px; margin: 0 auto 48px; line-height: 1.6; font-weight: 300; transition-delay: 0.5s;"
       >
-        We build fast, scalable, obsessively crafted digital products — the kind clients remember and users keep coming back to.
+        {{ t('hero.sub') }}
       </p>
 
       <!-- CTAs -->
       <div class="flex flex-wrap justify-center gap-4 fade-in" style="transition-delay: 0.65s">
         <RouterLink to="/contact" class="btn-primary">
-          Start a project
+          {{ t('hero.cta') }}
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </RouterLink>
         <a href="#work" class="btn-outline" @click.prevent="scrollToWork">
-          See our work
+          {{ t('hero.ctaWork') }}
         </a>
       </div>
 
@@ -48,17 +48,17 @@
       <div class="flex items-center justify-center gap-8 mt-16 fade-in" style="transition-delay: 0.8s">
         <div class="text-center">
           <div class="stat-number text-[40px]">5+</div>
-          <div class="text-text-muted text-[12px] uppercase tracking-widest mt-1">Live Projects</div>
+          <div class="text-text-muted text-[12px] uppercase tracking-widest mt-1">{{ t('hero.statProjects') }}</div>
         </div>
         <div class="w-px h-10 bg-white/10" />
         <div class="text-center">
           <div class="stat-number text-[40px]">3+</div>
-          <div class="text-text-muted text-[12px] uppercase tracking-widest mt-1">Years Building</div>
+          <div class="text-text-muted text-[12px] uppercase tracking-widest mt-1">{{ t('hero.statYears') }}</div>
         </div>
         <div class="w-px h-10 bg-white/10" />
         <div class="text-center">
           <div class="stat-number text-[40px]">100%</div>
-          <div class="text-text-muted text-[12px] uppercase tracking-widest mt-1">Custom Code</div>
+          <div class="text-text-muted text-[12px] uppercase tracking-widest mt-1">{{ t('hero.statCode') }}</div>
         </div>
       </div>
     </div>
@@ -74,13 +74,15 @@
 <script setup>
 import { onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useLanguage } from '../composables/useLanguage.js'
+
+const { t } = useLanguage()
 
 function scrollToWork() {
   document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })
 }
 
 onMounted(() => {
-  // Trigger fade-ins that are already in viewport
   document.querySelectorAll('.fade-in').forEach((el, i) => {
     setTimeout(() => el.classList.add('is-visible'), 100 + i * 50)
   })

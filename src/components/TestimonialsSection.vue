@@ -8,16 +8,16 @@
 
     <div class="max-w-[1080px] mx-auto relative z-10">
 
-      <div class="mb-4 section-label fade-up" style="width:fit-content; margin-inline:auto;">Client Results</div>
+      <div class="mb-4 section-label fade-up" style="width:fit-content; margin-inline:auto;">{{ t('testimonials.label') }}</div>
       <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] text-center mb-20"
         style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
-        TESTIMONIALS
+        {{ t('testimonials.title') }}
       </h2>
 
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div
-          v-for="(t, i) in testimonials"
-          :key="t.name"
+          v-for="(item, i) in testimonials"
+          :key="item.name"
           class="testimonial-card fade-up"
           :style="`transition-delay:${i * 0.12}s`"
         >
@@ -29,53 +29,36 @@
           </div>
 
           <blockquote class="text-[14px] leading-relaxed text-text-muted mb-8" style="font-style:italic;">
-            "{{ t.quote }}"
+            "{{ item.quote }}"
           </blockquote>
 
           <div class="h-px mb-6" style="background:var(--border);" />
 
           <div class="flex items-center gap-3">
             <div class="t-avatar">
-              <span>{{ t.name.charAt(0) }}</span>
+              <span>{{ item.name.charAt(0) }}</span>
             </div>
             <div>
-              <div class="font-semibold text-[13px]">{{ t.name }}</div>
-              <div class="text-[12px] text-text-dim">{{ t.role }} · {{ t.company }}</div>
+              <div class="font-semibold text-[13px]">{{ item.name }}</div>
+              <div class="text-[12px] text-text-dim">{{ item.role }} · {{ item.company }}</div>
             </div>
           </div>
         </div>
       </div>
-
 
     </div>
   </section>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useFadeUp } from '../composables/useFadeUp'
+import { useLanguage } from '../composables/useLanguage.js'
+
 useFadeUp()
+const { t } = useLanguage()
 
-
-const testimonials = [
-  {
-    quote: 'Working with INRAIT was unlike any agency experience we have had. The attention to detail was extraordinary — every interaction on our platform felt intentional. Delivered on time, on budget, zero surprises.',
-    name: 'Client Name',
-    role: 'Founder',
-    company: 'Company Name',
-  },
-  {
-    quote: 'We needed a booking system that felt premium enough for our clientele. What we received exceeded our expectations. The interface is fast, intuitive, and our guests actually compliment us on it.',
-    name: 'Client Name',
-    role: 'Owner',
-    company: 'Company Name',
-  },
-  {
-    quote: 'The team has a rare combination of engineering precision and design sensibility. The result speaks for itself. We have already started planning our second project together.',
-    name: 'Client Name',
-    role: 'CEO',
-    company: 'Company Name',
-  },
-]
+const testimonials = computed(() => t('testimonials.items'))
 </script>
 
 <style scoped>

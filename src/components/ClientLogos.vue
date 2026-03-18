@@ -3,7 +3,7 @@
     <div class="max-w-[1080px] mx-auto">
 
       <p class="text-center text-[11px] uppercase tracking-widest text-text-dim mb-12 fade-up">
-        Trusted by businesses across Bulgaria and Europe
+        {{ t('logos.trusted') }}
       </p>
 
       <div class="logos-grid fade-up" style="transition-delay:0.1s;">
@@ -13,19 +13,13 @@
           class="logo-cell"
           :title="client.name"
         >
-          <!--
-            To use a real logo image, add an `image` field to the client object below:
-              { name: 'Hotel Prestige', image: '/images/logos/hotel-prestige.svg' }
-            Then replace the wordmark span with:
-              <img :src="client.image" :alt="client.name" class="logo-img" />
-          -->
           <span class="logo-wordmark">{{ client.name }}</span>
         </div>
       </div>
 
       <p class="text-center text-[12px] text-text-dim mt-8 fade-up" style="transition-delay:0.2s;">
-        Your brand here?
-        <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">Let's talk.</RouterLink>
+        {{ t('logos.yourLogo') }}
+        <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">{{ t('logos.letsTalk') }}</RouterLink>
       </p>
 
     </div>
@@ -35,9 +29,11 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { useFadeUp } from '../composables/useFadeUp'
-useFadeUp()
+import { useLanguage } from '../composables/useLanguage.js'
 
-// Replace with real client names/logos
+useFadeUp()
+const { t } = useLanguage()
+
 const clients = [
   { name: 'Barbers Unity' },
   { name: 'Hotel Prestige' },
@@ -88,15 +84,4 @@ const clients = [
 }
 
 .logo-cell:hover .logo-wordmark { color: var(--text-muted); }
-
-/* For actual logo images */
-.logo-img {
-  max-height: 26px;
-  max-width: 96px;
-  object-fit: contain;
-  filter: grayscale(1) brightness(0.45);
-  transition: filter 0.25s ease;
-}
-
-.logo-cell:hover .logo-img { filter: grayscale(0.2) brightness(0.75); }
 </style>

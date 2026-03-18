@@ -3,7 +3,7 @@
     <div class="max-w-[1080px] mx-auto px-5">
 
       <h2 class="fade-up text-[56px] font-semibold text-center mb-20" style="letter-spacing: -0.01em;">
-        The Architecture.
+        {{ t('timeline.title') }}
       </h2>
 
       <div class="relative max-w-[800px] mx-auto">
@@ -12,7 +12,7 @@
         <div class="absolute top-0 bottom-0 w-px bg-[#333336]" style="left: 40px;" />
 
         <div
-          v-for="(item, i) in timeline"
+          v-for="(item, i) in items"
           :key="item.title"
           class="fade-up relative mb-[60px] last:mb-0"
           style="padding-left: 60px;"
@@ -20,7 +20,7 @@
         >
           <!-- Dot -->
           <div
-            class="absolute rounded-full bg-bg-base border-2 border-accent"
+            class="absolute border-2 rounded-full bg-bg-base border-accent"
             style="left: 14px; top: 8px; width: 12px; height: 12px; box-shadow: 0 0 10px #A4E04B;"
           />
 
@@ -37,13 +37,12 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useFadeUp } from '../composables/useFadeUp'
-useFadeUp()
+import { useLanguage } from '../composables/useLanguage.js'
 
-const timeline = [
-  { date: '09/2025 - PRESENT', title: 'Software Developer Training',   subtitle: 'University of Telecommunications and Post, Sofia' },
-  { date: '2025 (JAN - DEC)',  title: 'Full JavaScript Track',          subtitle: 'SoftUni. Mastered JS Basics, Fundamentals, Advanced, and JS Applications.' },
-  { date: '2019 - PRESENT',   title: 'Freelance Media Production',     subtitle: 'Professional photographer, videographer, and photo editor. Building an elite visual foundation for digital design.' },
-  { date: '2020 - 2024',      title: 'Client Relations & QA',          subtitle: 'Roles at Alorica and Webhelp. Managed user content compliance and provided high-level customer support.' },
-]
+useFadeUp()
+const { t } = useLanguage()
+
+const items = computed(() => t('timeline.items'))
 </script>

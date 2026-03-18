@@ -5,14 +5,14 @@
     <section class="relative px-6 pt-40 pb-20 overflow-hidden">
       <div class="hero-glow" />
       <div class="max-w-[1080px] mx-auto relative z-10 text-center">
-        <div class="mb-5 section-label fade-up" style="justify-content:center;">What We Build</div>
+        <div class="mb-5 section-label fade-up" style="justify-content:center;">{{ t('servicesPage.label') }}</div>
         <h1 class="font-display fade-up text-[clamp(64px,12vw,130px)] leading-none mb-6"
           style="letter-spacing:0.02em; transition-delay:0.05s;">
-          SERVICES
+          {{ t('servicesPage.title') }}
         </h1>
         <p class="fade-up text-[17px] text-text-muted max-w-xl mx-auto leading-relaxed mb-8"
           style="font-weight:300; transition-delay:0.1s;">
-          Select the services you need. Combine them to unlock automatic bundle discounts — the more you build together, the better the deal.
+          {{ t('servicesPage.selectServices') }} {{ t('servicesPage.combineServices') }}
         </p>
 
         <!-- Pricing disclaimer -->
@@ -23,15 +23,14 @@
             <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
           <p class="text-[13px] text-text-muted leading-relaxed text-left">
-            <strong class="text-text-main">All prices shown are starting estimates only.</strong>
-            Final pricing is determined after a free consultation — every project is scoped individually based on complexity, timeline, and requirements.
-            It can be lower or higher. No surprises.
+            <strong class="text-text-main">{{ t('servicesPage.disclaimerStrong') }}</strong>
+            {{ t('servicesPage.disclaimerBody') }}
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Bundle discount banner — sticky below nav, shows when 2+ selected -->
+    <!-- Bundle discount banner -->
     <Transition name="banner">
       <div v-if="selectedServices.length >= 2" class="discount-banner">
         <div class="max-w-[1080px] mx-auto px-6 flex items-center justify-between flex-wrap gap-4">
@@ -43,10 +42,10 @@
             </div>
             <div>
               <div class="font-semibold text-[15px] text-black leading-tight">
-                {{ currentDiscount.label }} applied to your estimate
+                {{ currentDiscount.label }} {{ t('servicesPage.bannerLabel') }}
               </div>
               <div class="text-[12px] text-black/60">
-                {{ selectedServices.length >= 3 ? 'Maximum bundle discount unlocked.' : 'Add one more service to unlock 15% off.' }}
+                {{ selectedServices.length >= 3 ? t('servicesPage.bannerMax') : t('servicesPage.bannerNext') }}
               </div>
             </div>
           </div>
@@ -73,18 +72,18 @@
             :style="`animation-delay: ${i * 0.07}s`"
           >
 
-            <!-- ── Card header: click = select/deselect service ── -->
+            <!-- Card header -->
             <div class="card-header" @click="toggleService(service.id)" data-cursor>
 
-              <!-- Selected badge — top-right corner -->
               <Transition name="badge">
                 <div v-if="isSelected(service.id)" class="selected-badge">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
-                  Added
+                  {{ t('servicesPage.added') }}
                 </div>
               </Transition>
+
               <div class="flex items-start flex-1 min-w-0 gap-4">
                 <div class="svc-icon" :class="{ 'svc-icon--on': isSelected(service.id) }">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
@@ -101,7 +100,7 @@
                   <p class="text-text-muted text-[13px] leading-relaxed">{{ service.body }}</p>
                 </div>
               </div>
-              <!-- Checkbox circle -->
+
               <div class="select-toggle" :class="{ 'select-toggle--on': isSelected(service.id) }">
                 <svg v-if="isSelected(service.id)" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="20 6 9 17 4 12"/>
@@ -113,7 +112,7 @@
               </div>
             </div>
 
-            <!-- ── Deliverables ── -->
+            <!-- Deliverables -->
             <div class="px-6 pb-4">
               <ul class="grid grid-cols-2 gap-x-4 gap-y-2">
                 <li v-for="item in service.deliverables" :key="item"
@@ -127,11 +126,10 @@
               </ul>
             </div>
 
-            <!-- ── Price row + add-ons toggle ── -->
-            <!-- @click.stop prevents this row from bubbling to card-header -->
+            <!-- Price row + add-ons toggle -->
             <div class="price-row" @click.stop>
               <div>
-                <div class="price-label-sm">Estimate from</div>
+                <div class="price-label-sm">{{ t('servicesPage.basePrice') }}</div>
                 <div class="font-display text-[32px] leading-none" style="letter-spacing:0.02em; color:var(--accent);">
                   €{{ service.basePrice.toLocaleString() }}
                 </div>
@@ -146,7 +144,7 @@
                   <line x1="12" y1="5" x2="12" y2="19"/>
                   <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                Add-ons
+                {{ t('servicesPage.addons') }}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
                   class="chevron" :class="{ 'chevron--open': openAddons === service.id }">
                   <polyline points="6 9 12 15 18 9"/>
@@ -154,11 +152,10 @@
               </button>
             </div>
 
-            <!-- ── Add-ons drawer ── -->
-            <!-- @click.stop on the whole drawer so nothing bubbles to card-header -->
+            <!-- Add-ons drawer -->
             <Transition name="drawer">
               <div v-if="openAddons === service.id" class="addons-drawer" @click.stop>
-                <div class="addons-header">Optional add-ons — click to include in estimate</div>
+                <div class="addons-header">{{ t('servicesPage.addonsTitle') }}</div>
                 <div class="flex flex-col gap-1.5">
                   <div
                     v-for="addon in service.addons"
@@ -195,14 +192,13 @@
           <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         <span class="text-[12px] text-text-dim leading-relaxed">
-          All estimates on this page are indicative starting points. Final pricing is agreed after a free discovery consultation and depends on project scope, complexity, and timeline.
-          The total shown in the builder below is an estimate — not a binding quote.
-          <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">Book a free call</RouterLink> to discuss your project.
+          {{ t('servicesPage.bottomNote') }}
+          <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">{{ t('servicesPage.bookCall') }}</RouterLink>
         </span>
       </div>
     </div>
 
-    <!-- ── Sticky quote bar ── -->
+    <!-- Sticky quote bar -->
     <Transition name="quotebar">
       <div v-if="hasSelection" class="quote-bar">
         <div class="max-w-[1080px] mx-auto px-6 flex items-center justify-between flex-wrap gap-4">
@@ -221,9 +217,8 @@
                 </svg>
               </button>
             </span>
-            <!-- Addon count pill -->
             <span v-if="selectedAddons.length > 0" class="addon-count-chip">
-              +{{ selectedAddons.length }} add-on{{ selectedAddons.length > 1 ? 's' : '' }}
+              +{{ selectedAddons.length }} {{ t('servicesPage.addons') }}
             </span>
           </div>
 
@@ -236,10 +231,10 @@
               <div class="font-display text-[28px] leading-none text-accent" style="letter-spacing:0.02em;">
                 ~€{{ discountedTotal.toLocaleString() }}
               </div>
-              <div class="text-[9px] text-text-dim mt-0.5 uppercase tracking-widest">estimate</div>
+              <div class="text-[9px] text-text-dim mt-0.5 uppercase tracking-widest">{{ t('servicesPage.estimate') }}</div>
             </div>
             <RouterLink to="/contact" class="btn-primary text-[13px] py-3 px-6" style="cursor:none;">
-              Get a quote
+              {{ t('servicesPage.getQuote') }}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"/>
                 <polyline points="12 5 19 12 12 19"/>
@@ -263,10 +258,20 @@ import { useSeo } from '../composables/useSeo.js'
 import { useJsonLd, breadcrumbSchema, serviceListSchema } from '../composables/useJsonLd.js'
 import { SERVICES, getBundleDiscount } from '../data/services.js'
 import { useFadeUp } from '../composables/useFadeUp'
+import { useLanguage } from '../composables/useLanguage.js'
 
 useFadeUp()
-useSeo({ title: 'Services & Pricing', description: 'Web engineering, booking systems, e-commerce, automation, design and photography — view all INRAIT services and build your custom package.', canonical: '/services' })
-useJsonLd([breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]), serviceListSchema(SERVICES)])
+const { t } = useLanguage()
+
+useSeo({
+  title:       'Services & Pricing',
+  description: 'Web engineering, booking systems, e-commerce, automation, design and photography — view all INRAIT services and build your custom package.',
+  canonical:   '/services',
+})
+useJsonLd([
+  breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]),
+  serviceListSchema(SERVICES),
+])
 
 const selectedServices = ref([])
 const selectedAddons   = ref([])
@@ -281,7 +286,6 @@ function toggleService(id) {
     selectedServices.value = selectedServices.value.filter(s => s !== id)
     const addonIds = serviceById(id).addons.map(a => a.id)
     selectedAddons.value = selectedAddons.value.filter(a => !addonIds.includes(a))
-    // Close drawer if it belongs to the deselected service
     if (openAddons.value === id) openAddons.value = null
   } else {
     selectedServices.value = [...selectedServices.value, id]
@@ -289,7 +293,6 @@ function toggleService(id) {
 }
 
 function toggleAddon(addonId, serviceId) {
-  // Auto-select parent service without closing the drawer
   if (!isSelected(serviceId)) {
     selectedServices.value = [...selectedServices.value, serviceId]
   }
@@ -316,12 +319,10 @@ const subtotal = computed(() => {
 })
 
 const currentDiscount  = computed(() => getBundleDiscount(selectedServices.value.length))
-
 const discountedTotal  = computed(() => {
   if (!currentDiscount.value) return subtotal.value
   return subtotal.value - Math.round(subtotal.value * currentDiscount.value.percent / 100)
 })
-
 const hasSelection = computed(() =>
   selectedServices.value.length > 0 || selectedAddons.value.length > 0
 )
@@ -330,7 +331,6 @@ const hasSelection = computed(() =>
 <style scoped>
 .services-page { min-height: 100vh; }
 
-/* ─── Disclaimer box (hero) ─────────────────────────────── */
 .disclaimer-box {
   display: inline-flex;
   align-items: flex-start;
@@ -344,7 +344,6 @@ const hasSelection = computed(() =>
   text-align: left;
 }
 
-/* ─── Discount banner ───────────────────────────────────── */
 .discount-banner {
   position: sticky;
   top: 56px;
@@ -383,9 +382,6 @@ const hasSelection = computed(() =>
   transform: translateY(-10px);
 }
 
-/* ─── Service cards ─────────────────────────────────────── */
-
-/* One-time entrance animation — immune to Vue re-renders unlike fade-up */
 @keyframes cardIn {
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -409,7 +405,6 @@ const hasSelection = computed(() =>
   box-shadow: 0 0 0 1px rgba(164,224,75,0.1), 0 16px 48px rgba(0,0,0,0.35);
 }
 
-/* Selected badge */
 .selected-badge {
   position: absolute;
   top: 18px;
@@ -498,7 +493,6 @@ const hasSelection = computed(() =>
   border-color: var(--accent);
 }
 
-/* ─── Price row ─────────────────────────────────────────── */
 .price-row {
   display: flex;
   align-items: center;
@@ -537,15 +531,9 @@ const hasSelection = computed(() =>
   background: rgba(164,224,75,0.04);
 }
 
-.chevron {
-  transition: transform 0.25s ease;
-}
+.chevron { transition: transform 0.25s ease; }
+.chevron--open { transform: rotate(180deg); }
 
-.chevron--open {
-  transform: rotate(180deg);
-}
-
-/* ─── Add-ons drawer ────────────────────────────────────── */
 .addons-drawer {
   padding: 18px 22px 20px;
   background: rgba(255,255,255,0.018);
@@ -622,7 +610,6 @@ const hasSelection = computed(() =>
   max-height: 0 !important;
 }
 
-/* ─── Bottom disclaimer ─────────────────────────────────── */
 .bottom-disclaimer {
   display: flex;
   align-items: flex-start;
@@ -633,7 +620,6 @@ const hasSelection = computed(() =>
   background: rgba(255,255,255,0.01);
 }
 
-/* ─── Sticky quote bar ──────────────────────────────────── */
 .quote-bar {
   position: fixed;
   bottom: 0;

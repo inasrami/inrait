@@ -58,7 +58,7 @@
         <div>
           <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaStack') }}</div>
           <div class="flex flex-wrap gap-1 mt-1">
-            <span v-for="t in project.stack" :key="t" class="chip" style="font-size: 11px;">{{ t }}</span>
+            <span v-for="tech in project.stack" :key="tech" class="chip" style="font-size: 11px;">{{ tech }}</span>
           </div>
         </div>
         <div>
@@ -70,7 +70,7 @@
             class="inline-flex items-center gap-1 text-[14px] font-medium hover:underline"
             :style="`color: ${project.color}; cursor: none;`"
           >
-            Visit site
+            {{ t('servicesPage.visitSite') }}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </a>
         </div>
@@ -105,7 +105,7 @@
       <div class="mt-32 text-center fade-up">
         <div class="mb-16 divider" />
         <h2 class="font-display text-[clamp(40px,7vw,80px)] mb-8" style="letter-spacing: 0.02em;">
-          WANT SOMETHING<br/><span style="color: var(--accent);">{{ t('projects.likeThis') }}</span>
+          {{ t('cta.line1') }}<br/><span style="color: var(--accent);">{{ t('projects.likeThis') }}</span>
         </h2>
         <RouterLink to="/contact" class="btn-primary text-[16px] px-10 py-5">
           {{ t('cta.start') }}
@@ -121,7 +121,7 @@
     <div>
       <h1 class="font-display text-[120px] text-accent" style="letter-spacing: 0.02em;">404</h1>
       <p class="text-text-muted text-[18px] mb-8">{{ t('projects.notFound') }}</p>
-      <RouterLink to="/" class="btn-primary">Go back home</RouterLink>
+      <RouterLink to="/" class="btn-primary">{{ t('notFound.home') }}</RouterLink>
     </div>
   </div>
 </template>
@@ -141,7 +141,6 @@ const project = computed(() => getProject(route.params.slug))
 
 useFadeUp()
 
-// Reactive SEO — updates when slug changes
 watch(project, (p) => {
   if (!p) return
   useSeo({
@@ -152,10 +151,8 @@ watch(project, (p) => {
   })
 }, { immediate: true })
 
-// JSON-LD injected directly when project resolves
 watch(project, (p) => {
   if (!p) return
-  // Remove previous ld+json scripts
   document.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
     if (s.id && s.id.startsWith('jsonld-')) s.remove()
   })

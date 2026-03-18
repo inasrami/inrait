@@ -81,6 +81,12 @@ export default {
     outcome:     'The Outcome',
     nextProject: 'Next project',
     dragHint:    'Drag to explore',
+    notFound:    'Project not found.',
+    likeThis:    'LIKE THIS?',
+    metaYear:    'Year',
+    metaCategory:'Category',
+    metaStack:   'Stack',
+    metaLive:    'Live site',
     filter: {
       all:        'All',
       web:        'Web',
@@ -164,6 +170,17 @@ export default {
     avail: 'Currently available for new projects',
   },
 
+  // ── Marquee ───────────────────────────────────────────────
+  marquee: {
+    text: 'POWERED BY VUE.JS • DRIVEN BY DESIGN • ENGINEERED FOR SCALE •\u00A0',
+    powered:    'POWERED BY',
+    vuejs:      'VUE.JS',
+    drivenBy:   'DRIVEN BY',
+    design:     'DESIGN',
+    engineered: 'ENGINEERED FOR',
+    scale:      'SCALE',
+  },
+
   // ── Footer ───────────────────────────────────────────────
   footer: {
     tagline:    'Web engineering from Sofia, Bulgaria. Clean code. Absolute performance. Built to scale.',
@@ -184,32 +201,35 @@ export default {
 
   // ── Contact page ─────────────────────────────────────────
   contact: {
-    label:      'Get In Touch',
-    line1:      "LET'S",
-    line2:      'BUILD IT.',
-    sub:        "Tell us about your project. We'll get back to you within 24 hours.",
-    name:       'Your name',
-    namePh:     'Alex Johnson',
-    email:      'Email address',
-    emailPh:    'alex@company.com',
-    type:       'Project type',
-    typePh:     'Select a service',
-    budget:     'Budget range',
-    budgetPh:   'Select budget',
-    message:    'Tell us about the project',
-    messagePh:  "What problem are you solving? Who is it for? What's the timeline?",
-    send:       'Send message',
-    sending:    'Sending…',
-    sent:       "Sent! We'll be in touch soon.",
-    errorFill:  'Please fill in your name, email, and message.',
-    errorFail:  'Something went wrong. Please email us directly at inkorami27@gmail.com',
-    directTitle:'Direct contact',
-    onlineTitle:'Find us online',
-    locationVal:'Sofia, Bulgaria · Remote-Ready',
-    availTitle: 'Currently available',
-    availBody:  'Taking on new projects. Typical response time is under 24 hours.',
-    setupNote:  'To activate email sending, replace',
-    setupLink:  'emailjs.com',
+    label:       'Get In Touch',
+    line1:       "LET'S",
+    line2:       'BUILD IT.',
+    sub:         "Tell us about your project. We'll get back to you within 24 hours.",
+    name:        'Your name',
+    namePh:      'Alex Johnson',
+    email:       'Email address',
+    emailPh:     'alex@company.com',
+    type:        'Project type',
+    typePh:      'Select a service',
+    budget:      'Budget range',
+    budgetPh:    'Select budget',
+    message:     'Tell us about the project',
+    messagePh:   "What problem are you solving? Who is it for? What's the timeline?",
+    send:        'Send message',
+    sending:     'Sending…',
+    sent:        "Sent! We'll be in touch soon.",
+    errorFill:   'Please fill in your name, email, and message.',
+    errorFail:   'Something went wrong. Please email us directly at inkorami27@gmail.com',
+    directTitle: 'Direct contact',
+    onlineTitle: 'Find us online',
+    emailLabel:  'Email',
+    phoneLabel:  'Phone',
+    locationLabel:'Location',
+    locationVal: 'Sofia, Bulgaria · Remote-Ready',
+    availTitle:  'Currently available',
+    availBody:   'Taking on new projects. Typical response time is under 24 hours.',
+    setupNote:   'To activate email sending, replace',
+    setupLink:   'emailjs.com',
     types: [
       'Business Website',
       'Custom Booking System',
@@ -234,6 +254,8 @@ export default {
     title:       'SERVICES',
     sub:         'Select the services you need. Combine them to unlock automatic bundle discounts — the more you build together, the better the deal.',
     disclaimer:  'All prices shown are starting estimates only. Final pricing is determined after a free consultation — every project is scoped individually based on complexity, timeline, and requirements. It can be lower or higher. No surprises.',
+    disclaimerStrong: 'All prices shown are starting estimates only.',
+    disclaimerBody: 'Final pricing is determined after a free consultation — every project is scoped individually based on complexity, timeline, and requirements. It can be lower or higher. No surprises.',
     bannerLabel: 'applied to your estimate',
     bannerMax:   'Maximum bundle discount unlocked.',
     bannerNext:  'Add one more service to unlock 15% off.',
@@ -245,6 +267,9 @@ export default {
     getQuote:    'Get a quote',
     bottomNote:  'All estimates on this page are indicative starting points. Final pricing is agreed after a free discovery consultation.',
     bookCall:    'Book a free call',
+    visitSite:   'Visit site',
+    selectServices: 'Select the services you need.',
+    combineServices: 'Combine them to unlock automatic bundle discounts — the more you build together, the better the deal.',
   },
 
   // ── Privacy ──────────────────────────────────────────────
@@ -254,6 +279,79 @@ export default {
     updated:  'Last updated: January 2025',
     backHome: 'Back to home',
     contact:  'Contact us',
+    sections: {
+      who: {
+        heading: '1. Who We Are',
+        body: 'INRAIT ("we", "us", "our") is a web engineering and digital studio based in Sofia, Bulgaria. We operate the website at inrait.com (the "Site"). For any privacy-related questions, contact us at inkorami27@gmail.com.',
+      },
+      what: {
+        heading: '2. What Data We Collect',
+        intro: 'We collect personal data only when you voluntarily provide it:',
+        items: [
+          'Contact form: your name, email address, project type, budget range, and message content.',
+          'Direct contact: any information you send us by email or phone.',
+        ],
+        outro: 'We do not use tracking pixels, advertising networks, or third-party analytics tools. We do not collect data automatically beyond what your browser sends to any web server (e.g. IP address in server logs).',
+      },
+      how: {
+        heading: '3. How We Use Your Data',
+        intro: 'The data you submit through our contact form is used exclusively to:',
+        items: [
+          'Respond to your project inquiry',
+          'Communicate with you about potential or ongoing work',
+          'Send project-related correspondence',
+        ],
+        outro: 'We do not use your data for marketing, profiling, or automated decision-making. We do not sell or share your data with third parties for commercial purposes.',
+      },
+      legal: {
+        heading: '4. Legal Basis for Processing (GDPR)',
+        intro: 'We process your personal data under the following legal bases as defined by the EU General Data Protection Regulation (GDPR):',
+        items: [
+          'Legitimate interests (Art. 6(1)(f)): responding to business inquiries you initiate.',
+          'Contractual necessity (Art. 6(1)(b)): fulfilling a service agreement if we enter into one.',
+          'Consent (Art. 6(1)(a)): where you have explicitly opted in (e.g. cookie consent).',
+        ],
+      },
+      retention: {
+        heading: '5. Data Retention',
+        body: 'We retain inquiry data for up to 2 years after last contact, or for the duration of any active business relationship, whichever is longer. After this period, data is securely deleted. You may request deletion at any time (see Section 7).',
+      },
+      thirdParty: {
+        heading: '6. Third-Party Services',
+        emailjs: 'Our contact form uses EmailJS to deliver your message to our inbox. EmailJS processes form submissions on their infrastructure. You can review their privacy policy at emailjs.com/legal/privacy-policy.',
+        hosting: 'Our website is hosted on infrastructure that may log standard server access data (IP address, browser type, timestamp) for security and operational purposes. These logs are not used for profiling and are retained for a maximum of 30 days.',
+      },
+      rights: {
+        heading: '7. Your Rights Under GDPR',
+        intro: 'As a data subject in the EU/EEA, you have the right to:',
+        items: [
+          'Access — request a copy of the personal data we hold about you',
+          'Rectification — request correction of inaccurate data',
+          'Erasure — request deletion of your data ("right to be forgotten")',
+          'Restriction — request that we limit how we process your data',
+          'Portability — receive your data in a structured, machine-readable format',
+          'Object — object to processing based on legitimate interests',
+        ],
+        contact: 'To exercise any of these rights, email us at inkorami27@gmail.com. We will respond within 30 days.',
+        complaint: 'You also have the right to lodge a complaint with the Bulgarian Commission for Personal Data Protection (CPDP): cpdp.bg.',
+      },
+      cookies: {
+        heading: '8. Cookies',
+        body: 'This website uses only essential cookies necessary for the site to function. We do not use advertising cookies, social media tracking cookies, or third-party analytics cookies without your consent. A cookie consent banner is presented on your first visit where applicable.',
+      },
+      children: {
+        heading: "9. Children's Privacy",
+        body: 'Our services are directed at businesses and adults. We do not knowingly collect personal data from individuals under the age of 16.',
+      },
+      changes: {
+        heading: '10. Changes to This Policy',
+        body: 'We may update this Privacy Policy from time to time. When we do, we will update the "last updated" date at the top of this page. Continued use of the Site after changes constitutes acceptance of the updated policy.',
+      },
+      contactSection: {
+        heading: '11. Contact',
+        body: 'For any privacy questions or requests:',
+      },
+    },
   },
 
   // ── 404 ──────────────────────────────────────────────────
@@ -264,22 +362,31 @@ export default {
     contact: 'Contact us',
     orGoTo:  'Or go to:',
     links:   ['Services', 'Our Work', 'About', 'Contact', 'Privacy'],
+    quickLinks: [
+      { to: '/services', label: 'Services' },
+      { to: '/#work',    label: 'Our Work' },
+      { to: '/#about',   label: 'About'   },
+      { to: '/contact',  label: 'Contact' },
+      { to: '/privacy',  label: 'Privacy' },
+    ],
   },
 
   // ── Blog ─────────────────────────────────────────────────
   blog: {
-    label:       'Insights',
-    title:       'BLOG',
-    sub:         'Practical thinking on web engineering, digital strategy, and what makes businesses grow online.',
-    readMore:    'Read article',
-    minRead:     'min read',
-    backBlog:    'Back to blog',
-    nextArticle: 'Next article',
-    ctaTitle:    'Ready to build something?',
-    ctaSub:      "Let's talk about your project. We respond within 24 hours.",
-    loading:     'Loading posts…',
-    empty:       'No articles yet.',
-    allPosts:    'All articles',
+    label:          'Insights',
+    title:          'BLOG',
+    sub:            'Practical thinking on web engineering, digital strategy, and what makes businesses grow online.',
+    readMore:       'Read article',
+    minRead:        'min read',
+    backBlog:       'Back to blog',
+    nextArticle:    'Next article',
+    ctaTitle:       'Ready to build something?',
+    ctaSub:         "Let's talk about your project. We respond within 24 hours.",
+    loading:        'Loading posts…',
+    loadingArticle: 'Loading article…',
+    empty:          'No articles yet.',
+    allPosts:       'All articles',
+    articleNotFound:'Article not found.',
   },
 
   // ── Cookie banner ────────────────────────────────────────
@@ -294,5 +401,16 @@ export default {
   whatsapp: {
     label:     'Chat on WhatsApp',
     ariaLabel: 'Chat on WhatsApp',
+  },
+
+  // ── Timeline ─────────────────────────────────────────────
+  timeline: {
+    title: 'The Architecture.',
+    items: [
+      { date: '09/2025 - PRESENT', title: 'Software Developer Training',   subtitle: 'University of Telecommunications and Post, Sofia' },
+      { date: '2025 (JAN - DEC)',  title: 'Full JavaScript Track',          subtitle: 'SoftUni. Mastered JS Basics, Fundamentals, Advanced, and JS Applications.' },
+      { date: '2019 - PRESENT',   title: 'Freelance Media Production',     subtitle: 'Professional photographer, videographer, and photo editor. Building an elite visual foundation for digital design.' },
+      { date: '2020 - 2024',      title: 'Client Relations & QA',          subtitle: 'Roles at Alorica and Webhelp. Managed user content compliance and provided high-level customer support.' },
+    ],
   },
 }
