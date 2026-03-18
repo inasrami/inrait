@@ -86,7 +86,7 @@
       <div class="loader-bar-wrap">
         <div class="loader-bar-anim" />
       </div>
-      <p class="text-text-dim text-[13px]">Loading article…</p>
+      <p class="text-text-dim text-[13px]">{{ t('blog.loadingArticle') }}</p>
     </div>
   </div>
 
@@ -95,8 +95,8 @@
     <div class="text-center">
       <div class="font-display text-[120px] leading-none"
         style="color:transparent; -webkit-text-stroke:1px rgba(164,224,75,0.15);">404</div>
-      <p class="mb-6 text-text-muted">Article not found.</p>
-      <RouterLink to="/blog" class="btn-outline" style="cursor:none;">Back to blog</RouterLink>
+      <p class="mb-6 text-text-muted">{{ t('blog.articleNotFound') }}</p>
+      <RouterLink to="/blog" class="btn-outline" style="cursor:none;">{{ t('blog.backBlog') }}</RouterLink>
     </div>
   </div>
 

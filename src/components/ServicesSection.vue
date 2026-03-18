@@ -9,10 +9,10 @@
       <!-- Header -->
       <div class="flex flex-wrap items-end justify-between gap-6 mb-16">
         <div>
-          <div class="mb-4 section-label fade-up">What We Build</div>
+          <div class="mb-4 section-label fade-up">{{ t('services.label') }}</div>
           <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]"
             style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
-            SERVICES
+            {{ t('services.title') }}
           </h2>
         </div>
         <RouterLink
@@ -69,7 +69,7 @@
           <!-- Footer: price + CTA -->
           <div class="card-footer">
             <div>
-              <div class="text-[10px] uppercase tracking-widest text-text-dim mb-1">Starting from</div>
+              <div class="text-[10px] uppercase tracking-widest text-text-dim mb-1">{{ t('services.from') }}</div>
               <div class="font-display text-[38px] leading-none" style="letter-spacing:0.02em; color:var(--accent);">
                 €{{ service.basePrice.toLocaleString() }}
               </div>
@@ -96,7 +96,7 @@
           <span class="text-[13px] text-text-muted leading-relaxed">
             We also offer <strong class="text-text-main">E-commerce, Visual Identity &amp; Photography.</strong>
             Combine services for up to <strong class="text-accent">15% off.</strong>
-            All prices are estimates — final cost is agreed after a free consultation.
+            {{ t('services.disclaimer') }}
           </span>
         </div>
         <RouterLink to="/services" class="more-link" style="cursor:none;">
@@ -114,11 +114,13 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage.js'
 import { RouterLink } from 'vue-router'
 import { SERVICES } from '../data/services.js'
 import { useFadeUp } from '../composables/useFadeUp'
 
 useFadeUp()
+const { t } = useLanguage()
 const active = ref(null)
 const heroServices = computed(() => SERVICES.filter(s => s.hero))
 </script>

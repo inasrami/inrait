@@ -9,7 +9,7 @@
         style="cursor: none;"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Back to work
+        {{ t('projects.backToWork') }}
       </RouterLink>
     </div>
 
@@ -48,21 +48,21 @@
       <!-- Meta row -->
       <div class="grid grid-cols-2 gap-8 py-10 mb-20 md:grid-cols-4" style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
         <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">Year</div>
+          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaYear') }}</div>
           <div class="font-semibold text-[16px]">{{ project.year }}</div>
         </div>
         <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">Category</div>
+          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaCategory') }}</div>
           <div class="font-semibold text-[16px]">{{ project.tag }}</div>
         </div>
         <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">Stack</div>
+          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaStack') }}</div>
           <div class="flex flex-wrap gap-1 mt-1">
             <span v-for="t in project.stack" :key="t" class="chip" style="font-size: 11px;">{{ t }}</span>
           </div>
         </div>
         <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">Live</div>
+          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaLive') }}</div>
           <a
             :href="project.url"
             target="_blank"
@@ -80,22 +80,22 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-16">
 
         <div class="fade-up">
-          <div class="mb-6 section-label">Overview</div>
+          <div class="mb-6 section-label">{{ t('projects.overview') }}</div>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.description }}</p>
         </div>
 
         <div class="fade-up" style="transition-delay: 0.1s;">
-          <div class="mb-6 section-label">The Challenge</div>
+          <div class="mb-6 section-label">{{ t('projects.challenge') }}</div>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.challenge }}</p>
         </div>
 
         <div class="fade-up" style="transition-delay: 0.15s;">
-          <div class="mb-6 section-label">The Solution</div>
+          <div class="mb-6 section-label">{{ t('projects.solution') }}</div>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.solution }}</p>
         </div>
 
         <div class="fade-up" style="transition-delay: 0.2s;">
-          <div class="mb-6 section-label">The Outcome</div>
+          <div class="mb-6 section-label">{{ t('projects.outcome') }}</div>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.outcome }}</p>
         </div>
 
@@ -105,10 +105,10 @@
       <div class="mt-32 text-center fade-up">
         <div class="mb-16 divider" />
         <h2 class="font-display text-[clamp(40px,7vw,80px)] mb-8" style="letter-spacing: 0.02em;">
-          WANT SOMETHING<br/><span style="color: var(--accent);">LIKE THIS?</span>
+          WANT SOMETHING<br/><span style="color: var(--accent);">{{ t('projects.likeThis') }}</span>
         </h2>
         <RouterLink to="/contact" class="btn-primary text-[16px] px-10 py-5">
-          Let's talk about your project
+          {{ t('cta.start') }}
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </RouterLink>
       </div>
@@ -120,7 +120,7 @@
   <div v-else class="flex items-center justify-center min-h-screen px-6 text-center">
     <div>
       <h1 class="font-display text-[120px] text-accent" style="letter-spacing: 0.02em;">404</h1>
-      <p class="text-text-muted text-[18px] mb-8">Project not found.</p>
+      <p class="text-text-muted text-[18px] mb-8">{{ t('projects.notFound') }}</p>
       <RouterLink to="/" class="btn-primary">Go back home</RouterLink>
     </div>
   </div>
@@ -132,9 +132,11 @@ import { useRoute, RouterLink } from 'vue-router'
 import { getProject } from '../data/projects.js'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
+import { useLanguage } from '../composables/useLanguage.js'
 import { useJsonLd, breadcrumbSchema, projectSchema } from '../composables/useJsonLd.js'
 
 const route   = useRoute()
+const { t } = useLanguage()
 const project = computed(() => getProject(route.params.slug))
 
 useFadeUp()
