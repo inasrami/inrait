@@ -12,19 +12,19 @@
               <circle cx="15" cy="14" r="1" fill="var(--accent)" stroke="none"/>
             </svg>
             <p class="text-[13px] text-text-muted leading-relaxed">
-              We use essential cookies to keep the site running. No tracking, no advertising.
+              {{ t('cookie.text') }}
               <RouterLink to="/privacy" class="ml-1 text-accent underline-offset-2 hover:underline" style="cursor:none;">
-                Privacy Policy
+                {{ t('cookie.policy') }}
               </RouterLink>
             </p>
           </div>
 
           <div class="flex items-center flex-shrink-0 gap-3">
             <button class="cookie-decline" @click="decline" style="cursor:none;">
-              Decline
+              {{ t('cookie.decline') }}
             </button>
             <button class="cookie-accept" @click="accept" style="cursor:none;">
-              Accept
+              {{ t('cookie.accept') }}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
@@ -40,6 +40,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useLanguage } from '../composables/useLanguage.js'
+
+const { t } = useLanguage()
 
 const STORAGE_KEY = 'inrait_cookie_consent'
 const visible = ref(false)
@@ -47,7 +50,6 @@ const visible = ref(false)
 onMounted(() => {
   const stored = localStorage.getItem(STORAGE_KEY)
   if (!stored) {
-    // Small delay so it doesn't flash immediately on load
     setTimeout(() => { visible.value = true }, 1200)
   }
 })

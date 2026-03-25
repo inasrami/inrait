@@ -28,11 +28,9 @@
           <div>
             <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">{{ t('footer.colWork') }}</h4>
             <div class="flex flex-col gap-3">
-              <RouterLink to="/work/barbers-unity" class="footer-link">Barbers Unity</RouterLink>
-              <RouterLink to="/work/shiftease" class="footer-link">ShiftEase</RouterLink>
-              <RouterLink to="/work/hotel-prestige" class="footer-link">Hotel Prestige</RouterLink>
-              <RouterLink to="/work/dna-of-design" class="footer-link">DNA of Design</RouterLink>
-              <RouterLink to="/work/aurum" class="footer-link">Aurum</RouterLink>
+              <RouterLink v-for="project in projects" :key="project.slug" :to="`/work/${project.slug}`" class="footer-link">
+                {{ project.title }}
+              </RouterLink>
             </div>
           </div>
 
@@ -79,7 +77,17 @@
 <script setup>
 import { useLanguage } from '../composables/useLanguage.js'
 import { RouterLink } from 'vue-router'
+
 const { t } = useLanguage()
+
+// Project titles are proper nouns — kept as-is regardless of language
+const projects = [
+  { slug: 'barbers-unity',  title: 'Barbers Unity'  },
+  { slug: 'shiftease',      title: 'ShiftEase'       },
+  { slug: 'hotel-prestige', title: 'Hotel Prestige'  },
+  { slug: 'dna-of-design',  title: 'DNA of Design'   },
+  { slug: 'aurum',          title: 'Aurum'            },
+]
 </script>
 
 <style scoped>

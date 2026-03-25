@@ -40,7 +40,7 @@
       <img :src="post.image" :alt="localise(post).title" class="object-cover w-full h-full" />
     </div>
 
-    <!-- Article body — rendered from parsed markdown content -->
+    <!-- Article body -->
     <article class="max-w-[720px] mx-auto" style="cursor:none;">
       <template v-for="(block, i) in parsedContent" :key="i">
         <h2 v-if="block.type === 'h2'"   class="article-h2">{{ block.text }}</h2>
@@ -100,7 +100,7 @@
     </div>
   </div>
 
-  </div><!-- end outer wrapper -->
+  </div>
 </template>
 
 <script setup>
@@ -117,13 +117,11 @@ const { t, currentLanguage } = useLanguage()
 const post      = ref(null)
 const isLoading = ref(true)
 
-// Same safe helper as Blog.vue — falls back to EN if language key missing
 function localise(p) {
   if (!p) return { title: '', content: '', excerpt: '' }
   return p[currentLanguage.value] ?? p.en ?? { title: '', content: '', excerpt: '' }
 }
 
-// ── Fetch from Firestore ──────────────────────────────────
 onMounted(async () => {
   try {
     const q = query(collection(db, 'posts'), where('slug', '==', route.params.slug))
@@ -149,7 +147,6 @@ onMounted(async () => {
   }
 })
 
-// ── Reactive SEO ──────────────────────────────────────────
 watch([post, currentLanguage], () => {
   if (!post.value) return
   const local = post.value[currentLanguage.value]
@@ -160,8 +157,6 @@ watch([post, currentLanguage], () => {
   })
 }, { immediate: true })
 
-// ── Markdown parser ───────────────────────────────────────
-// Runs at computed time — nothing called inside the template
 const parsedContent = computed(() => {
   const raw = localise(post.value).content ?? ''
   const lines = raw.split('\n')

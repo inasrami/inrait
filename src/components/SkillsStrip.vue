@@ -32,6 +32,11 @@
 </template>
 
 <script setup>
-const row1 = ['Vue.js 3', 'Tailwind CSS', 'JavaScript ES6+', 'MongoDB', 'Responsive Design', 'Git & GitHub', 'CSS Grid', 'Performance Optimization']
-const row2 = ['UX Engineering', 'Component Architecture', 'REST APIs', 'Adobe Suite', 'Photography', 'SEO-Ready Markup', 'Dark UI Design', 'Vite Build System']
+import { computed } from 'vue'
+import { useLanguage } from '../composables/useLanguage.js'
+
+const { t } = useLanguage()
+
+const row1 = computed(() => t('skillsStrip.row1'))
+const row2 = computed(() => t('skillsStrip.row2'))
 </script>

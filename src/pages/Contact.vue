@@ -87,12 +87,12 @@
               </template>
             </button>
 
-            <!-- EmailJS setup note — remove after configuring -->
+            <!-- EmailJS setup note -->
             <p class="text-[11px] text-text-dim text-center leading-relaxed">
-              To activate email sending, replace <code class="px-1 rounded bg-white/5">YOUR_SERVICE_ID</code>,
-              <code class="px-1 rounded bg-white/5">YOUR_TEMPLATE_ID</code>, and
+              {{ t('contact.setupNote') }} <code class="px-1 rounded bg-white/5">YOUR_SERVICE_ID</code>,
+              <code class="px-1 rounded bg-white/5">YOUR_TEMPLATE_ID</code>,
               <code class="px-1 rounded bg-white/5">YOUR_PUBLIC_KEY</code> in <code class="px-1 rounded bg-white/5">Contact.vue</code>.
-              <a href="https://emailjs.com" target="_blank" rel="noopener" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">emailjs.com</a>
+              <a href="https://emailjs.com" target="_blank" rel="noopener" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">{{ t('contact.setupLink') }}</a>
             </p>
 
           </form>
@@ -196,18 +196,9 @@ const errorMsg  = ref('')
 
 const form = reactive({ name: '', email: '', type: '', budget: '', message: '' })
 
-// ─── EmailJS config ──────────────────────────────────────
-// 1. Sign up at https://emailjs.com (free tier: 200 emails/month)
-// 2. Create a service (Gmail works) → copy Service ID
-// 3. Create an email template → copy Template ID
-// 4. Go to Account → API Keys → copy Public Key
-// 5. Replace the three placeholders below
 const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID'
 const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'
 const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY'
-
-// Recommended EmailJS template variables to use:
-// {{from_name}}  {{from_email}}  {{project_type}}  {{budget}}  {{message}}  {{to_email}}
 
 async function handleSubmit() {
   errorMsg.value = ''
@@ -220,7 +211,6 @@ async function handleSubmit() {
   loading.value = true
 
   try {
-    // Dynamically load EmailJS SDK (no install needed)
     if (!window.emailjs) {
       await loadScript('https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js')
       window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY })

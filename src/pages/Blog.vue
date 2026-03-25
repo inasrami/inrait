@@ -26,7 +26,6 @@
     <!-- Empty -->
     <div v-else-if="posts.length === 0" class="max-w-[1080px] mx-auto text-center py-20">
       <p class="text-text-muted text-[16px]">{{ t('blog.empty') }}</p>
-      <p class="text-text-dim text-[13px] mt-2">Check back soon — new articles are on the way.</p>
     </div>
 
     <!-- Posts grid -->
@@ -54,7 +53,6 @@
                 <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
               </svg>
             </div>
-            <!-- Category chip over image -->
             <span class="post-cat-badge">{{ post.category === 'tech' ? 'Tech' : 'Industry' }}</span>
           </div>
 
@@ -113,7 +111,6 @@ useSeo({
 const posts     = ref([])
 const isLoading = ref(true)
 
-// Safe helper — falls back to EN if BG is missing
 function localise(post) {
   return post[currentLanguage.value] ?? post.en ?? { title: '', excerpt: '', content: '' }
 }
@@ -124,8 +121,6 @@ onMounted(async () => {
     const snapshot = await getDocs(q)
     posts.value = snapshot.docs.map(doc => {
       const data = doc.data()
-      // DEBUG — open browser console to see structure, remove after confirming
-      console.log('Firestore post:', data)
       return {
         id:       doc.id,
         slug:     data.slug || doc.id,
@@ -162,7 +157,6 @@ function formatDate(dateString) {
 </script>
 
 <style scoped>
-/* ── Card entrance animation ──────────────────────────── */
 @keyframes cardIn {
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -172,7 +166,6 @@ function formatDate(dateString) {
   animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* ── Post card ────────────────────────────────────────── */
 .post-card {
   display: flex;
   flex-direction: column;
@@ -190,7 +183,6 @@ function formatDate(dateString) {
   box-shadow: 0 24px 60px rgba(0,0,0,0.45);
 }
 
-/* ── Image ────────────────────────────────────────────── */
 .post-img-wrap {
   position: relative;
   height: 200px;
@@ -236,7 +228,6 @@ function formatDate(dateString) {
   padding: 3px 10px;
 }
 
-/* ── Content ──────────────────────────────────────────── */
 .post-content {
   display: flex;
   flex-direction: column;
@@ -244,9 +235,7 @@ function formatDate(dateString) {
   flex: 1;
 }
 
-.post-title {
-  transition: color 0.2s ease;
-}
+.post-title { transition: color 0.2s ease; }
 .post-card:hover .post-title { color: var(--accent); }
 
 .post-excerpt {
@@ -276,7 +265,6 @@ function formatDate(dateString) {
 
 .post-card:hover .read-more { gap: 9px; }
 
-/* ── Skeleton loading ─────────────────────────────────── */
 .skeleton-card {
   height: 360px;
   border-radius: 20px;

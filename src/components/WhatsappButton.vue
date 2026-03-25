@@ -34,7 +34,6 @@ const route = useRoute()
 const hovered = ref(false)
 const visible = ref(false)
 
-// Your WhatsApp number in international format — no + or spaces
 const PHONE   = '359876566094'
 const MESSAGE = encodeURIComponent('Hi! I found you through your website and I\'d like to discuss a project.')
 
@@ -42,7 +41,6 @@ const whatsappUrl = computed(() =>
   `https://wa.me/${PHONE}?text=${MESSAGE}`
 )
 
-// Don't show on contact page — redundant there
 const shouldShow = computed(() => route.path !== '/contact')
 
 onMounted(() => {
@@ -108,7 +106,6 @@ onMounted(() => {
   opacity: 1;
 }
 
-/* Entrance animation */
 .fab-enter-active {
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
 }
@@ -117,7 +114,6 @@ onMounted(() => {
   transform: translateY(20px) scale(0.8);
 }
 
-/* Pulse ring */
 .whatsapp-fab::before {
   content: '';
   position: absolute;

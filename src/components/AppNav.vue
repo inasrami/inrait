@@ -38,7 +38,7 @@
         <!-- Divider -->
         <span class="nav-divider" />
 
-        <!-- Language toggle — more visible -->
+        <!-- Language toggle -->
         <button class="lang-btn" @click="toggleLang" style="cursor:none;"
           :aria-label="`Switch to ${isBG ? 'English' : 'Bulgarian'}`">
           <span class="lang-flag">{{ isBG ? '🇧🇬' : '🇬🇧' }}</span>
@@ -122,7 +122,7 @@ const mobileOpen    = ref(false)
 const scrolled      = ref(false)
 const activeSection = ref('')
 
-const { t, toggleLang, isEN, isBG } = useLanguage()
+const { t, toggleLang, isBG } = useLanguage()
 
 const navLinks = [
   { id: 'work',    labelKey: 'nav.work'    },
@@ -186,7 +186,6 @@ watch(() => route.path, (path) => {
 .nav-link--active { color: var(--text) !important; }
 .nav-link--active::after { width: 100% !important; }
 
-/* Blog link gets a subtle accent dot to make it stand out */
 .blog-link { position: relative; }
 .blog-link::before {
   content: '';
@@ -200,14 +199,12 @@ watch(() => route.path, (path) => {
   opacity: 0.7;
 }
 
-/* Divider between links and lang/cta */
 .nav-divider {
   width: 1px;
   height: 18px;
   background: var(--border-strong);
 }
 
-/* Language button — more prominent */
 .lang-btn {
   display: inline-flex;
   align-items: center;
@@ -233,7 +230,6 @@ watch(() => route.path, (path) => {
 .lang-flag { font-size: 14px; line-height: 1; }
 .lang-code { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
 
-/* Mobile nav */
 .mobile-nav-item {
   color: rgba(255,255,255,0.35);
   letter-spacing: 0.02em;

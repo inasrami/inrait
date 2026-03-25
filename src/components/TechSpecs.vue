@@ -1,7 +1,6 @@
 <template>
   <section id="specs" class="relative px-6 py-32" style="background: var(--surface);">
 
-    <!-- Top gradient -->
     <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
 
     <div class="max-w-[1080px] mx-auto">
@@ -9,7 +8,7 @@
       <div class="mb-4 section-label fade-up">{{ t('techSpecs.label') }}</div>
       <div class="flex flex-wrap items-end justify-between gap-6 mb-20">
         <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
-          THE STACK
+          {{ t('techSpecs.title') }}
         </h2>
         <p class="text-text-muted text-[15px] max-w-xs leading-relaxed fade-up" style="transition-delay: 0.1s;">
           {{ t('techSpecs.sub') }}
@@ -37,10 +36,8 @@
               :key="tech.name"
               class="flex items-center gap-2 px-3 py-2 transition-all duration-200 rounded-xl"
               style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);"
-              :style="{ ':hover': { borderColor: 'rgba(164,224,75,0.3)' } }"
               data-cursor
             >
-              <!-- Tech icon (inline SVG or letter avatar) -->
               <span class="text-[18px] leading-none flex-shrink-0" v-html="tech.logo" />
               <span class="text-[13px] font-medium text-text-main">{{ tech.name }}</span>
             </div>
@@ -53,12 +50,14 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
+
 useFadeUp()
 const { t } = useLanguage()
 
-// Simple branded SVG logos as inline strings
+// ── Inline SVG logos (unchanged — these are universal brand marks) ──
 const VueLogo   = `<svg viewBox="0 0 128 128" width="18" height="18"><path fill="#42b883" d="M78.8,10L64,35.4L49.2,10H0l64,110l64-110H78.8z"/><path fill="#35495e" d="M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z"/></svg>`
 const TailwindLogo = `<svg viewBox="0 0 128 128" width="18" height="18"><path d="M64.004 25.602c-17.067 0-27.73 8.53-32 25.597 6.398-8.531 13.867-11.73 22.398-9.597 4.871 1.214 8.352 4.746 12.207 8.66C72.883 56.629 80.145 64 96.004 64c17.066 0 27.73-8.531 32-25.602-6.399 8.536-13.867 11.735-22.399 9.602-4.87-1.215-8.347-4.746-12.207-8.66-6.27-6.367-13.531-13.738-29.394-13.738zM32.004 64c-17.066 0-27.73 8.531-32 25.602C6.402 81.066 13.87 77.867 22.402 80c4.871 1.215 8.352 4.746 12.207 8.66C40.883 95.027 48.145 102.4 64.004 102.4c17.066 0 27.73-8.532 32-25.602-6.399 8.531-13.867 11.73-22.399 9.597-4.87-1.214-8.347-4.745-12.207-8.66C55.129 71.371 47.868 64 32.004 64z" fill="#38bdf8"/></svg>`
 const JSLogo    = `<svg viewBox="0 0 128 128" width="18" height="18"><path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zM69.462 58.943H57.753l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"/></svg>`
@@ -69,46 +68,49 @@ const GitLogo   = `<svg viewBox="0 0 128 128" width="18" height="18"><path fill=
 const AdobeLogo = `<svg viewBox="0 0 128 128" width="18" height="18"><path fill="#FF0000" d="M64 0C28.653 0 0 28.653 0 64s28.653 64 64 64 64-28.653 64-64S99.347 0 64 0zm-16.99 94.67H31.967L55.504 33.33h18.527L50.494 76.139h18.953l-4.52 9.23-17.918 9.301zm45.647 0H76.685V33.33h15.972v61.34z"/></svg>`
 const NodeLogo  = `<svg viewBox="0 0 128 128" width="18" height="18"><path fill="#83CD29" d="M112.771 30.334L68.674 4.643c-2.781-1.607-6.567-1.607-9.348 0L15.228 30.334C12.372 31.951 10 36.003 10 39.256v51.503c0 3.108 2.372 7.235 5.228 8.852l44.097 25.691c2.781 1.607 6.567 1.607 9.348 0l44.097-25.691c2.781-1.607 5.228-5.629 5.228-8.852V39.256c.001-3.108-2.371-7.234-5.227-8.922z"/><path fill="#404137" d="M112.771 30.334L68.674 4.643c-2.781-1.607-6.567-1.607-9.348 0L15.228 30.334C12.372 31.951 10 36.003 10 39.256v51.503c0 3.108 2.372 7.235 5.228 8.852l44.097 25.691c2.781 1.607 6.567 1.607 9.348 0l44.097-25.691c2.781-1.607 5.228-5.629 5.228-8.852V39.256c.001-3.108-2.371-7.234-5.227-8.922z" opacity=".15"/><path fill="#fff" d="M62.119 84.178c0 2.174-1.14 4.004-2.845 4.964L43.07 98.753c-.758.431-1.58.647-2.431.647-.85 0-1.7-.216-2.46-.647l-16.203-9.611c-1.704-.961-2.845-2.79-2.845-4.964V64.996c0-2.173 1.14-4.003 2.845-4.964l16.203-9.611c.76-.431 1.61-.648 2.46-.648.851 0 1.673.217 2.431.648l16.204 9.611c1.704.961 2.845 2.791 2.845 4.964v19.182zm46.1 0c0 2.174-1.14 4.004-2.845 4.964l-16.204 9.611c-.758.431-1.58.647-2.43.647-.851 0-1.7-.216-2.46-.647l-16.204-9.611c-1.704-.961-2.845-2.79-2.845-4.964V64.996c0-2.173 1.14-4.003 2.845-4.964l16.204-9.611c.76-.431 1.609-.648 2.46-.648.85 0 1.672.217 2.43.648l16.204 9.611c1.704.961 2.845 2.791 2.845 4.964v19.182z"/></svg>`
 
-const categories = [
-  {
-    title: 'Frontend & Frameworks',
-    icon: '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
-    items: [
-      { name: 'Vue.js 3',        logo: VueLogo    },
-      { name: 'JavaScript ES6+', logo: JSLogo     },
-      { name: 'HTML5',           logo: HTMLLogo   },
-      { name: 'CSS3',            logo: CSSLogo    },
-      { name: 'Tailwind CSS',    logo: TailwindLogo },
-    ],
-  },
-  {
-    title: 'Backend & Data',
-    icon: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
-    items: [
-      { name: 'MongoDB',   logo: MongoLogo },
-      { name: 'Node.js',   logo: NodeLogo  },
-      { name: 'REST APIs', logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#A4E04B" stroke-width="1.75"><path d="M5 12h14M12 5l7 7-7 7"/></svg>` },
-      { name: 'SheetJS',   logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#A4E04B" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>` },
-    ],
-  },
-  {
-    title: 'Tools & Workflow',
-    icon: '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 21v-2M12 5V3"/>',
-    items: [
-      { name: 'Git / GitHub', logo: GitLogo  },
-      { name: 'Vite',         logo: `<svg viewBox="0 0 256 256" width="18" height="18"><path fill="#646CFF" d="M255.0 97.6L135.7 252.9a9.5 9.5 0 01-15.1-1.1L.8 97.7a9.5 9.5 0 018.4-14.6l118.3 19.2a9.5 9.5 0 003 0L246.6 83a9.5 9.5 0 018.4 14.6z"/><path fill="#6BF" d="M185.1 3.7L97.5 21.3a4.8 4.8 0 00-3.8 4.4l-5.8 92.6a4.8 4.8 0 005.8 5L118 118a4.8 4.8 0 015.3 5.9l-7.7 36a4.8 4.8 0 007.6 4.6l4.6-3.5a4.8 4.8 0 017.5 4.4l-5.8 52.7c-.4 3.5 4.1 5.2 6.1 2.3l1.4-2 76.7-153.4a4.8 4.8 0 00-4.9-6.9l-25.3 4.9a4.8 4.8 0 01-5.6-6.1l16.8-49a4.8 4.8 0 00-3.6-6.2z"/></svg>` },
-      { name: 'Postman',      logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FF6C37" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>` },
-    ],
-  },
-  {
-    title: 'Visual & Creative',
-    icon: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.85 0 3-.5 3-2v-.5c0-.47-.15-.9-.4-1.26-.24-.35-.4-.78-.4-1.24 0-1.1.9-2 2-2h2c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/>',
-    items: [
-      { name: 'Adobe Photoshop',   logo: AdobeLogo },
-      { name: 'Adobe Illustrator', logo: AdobeLogo },
-      { name: 'Adobe Lightroom',   logo: AdobeLogo },
-      { name: 'Photography',       logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#A4E04B" stroke-width="1.75"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>` },
-    ],
-  },
-]
+const categories = computed(() => {
+  const titles = t('techSpecs.categories')
+  return [
+    {
+      title: titles[0],
+      icon: '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+      items: [
+        { name: 'Vue.js 3',        logo: VueLogo    },
+        { name: 'JavaScript ES6+', logo: JSLogo     },
+        { name: 'HTML5',           logo: HTMLLogo   },
+        { name: 'CSS3',            logo: CSSLogo    },
+        { name: 'Tailwind CSS',    logo: TailwindLogo },
+      ],
+    },
+    {
+      title: titles[1],
+      icon: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+      items: [
+        { name: 'MongoDB',   logo: MongoLogo },
+        { name: 'Node.js',   logo: NodeLogo  },
+        { name: 'REST APIs', logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#A4E04B" stroke-width="1.75"><path d="M5 12h14M12 5l7 7-7 7"/></svg>` },
+        { name: 'SheetJS',   logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#A4E04B" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>` },
+      ],
+    },
+    {
+      title: titles[2],
+      icon: '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M12 21v-2M12 5V3"/>',
+      items: [
+        { name: 'Git / GitHub', logo: GitLogo  },
+        { name: 'Vite',         logo: `<svg viewBox="0 0 256 256" width="18" height="18"><path fill="#646CFF" d="M255.0 97.6L135.7 252.9a9.5 9.5 0 01-15.1-1.1L.8 97.7a9.5 9.5 0 018.4-14.6l118.3 19.2a9.5 9.5 0 003 0L246.6 83a9.5 9.5 0 018.4 14.6z"/><path fill="#6BF" d="M185.1 3.7L97.5 21.3a4.8 4.8 0 00-3.8 4.4l-5.8 92.6a4.8 4.8 0 005.8 5L118 118a4.8 4.8 0 015.3 5.9l-7.7 36a4.8 4.8 0 007.6 4.6l4.6-3.5a4.8 4.8 0 017.5 4.4l-5.8 52.7c-.4 3.5 4.1 5.2 6.1 2.3l1.4-2 76.7-153.4a4.8 4.8 0 00-4.9-6.9l-25.3 4.9a4.8 4.8 0 01-5.6-6.1l16.8-49a4.8 4.8 0 00-3.6-6.2z"/></svg>` },
+        { name: 'Postman',      logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FF6C37" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>` },
+      ],
+    },
+    {
+      title: titles[3],
+      icon: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.85 0 3-.5 3-2v-.5c0-.47-.15-.9-.4-1.26-.24-.35-.4-.78-.4-1.24 0-1.1.9-2 2-2h2c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/>',
+      items: [
+        { name: 'Adobe Photoshop',   logo: AdobeLogo },
+        { name: 'Adobe Illustrator', logo: AdobeLogo },
+        { name: 'Adobe Lightroom',   logo: AdobeLogo },
+        { name: 'Photography',       logo: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#A4E04B" stroke-width="1.75"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>` },
+      ],
+    },
+  ]
+})
 </script>
