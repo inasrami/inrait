@@ -15,7 +15,7 @@
 
 <script setup>
 import { useSeo }          from '../composables/useSeo.js'
-import { useJsonLd, localBusinessSchema, webSiteSchema, breadcrumbSchema } from '../composables/Useksonld.js'
+import { useJsonLd, localBusinessSchema, webSiteSchema, breadcrumbSchema } from '../composables/Usejsonld.js'
 import HeroSection         from '../components/HeroSection.vue'
 import PhilosophySection   from '../components/PhilosophySection.vue'
 import ServicesSection     from '../components/ServicesSection.vue'

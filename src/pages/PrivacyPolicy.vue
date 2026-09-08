@@ -102,7 +102,7 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSeo } from '../composables/useSeo.js'
-import { useJsonLd, breadcrumbSchema } from '../composables/Useksonld.js'
+import { useJsonLd, breadcrumbSchema } from '../composables/Usejsonld.js'
 import { useLanguage } from '../composables/useLanguage.js'
 
 const { t } = useLanguage()
