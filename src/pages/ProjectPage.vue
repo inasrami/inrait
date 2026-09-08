@@ -129,11 +129,11 @@
 <script setup>
 import { computed, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import { getProject } from '../data/projects.js'
+import { getProject } from '../data/Projects.js'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
 import { useLanguage } from '../composables/useLanguage.js'
-import { useJsonLd, breadcrumbSchema, projectSchema } from '../composables/useJsonLd.js'
+import { useJsonLd, breadcrumbSchema, projectSchema } from '../composables/Usejsonld.js'
 
 const route   = useRoute()
 const { t } = useLanguage()
