@@ -1,5 +1,5 @@
 <template>
-  <section class="relative px-6 py-32 overflow-hidden" style="background: var(--surface);">
+  <section class="relative px-6 py-20 overflow-hidden md:py-32" style="background: var(--surface);">
 
     <div class="absolute top-0 left-0 right-0 h-px"
       style="background: var(--border);" />
@@ -8,14 +8,15 @@
 
     <div class="max-w-[860px] mx-auto relative z-10">
 
-      <h2 class="font-display fade-up text-[clamp(40px,7vw,72px)] mb-4"
+      <h2 class="font-display fade-up text-[clamp(36px,7vw,72px)] mb-8 md:mb-4 text-center md:text-left"
         style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
         {{ t('comparison.title') }}
       </h2>
+      
       <!-- Table -->
       <div class="comp-table fade-up" style="transition-delay:0.15s;">
 
-        <!-- Header row -->
+        <!-- Header row (Hidden on mobile via CSS) -->
         <div class="comp-row comp-header">
           <div class="comp-feature-cell" />
           <div class="comp-col comp-col--inrait">
@@ -35,6 +36,7 @@
           <div class="comp-feature-cell">{{ row.feature }}</div>
 
           <div class="comp-col comp-col--inrait">
+            <span class="mobile-label">INRAIT</span>
             <span v-if="row.inrait === true" class="cell-yes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               {{ t('comparison.yes') }}
@@ -46,6 +48,7 @@
           </div>
 
           <div class="comp-col">
+            <span class="mobile-label">{{ t('comparison.col2') }}</span>
             <span v-if="row.freelancer === true" class="cell-neutral-yes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
@@ -55,6 +58,7 @@
           </div>
 
           <div class="comp-col comp-col--last">
+            <span class="mobile-label">{{ t('comparison.col3') }}</span>
             <span v-if="row.agency === true" class="cell-neutral-yes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
@@ -67,8 +71,8 @@
       </div>
 
       <!-- CTA below table -->
-      <div class="mt-12 text-center fade-up" style="transition-delay:0.2s;">
-        <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-5" style="cursor: pointer;">
+      <div class="mt-8 text-center md:mt-12 fade-up" style="transition-delay:0.2s;">
+        <RouterLink to="/contact" class="btn-primary text-[15px] px-8 py-4 md:px-10 md:py-5 inline-flex items-center justify-center gap-2" style="cursor: pointer;">
           {{ t('cta.start') }}
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </RouterLink>
@@ -198,24 +202,57 @@ const rows = computed(() => t('comparison.rows'))
   color: var(--text-muted);
 }
 
-@media (max-width: 640px) {
+/* Hidden by default on desktop */
+.mobile-label {
+  display: none;
+}
+
+/* Mobile Responsive Optimization */
+@media (max-width: 768px) {
+  .comp-header {
+    display: none;
+  }
+
   .comp-row {
-    grid-template-columns: 1fr 100px 90px 90px;
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 12px;
   }
 
   .comp-feature-cell {
-    padding: 14px 14px;
-    font-size: 13px;
+    padding: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
   }
 
   .comp-col {
-    padding: 14px 6px;
-    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 8px;
+    text-align: right;
   }
 
-  .cell-price,
-  .col-logo {
-    font-size: 16px;
+  .comp-col--inrait {
+    background: rgba(164, 224, 75, 0.08);
+    border: 1px solid rgba(164, 224, 75, 0.2);
+  }
+
+  .mobile-label {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  .comp-col--inrait .mobile-label {
+    color: var(--accent);
   }
 }
 </style>
