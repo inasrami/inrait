@@ -1,9 +1,8 @@
 <template>
-  <div class="min-h-screen px-6 pb-32 pt-36" style="cursor:none;">
+  <div class="min-h-screen px-6 pb-32 pt-36">
 
     <!-- Hero -->
     <div class="max-w-[1080px] mx-auto mb-20">
-      <div class="mb-4 section-label fade-up">{{ t('blog.label') }}</div>
       <div class="flex flex-wrap items-end justify-between gap-6">
         <h1 class="font-display fade-up text-[clamp(64px,12vw,120px)] leading-none"
           style="letter-spacing:0.02em; transition-delay:0.05s;">
@@ -174,7 +173,7 @@ function formatDate(dateString) {
   background: rgba(255,255,255,0.018);
   overflow: hidden;
   transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: none;
+  cursor: pointer;
 }
 
 .post-card:hover {

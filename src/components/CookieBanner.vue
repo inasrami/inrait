@@ -13,17 +13,17 @@
             </svg>
             <p class="text-[13px] text-text-muted leading-relaxed">
               {{ t('cookie.text') }}
-              <RouterLink to="/privacy" class="ml-1 text-accent underline-offset-2 hover:underline" style="cursor:none;">
+              <RouterLink to="/privacy" class="ml-1 text-accent underline-offset-2 hover:underline" style="cursor: pointer;">
                 {{ t('cookie.policy') }}
               </RouterLink>
             </p>
           </div>
 
           <div class="flex items-center flex-shrink-0 gap-3">
-            <button class="cookie-decline" @click="decline" style="cursor:none;">
+            <button class="cookie-decline" @click="decline" style="cursor: pointer;">
               {{ t('cookie.decline') }}
             </button>
-            <button class="cookie-accept" @click="accept" style="cursor:none;">
+            <button class="cookie-accept" @click="accept" style="cursor: pointer;">
               {{ t('cookie.accept') }}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
@@ -91,7 +91,7 @@ function decline() {
   border-radius: 100px;
   border: none;
   transition: background 0.2s ease, transform 0.2s ease;
-  cursor: none;
+  cursor: pointer;
 }
 
 .cookie-accept:hover {
@@ -110,7 +110,7 @@ function decline() {
   border-radius: 100px;
   background: transparent;
   transition: color 0.2s ease, border-color 0.2s ease;
-  cursor: none;
+  cursor: pointer;
 }
 
 .cookie-decline:hover {

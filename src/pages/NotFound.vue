@@ -91,7 +91,7 @@ const quickLinks = computed(() => t('notFound.quickLinks'))
   font-size: 13px;
   color: var(--text-muted);
   transition: color 0.2s ease, border-color 0.2s ease;
-  cursor: none;
+  cursor: pointer;
 }
 
 .quick-link:hover {

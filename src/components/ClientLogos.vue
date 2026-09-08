@@ -19,7 +19,7 @@
 
       <p class="text-center text-[12px] text-text-dim mt-8 fade-up" style="transition-delay:0.2s;">
         {{ t('logos.yourLogo') }}
-        <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">{{ t('logos.letsTalk') }}</RouterLink>
+        <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor: pointer;">{{ t('logos.letsTalk') }}</RouterLink>
       </p>
 
     </div>

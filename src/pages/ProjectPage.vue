@@ -6,7 +6,7 @@
       <RouterLink
         to="/"
         class="inline-flex items-center gap-2 text-text-muted text-[14px] hover:text-text-main transition-colors"
-        style="cursor: none;"
+        style="cursor: pointer;"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         {{ t('projects.backToWork') }}
@@ -68,7 +68,7 @@
             target="_blank"
             rel="noopener"
             class="inline-flex items-center gap-1 text-[14px] font-medium hover:underline"
-            :style="`color: ${project.color}; cursor: none;`"
+            :style="`color: ${project.color}; cursor: pointer;`"
           >
             {{ t('servicesPage.visitSite') }}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -80,22 +80,22 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-16">
 
         <div class="fade-up">
-          <div class="mb-6 section-label">{{ t('projects.overview') }}</div>
+          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.overview') }}</h2>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.description }}</p>
         </div>
 
         <div class="fade-up" style="transition-delay: 0.1s;">
-          <div class="mb-6 section-label">{{ t('projects.challenge') }}</div>
+          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.challenge') }}</h2>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.challenge }}</p>
         </div>
 
         <div class="fade-up" style="transition-delay: 0.15s;">
-          <div class="mb-6 section-label">{{ t('projects.solution') }}</div>
+          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.solution') }}</h2>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.solution }}</p>
         </div>
 
         <div class="fade-up" style="transition-delay: 0.2s;">
-          <div class="mb-6 section-label">{{ t('projects.outcome') }}</div>
+          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.outcome') }}</h2>
           <p class="text-text-muted text-[17px] leading-relaxed">{{ project.outcome }}</p>
         </div>
 

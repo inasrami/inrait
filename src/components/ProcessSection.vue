@@ -3,7 +3,6 @@
 
     <div class="max-w-[1080px] mx-auto">
 
-      <div class="mb-4 section-label fade-up">{{ t('process.label') }}</div>
       <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] mb-20" style="letter-spacing:0.02em; line-height:1;">
         {{ t('process.title') }}
       </h2>

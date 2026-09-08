@@ -2,7 +2,6 @@
   <div class="min-h-screen px-6 pb-32 pt-36">
     <div class="max-w-[720px] mx-auto">
 
-      <div class="mb-4 section-label">{{ t('privacy.label') }}</div>
       <h1 class="font-display text-[clamp(48px,8vw,80px)] mb-4 leading-none" style="letter-spacing:0.02em;">
         {{ t('privacy.title') }}
       </h1>

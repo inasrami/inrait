@@ -3,8 +3,6 @@
 
     <div class="max-w-[1000px] mx-auto">
 
-      <div class="mb-12 section-label fade-up">{{ t('philosophy.label') }}</div>
-
       <h2
         class="font-semibold text-text-main"
         style="

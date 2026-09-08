@@ -1,5 +1,5 @@
 <template>
-  <div style="cursor:none;">
+  <div>
 
   <!-- Loaded post -->
   <div v-if="post" class="min-h-screen px-6 pb-32 pt-36">
@@ -7,8 +7,7 @@
     <!-- Back -->
     <div class="max-w-[720px] mx-auto mb-12">
       <RouterLink to="/blog"
-        class="inline-flex items-center gap-2 text-text-muted text-[13px] hover:text-text-main transition-colors"
-        style="cursor:none;">
+        class="inline-flex items-center gap-2 text-text-muted text-[13px] hover:text-text-main transition-colors">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
         </svg>
@@ -41,7 +40,7 @@
     </div>
 
     <!-- Article body -->
-    <article class="max-w-[720px] mx-auto" style="cursor:none;">
+    <article class="max-w-[720px] mx-auto">
       <template v-for="(block, i) in parsedContent" :key="i">
         <h2 v-if="block.type === 'h2'"   class="article-h2">{{ block.text }}</h2>
         <p  v-else-if="block.type === 'p'" class="article-p"  v-html="block.html" />
@@ -61,7 +60,7 @@
           </h3>
           <p class="text-text-muted text-[14px] leading-relaxed">{{ t('blog.ctaSub') }}</p>
         </div>
-        <RouterLink to="/contact" class="btn-primary text-[13px] py-3 px-6 flex-shrink-0" style="cursor:none;">
+        <RouterLink to="/contact" class="btn-primary text-[13px] py-3 px-6 flex-shrink-0">
           {{ t('cta.start') }}
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -73,7 +72,7 @@
     <!-- Footer nav -->
     <div class="max-w-[720px] mx-auto mt-12 pt-8 flex items-center justify-between flex-wrap gap-4"
       style="border-top:1px solid var(--border);">
-      <RouterLink to="/blog" class="btn-outline text-[13px] py-3 px-5" style="cursor:none;">
+      <RouterLink to="/blog" class="btn-outline text-[13px] py-3 px-5">
         {{ t('blog.allPosts') }}
       </RouterLink>
     </div>
@@ -81,7 +80,7 @@
   </div>
 
   <!-- Loading state -->
-  <div v-else-if="isLoading" class="flex items-center justify-center min-h-screen" style="cursor:none;">
+  <div v-else-if="isLoading" class="flex items-center justify-center min-h-screen">
     <div class="flex flex-col items-center gap-4">
       <div class="loader-bar-wrap">
         <div class="loader-bar-anim" />
@@ -96,7 +95,7 @@
       <div class="font-display text-[120px] leading-none"
         style="color:transparent; -webkit-text-stroke:1px rgba(164,224,75,0.15);">404</div>
       <p class="mb-6 text-text-muted">{{ t('blog.articleNotFound') }}</p>
-      <RouterLink to="/blog" class="btn-outline" style="cursor:none;">{{ t('blog.backBlog') }}</RouterLink>
+      <RouterLink to="/blog" class="btn-outline">{{ t('blog.backBlog') }}</RouterLink>
     </div>
   </div>
 
@@ -205,7 +204,6 @@ function formatDate(dateString) {
 </script>
 
 <style scoped>
-* { cursor: none !important; }
 
 .post-cat {
   font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;

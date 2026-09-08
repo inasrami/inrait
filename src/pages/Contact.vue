@@ -5,10 +5,9 @@
       style="width:600px;height:600px;background:radial-gradient(ellipse at right,rgba(164,224,75,0.06) 0%,transparent 70%);" />
 
     <div class="max-w-[1080px] mx-auto">
-      <div class="mb-6 section-label fade-up">{{ t('contact.label') }}</div>
       <h1 class="mb-6 font-display fade-up"
         style="font-size:clamp(60px,11vw,130px);letter-spacing:0.02em;line-height:0.95;transition-delay:0.05s;">
-        {{ t('contact.line1') }}<br/>{{ t('contact.line2') }}
+        {{ t('contact.line1') }}
       </h1>
       <p class="text-text-muted text-[18px] mb-20 max-w-lg leading-relaxed fade-up"
         style="font-weight:300;transition-delay:0.1s;">
@@ -65,7 +64,7 @@
             </div>
 
             <button type="submit" class="btn-primary w-full justify-center py-5 text-[16px]"
-              :disabled="loading || submitted" style="cursor:none;">
+              :disabled="loading || submitted" style="cursor: pointer;">
               <!-- Idle -->
               <template v-if="!loading && !submitted">
                 {{ t('contact.send') }}
@@ -92,7 +91,7 @@
               {{ t('contact.setupNote') }} <code class="px-1 rounded bg-white/5">YOUR_SERVICE_ID</code>,
               <code class="px-1 rounded bg-white/5">YOUR_TEMPLATE_ID</code>,
               <code class="px-1 rounded bg-white/5">YOUR_PUBLIC_KEY</code> in <code class="px-1 rounded bg-white/5">Contact.vue</code>.
-              <a href="https://emailjs.com" target="_blank" rel="noopener" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">{{ t('contact.setupLink') }}</a>
+              <a href="https://emailjs.com" target="_blank" rel="noopener" class="text-accent underline-offset-2 hover:underline" style="cursor: pointer;">{{ t('contact.setupLink') }}</a>
             </p>
 
           </form>
@@ -260,7 +259,7 @@ function loadScript(src) {
   font-size: 15px;
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
-  cursor: none;
+  cursor: pointer;
   resize: none;
   width: 100%;
 }
@@ -271,7 +270,7 @@ function loadScript(src) {
 .contact-item {
   display: flex; align-items: center; gap: 14px;
   padding: 8px 0; border-bottom: 1px solid var(--border);
-  transition: color 0.2s ease; cursor: none;
+  transition: color 0.2s ease; cursor: pointer;
 }
 .contact-item:last-child { border-bottom: none; }
 .contact-item:hover .contact-icon { background: rgba(164,224,75,0.15); }

@@ -3,7 +3,6 @@
 
     <div class="max-w-[780px] mx-auto">
 
-      <div class="mb-4 section-label fade-up">{{ t('faq.label') }}</div>
       <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] mb-16"
         style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
         {{ t('faq.title') }}
@@ -20,7 +19,7 @@
             class="faq-trigger"
             @click="toggle(i)"
             :aria-expanded="open === i"
-            style="cursor: none;"
+            style="cursor: pointer;"
           >
             <span class="faq-q">{{ item.q }}</span>
             <span class="faq-icon" :class="{ 'faq-icon--open': open === i }">
@@ -46,7 +45,7 @@
           <p class="font-semibold text-[17px] mb-1">{{ t('faq.ctaTitle') }}</p>
           <p class="text-text-muted text-[14px]">{{ t('faq.ctaSub') }}</p>
         </div>
-        <RouterLink to="/contact" class="btn-primary text-[14px] px-7 py-4 flex-shrink-0" style="cursor:none;">
+        <RouterLink to="/contact" class="btn-primary text-[14px] px-7 py-4 flex-shrink-0" style="cursor: pointer;">
           {{ t('cta.start') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </RouterLink>
@@ -86,7 +85,7 @@ function toggle(i) {
   background: none;
   border: none;
   text-align: left;
-  cursor: none;
+  cursor: pointer;
   transition: color 0.2s ease;
 }
 

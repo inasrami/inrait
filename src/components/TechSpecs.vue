@@ -5,7 +5,6 @@
 
     <div class="max-w-[1080px] mx-auto">
 
-      <div class="mb-4 section-label fade-up">{{ t('techSpecs.label') }}</div>
       <div class="flex flex-wrap items-end justify-between gap-6 mb-20">
         <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
           {{ t('techSpecs.title') }}

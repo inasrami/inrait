@@ -5,7 +5,6 @@
     <section class="relative px-6 pt-40 pb-20 overflow-hidden">
       <div class="hero-glow" />
       <div class="max-w-[1080px] mx-auto relative z-10 text-center">
-        <div class="mb-5 section-label fade-up" style="justify-content:center;">{{ t('servicesPage.label') }}</div>
         <h1 class="font-display fade-up text-[clamp(64px,12vw,130px)] leading-none mb-6" style="letter-spacing:0.02em; transition-delay:0.05s;">
           {{ t('servicesPage.title') }}
         </h1>
@@ -129,7 +128,7 @@
                 class="addon-toggle"
                 :class="{ 'addon-toggle--open': openAddons === service.id }"
                 @click.stop="toggleAddons(service.id)"
-                style="cursor:none;"
+                style="cursor: pointer;"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -153,7 +152,7 @@
                     class="addon-row"
                     :class="{ 'addon-row--checked': isAddonSelected(addon.id) }"
                     @click.stop="toggleAddon(addon.id, service.id)"
-                    style="cursor:none;"
+                    style="cursor: pointer;"
                   >
                     <div class="addon-check" :class="{ 'addon-check--on': isAddonSelected(addon.id) }">
                       <svg v-if="isAddonSelected(addon.id)" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
@@ -180,7 +179,7 @@
         </svg>
         <span class="text-[12px] text-text-dim leading-relaxed">
           {{ t('servicesPage.bottomNote') }}
-          <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor:none;">{{ t('servicesPage.bookCall') }}</RouterLink>
+          <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor: pointer;">{{ t('servicesPage.bookCall') }}</RouterLink>
         </span>
       </div>
     </div>
@@ -193,7 +192,7 @@
           <div class="flex flex-wrap items-center gap-3">
             <span v-for="id in selectedServices" :key="id" class="summary-chip">
               {{ serviceById(id)?.title }}
-              <button @click.stop="toggleService(id)" class="chip-remove" style="cursor:none;">
+              <button @click.stop="toggleService(id)" class="chip-remove" style="cursor: pointer;">
                 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
@@ -215,7 +214,7 @@
               </div>
               <div class="text-[9px] text-text-dim mt-0.5 uppercase tracking-widest">{{ t('servicesPage.estimate') }}</div>
             </div>
-            <RouterLink to="/contact" class="btn-primary text-[13px] py-3 px-6" style="cursor:none;">
+            <RouterLink to="/contact" class="btn-primary text-[13px] py-3 px-6" style="cursor: pointer;">
               {{ t('servicesPage.getQuote') }}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -370,7 +369,7 @@ const hasSelection = computed(() =>
 .card-header {
   position: relative; display: flex; align-items: flex-start;
   gap: 14px; padding: 26px 22px 18px;
-  user-select: none; cursor: none; transition: background 0.2s ease;
+  user-select: none; cursor: pointer; transition: background 0.2s ease;
 }
 .card-header:hover { background: rgba(255,255,255,0.02); }
 
@@ -412,7 +411,7 @@ const hasSelection = computed(() =>
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 12px; font-weight: 500; color: var(--text-muted);
   border: 1px solid var(--border-strong); border-radius: 100px;
-  padding: 7px 14px; background: transparent; cursor: none;
+  padding: 7px 14px; background: transparent; cursor: pointer;
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 .addon-toggle:hover,
@@ -431,7 +430,7 @@ const hasSelection = computed(() =>
 }
 .addon-row {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-  border-radius: 10px; border: 1px solid transparent; cursor: none;
+  border-radius: 10px; border: 1px solid transparent; cursor: pointer;
   transition: background 0.18s ease, border-color 0.18s ease;
 }
 .addon-row:hover { background: rgba(255,255,255,0.03); }
@@ -481,7 +480,7 @@ const hasSelection = computed(() =>
   display: flex; align-items: center; justify-content: center;
   width: 16px; height: 16px; border-radius: 50%;
   background: rgba(255,255,255,0.07); border: none; color: var(--text-muted);
-  transition: background 0.18s ease, color 0.18s ease; cursor: none;
+  transition: background 0.18s ease, color 0.18s ease; cursor: pointer;
 }
 .chip-remove:hover { background: rgba(255,80,80,0.15); color: #ff6060; }
 

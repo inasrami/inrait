@@ -8,7 +8,6 @@
 
     <div class="max-w-[860px] mx-auto relative z-10">
 
-      <div class="mb-4 section-label fade-up">{{ t('comparison.label') }}</div>
       <h2 class="font-display fade-up text-[clamp(40px,7vw,72px)] mb-4"
         style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
         {{ t('comparison.title') }}
@@ -69,7 +68,7 @@
 
       <!-- CTA below table -->
       <div class="mt-12 text-center fade-up" style="transition-delay:0.2s;">
-        <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-5" style="cursor:none;">
+        <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-5" style="cursor: pointer;">
           {{ t('cta.start') }}
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </RouterLink>

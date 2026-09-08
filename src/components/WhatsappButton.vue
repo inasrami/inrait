@@ -68,7 +68,7 @@ onMounted(() => {
               transform 0.3s ease;
   text-decoration: none;
   overflow: hidden;
-  cursor: none;
+  cursor: pointer;
 }
 
 .whatsapp-fab:hover,

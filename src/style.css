@@ -27,7 +27,6 @@
 
   html {
     scroll-behavior: smooth;
-    cursor: none;
   }
 
   body {
@@ -46,38 +45,6 @@
 
   a { text-decoration: none; color: inherit; }
   img { display: block; }
-}
-
-/* ─── Custom Cursor ─────────────────────────────────────── */
-.cursor-dot {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease, opacity 0.3s ease;
-  mix-blend-mode: normal;
-}
-
-.cursor-ring {
-  position: fixed;
-  width: 36px;
-  height: 36px;
-  border: 1.5px solid rgba(164, 224, 75, 0.5);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, transform 0.08s linear;
-}
-
-.cursor-ring.hovering {
-  width: 56px;
-  height: 56px;
-  border-color: var(--accent);
 }
 
 /* ─── Typography ────────────────────────────────────────── */
@@ -167,7 +134,7 @@
   letter-spacing: -0.01em;
   border-radius: 100px;
   border: none;
-  cursor: none;
+  cursor: pointer;
   transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -190,7 +157,7 @@
   letter-spacing: -0.01em;
   border-radius: 100px;
   border: 1px solid var(--border-strong);
-  cursor: none;
+  cursor: pointer;
   transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
 }
 
@@ -223,7 +190,7 @@
   overflow: hidden;
   background: var(--surface-2);
   border: 1px solid var(--border);
-  cursor: none;
+  cursor: pointer;
   transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease;
 }
 
@@ -378,26 +345,6 @@
   background: var(--bg);
 }
 
-/* ─── Section label ─────────────────────────────────────── */
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.section-label::before {
-  content: '';
-  display: block;
-  width: 24px;
-  height: 1px;
-  background: var(--accent);
-}
-
 /* ─── Highlight chip ────────────────────────────────────── */
 .chip {
   display: inline-flex;
@@ -411,12 +358,6 @@
   font-weight: 500;
   color: var(--accent);
   letter-spacing: 0.02em;
-}
-
-/* ─── Responsive ────────────────────────────────────────── */
-@media (max-width: 768px) {
-  html { cursor: auto; }
-  .cursor-dot, .cursor-ring { display: none; }
 }
 
 /* ─── Loading screen ────────────────────────────────────── */

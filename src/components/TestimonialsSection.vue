@@ -8,7 +8,6 @@
 
     <div class="max-w-[1080px] mx-auto relative z-10">
 
-      <div class="mb-4 section-label fade-up" style="width:fit-content; margin-inline:auto;">{{ t('testimonials.label') }}</div>
       <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] text-center mb-20"
         style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
         {{ t('testimonials.title') }}

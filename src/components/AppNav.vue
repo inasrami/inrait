@@ -39,7 +39,7 @@
         <span class="nav-divider" />
 
         <!-- Language toggle -->
-        <button class="lang-btn" @click="toggleLang" style="cursor:none;"
+        <button class="lang-btn" @click="toggleLang" style="cursor: pointer;"
           :aria-label="`Switch to ${isBG ? 'English' : 'Bulgarian'}`">
           <span class="lang-flag">{{ isBG ? '🇧🇬' : '🇬🇧' }}</span>
           <span class="lang-code">{{ isBG ? 'BG' : 'EN' }}</span>
@@ -50,19 +50,16 @@
 
         <RouterLink to="/contact" class="btn-primary text-[13px] py-[10px] px-5">
           {{ t('nav.letsTalk') }}
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-          </svg>
         </RouterLink>
       </div>
 
       <!-- Mobile right: lang + burger -->
       <div class="flex items-center gap-3 md:hidden">
-        <button class="lang-btn" @click="toggleLang" style="cursor:none;">
+        <button class="lang-btn" @click="toggleLang" style="cursor: pointer;">
           <span class="lang-flag">{{ isBG ? '🇧🇬' : '🇬🇧' }}</span>
           <span class="lang-code">{{ isBG ? 'BG' : 'EN' }}</span>
         </button>
-        <button class="flex flex-col gap-[5px] p-2" style="cursor:none;"
+        <button class="flex flex-col gap-[5px] p-2" style="cursor: pointer;"
           @click="mobileOpen = !mobileOpen" aria-label="Toggle menu">
           <span class="block w-5 h-[1.5px] bg-white transition-all duration-300 origin-center"
             :style="mobileOpen ? 'transform: rotate(45deg) translate(5px, 5px)' : ''" />
@@ -218,7 +215,7 @@ watch(() => route.path, (path) => {
   letter-spacing: 0.04em;
   color: var(--text-muted);
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-  cursor: none;
+  cursor: pointer;
 }
 
 .lang-btn:hover {
@@ -234,7 +231,7 @@ watch(() => route.path, (path) => {
   color: rgba(255,255,255,0.35);
   letter-spacing: 0.02em;
   transition: color 0.2s ease;
-  cursor: none;
+  cursor: pointer;
 }
 .mobile-nav-item:hover { color: rgba(255,255,255,0.75); }
 .mobile-nav-item--active { color: #fff; }

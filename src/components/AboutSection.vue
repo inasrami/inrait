@@ -54,7 +54,7 @@
           </svg>
           {{ t('about.location') }}
         </div>
-        <RouterLink to="/contact" class="btn-outline text-[13px] py-[10px] px-5" style="cursor:none;">
+        <RouterLink to="/contact" class="btn-outline text-[13px] py-[10px] px-5" style="cursor: pointer;">
           {{ t('about.startProject') }}
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/>

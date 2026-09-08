@@ -6,15 +6,15 @@ export default {
     process:  'Process',
     services: 'Services',
     blog:     'Blog',
-    letsTalk: "Let's Talk",
+    letsTalk: 'Contact',
   },
 
   hero: {
     available:    'Open for projects · Sofia, Bulgaria',
-    line1:        'WEB',
-    line2:        'ENGINEERING',
-    line3:        'THAT HITS.',
-    sub:          'Fast, scalable, obsessively crafted digital products.',
+    line1:        'WEBSITES',
+    line2:        'AND SYSTEMS',
+    line3:        'FROM SOFIA.',
+    sub:          'Booking platforms, stores, and automations for hotels, restaurants, and service businesses.',
     cta:          'Start a project',
     ctaWork:      'See our work',
     statProjectsVal: '5',
@@ -27,9 +27,9 @@ export default {
 
   philosophy: {
     label:          'Philosophy',
-    headline:       'Websites that',
-    headlineEm:     ' work',
-    headlineSuffix: '. Built for speed, trust, and results.',
+    headline:       'Sites, booking systems, and automations',
+    headlineEm:     '',
+    headlineSuffix: ' for businesses that need them to run every day.',
     pillars: [
       { title: 'Speed is design.',   body: 'Lean, optimized code. A beautiful interface that loads slow is a broken interface.' },
       { title: 'UX is psychology.',  body: 'Every layout decision guides attention and builds confidence without a word.' },
@@ -219,12 +219,12 @@ export default {
 
   cta: {
     label: 'Ready?',
-    line1: "LET'S BUILD",
-    line2: 'TOGETHER.',
-    sub:   "Clear vision or just a problem to solve — we want to hear it.",
+    line1: 'START A',
+    line2: 'PROJECT',
+    sub:   'Send a short brief. We reply within a day.',
     start: 'Start a project',
     email: 'Send an email',
-    avail: 'Open for new projects — let\'s talk',
+    avail: 'Taking on new work this month.',
   },
 
   marquee: {
@@ -255,9 +255,9 @@ export default {
 
   contact: {
     label:        'Get In Touch',
-    line1:        "LET'S",
-    line2:        'BUILD IT.',
-    sub:          "Tell us about your project. We'll get back to you within 24 hours.",
+    line1:        'CONTACT',
+    line2:        '',
+    sub:          'Tell us what you need. We reply within a day.',
     name:         'Your name',
     namePh:       'Alex Johnson',
     email:        'Email address',
@@ -434,7 +434,7 @@ export default {
   comparison: {
     label:    'Why INRAIT?',
     title:    'HOW WE COMPARE',
-    sub:      'Not a freelancer who disappears. Not an agency that charges for meetings. Something better.',
+    sub:      'Direct work with the person building the site — without agency overhead.',
     col1:     'INRAIT',
     col2:     'Freelancer',
     col3:     'Agency',

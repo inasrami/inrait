@@ -5,7 +5,6 @@
     <div class="px-6 max-w-[1080px] mx-auto mb-10">
       <div class="flex flex-wrap items-end justify-between gap-6 mb-8">
         <div>
-          <div class="mb-4 section-label fade-up">{{ t('projects.label') }}</div>
           <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
             {{ t('projects.title') }}
           </h2>
@@ -32,7 +31,7 @@
           class="filter-tab"
           :class="{ 'filter-tab--active': activeFilter === f.key }"
           @click="setFilter(f.key)"
-          style="cursor:none;"
+          style="cursor: pointer;"
         >
           {{ f.label }}
         </button>
@@ -201,7 +200,7 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
 .filter-tab {
   padding: 7px 16px; border-radius: 100px; border: 1px solid var(--border);
   font-size: 12px; font-weight: 500; color: var(--text-muted);
-  background: transparent; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; cursor: none;
+  background: transparent; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; cursor: pointer;
 }
 .filter-tab:hover { color: var(--text); border-color: var(--border-strong); }
 .filter-tab--active { color: #000; background: var(--accent); border-color: var(--accent); }
@@ -233,9 +232,9 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
 .carousel-index { position: absolute; bottom: 14px; right: 18px; font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; letter-spacing: 0.02em; color: rgba(255,255,255,0.12); pointer-events: none; }
 .carousel-info { padding: 24px 28px 28px; }
 
-.carousel-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+.carousel-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
 .carousel-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(164,224,75,0.06); }
 
-.dot-btn { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); border: none; cursor: none; transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease; }
+.dot-btn { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); border: none; cursor: pointer; transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease; }
 .dot-btn.active { background: var(--accent); width: 20px; border-radius: 3px; }
 </style>
