@@ -20,11 +20,11 @@ import HeroSection         from '../components/HeroSection.vue'
 import PhilosophySection   from '../components/PhilosophySection.vue'
 import ServicesSection     from '../components/ServicesSection.vue'
 import ProjectsSection     from '../components/ProjectsSection.vue'
-import ComparisonTable     from '../components/ComparisonTable.vue'
+import ComparisonTable     from '../components/Comparisontable.vue'
 import AboutSection        from '../components/AboutSection.vue'
 import TechSpecs           from '../components/TechSpecs.vue'
 import ProcessSection      from '../components/ProcessSection.vue'
-import FaqSection          from '../components/FaqSection.vue'
+import FaqSection          from '../components/Faqsection.vue'
 import CtaSection          from '../components/CtaSection.vue'
 
 useSeo({

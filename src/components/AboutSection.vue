@@ -12,11 +12,7 @@
           </h2>
         </div>
 
-        <!-- Availability badge -->
-        <div class="availability-badge fade-up" style="transition-delay:0.1s;">
-          <span class="avail-dot" />
-          <span>{{ t('about.available') }}</span>
-        </div>
+      
       </div>
 
       <!-- Studio statement -->
