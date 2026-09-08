@@ -178,7 +178,7 @@ import { ref, reactive } from 'vue'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
 import { useLanguage } from '../composables/useLanguage.js'
-import { useJsonLd, breadcrumbSchema } from '../composables/useJsonLd.js'
+import { useJsonLd, breadcrumbSchema } from '../composables/Useksonld.js'
 
 useFadeUp()
 const { t } = useLanguage()

@@ -234,7 +234,7 @@
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSeo } from '../composables/useSeo.js'
-import { useJsonLd, breadcrumbSchema } from '../composables/useJsonLd.js'
+import { useJsonLd, breadcrumbSchema } from '../composables/Useksonld.js'
 import { useServices, getBundleDiscount } from '../data/services.js'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
