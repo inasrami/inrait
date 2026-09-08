@@ -41,7 +41,7 @@
         <!-- Language toggle -->
         <button class="lang-btn" @click="toggleLang" style="cursor: pointer;"
           :aria-label="`Switch to ${isBG ? 'English' : 'Bulgarian'}`">
-          <span class="lang-flag">{{ isBG ? '🇧🇬' : '🇬🇧' }}</span>
+
           <span class="lang-code">{{ isBG ? 'BG' : 'EN' }}</span>
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"/>
@@ -56,7 +56,7 @@
       <!-- Mobile right: lang + burger -->
       <div class="flex items-center gap-3 md:hidden">
         <button class="lang-btn" @click="toggleLang" style="cursor: pointer;">
-          <span class="lang-flag">{{ isBG ? '🇧🇬' : '🇬🇧' }}</span>
+
           <span class="lang-code">{{ isBG ? 'BG' : 'EN' }}</span>
         </button>
         <button class="flex flex-col gap-[5px] p-2" style="cursor: pointer;"
@@ -207,7 +207,7 @@ watch(() => route.path, (path) => {
   align-items: center;
   gap: 5px;
   padding: 6px 12px;
-  border-radius: 100px;
+  border-radius: 50px;
   border: 1px solid var(--border-strong);
   background: rgba(255,255,255,0.04);
   font-size: 12px;
@@ -224,7 +224,7 @@ watch(() => route.path, (path) => {
   background: rgba(255,255,255,0.07);
 }
 
-.lang-flag { font-size: 14px; line-height: 1; }
+
 .lang-code { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
 
 .mobile-nav-item {

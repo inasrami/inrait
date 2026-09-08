@@ -20,19 +20,19 @@ const ADDON_IDS = {
 }
 
 const ADDON_PRICES = {
-  website:     [200, 150, 180, 250, 300],
-  booking:     [250, 200, 150, 350, 180],
-  ecommerce:   [200, 250, 180, 220, 160],
-  automation:  [200, 180, 220, 250, 150],
-  identity:    [150, 180, 120, 300, 250],
+  website:     [199, 149, 179, 99, 99],
+  booking:     [249, 199, 149, 199, 149],
+  ecommerce:   [199, 249, 179, 199, 99],
+  automation:  [199, 179, 219, 249, 149],
+  identity:    [149, 199, 149, 499, 249],
 }
 
 const BASE_PRICES = {
-  website:     900,
-  booking:     1200,
-  ecommerce:   2000,
-  automation:  600,
-  identity:    450,
+  website:     899,
+  booking:     1199,
+  ecommerce:   1799,
+  automation:  599,
+  identity:    499,
 }
 
 const HERO_FLAGS = {
