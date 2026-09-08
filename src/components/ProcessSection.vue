@@ -1,11 +1,6 @@
 <template>
   <section id="process" class="relative px-6 py-32 overflow-hidden">
 
-    <div
-      class="absolute right-0 -translate-y-1/2 pointer-events-none top-1/2"
-      style="width: 600px; height: 600px; background: radial-gradient(ellipse at right center, rgba(164,224,75,0.04) 0%, transparent 70%);"
-    />
-
     <div class="max-w-[1080px] mx-auto">
 
       <div class="mb-4 section-label fade-up">{{ t('process.label') }}</div>
@@ -16,7 +11,7 @@
       <!-- Process steps -->
       <div class="relative grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-0">
 
-        <div class="absolute top-0 bottom-0 hidden w-px -translate-x-1/2 md:block left-1/2" style="background: linear-gradient(to bottom, transparent, var(--border-strong), transparent);" />
+        <div class="absolute top-0 bottom-0 hidden w-px -translate-x-1/2 md:block left-1/2" style="background: var(--border-strong);" />
 
         <div
           v-for="(step, i) in steps"

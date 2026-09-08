@@ -1,11 +1,6 @@
 <template>
   <section class="relative px-6 py-40 overflow-hidden" style="background: var(--surface);">
 
-    <div
-      class="absolute inset-0 pointer-events-none"
-      style="background: radial-gradient(ellipse at center, rgba(164,224,75,0.07) 0%, transparent 65%);"
-    />
-
     <div class="max-w-[760px] mx-auto text-center relative z-10">
 
       <div class="mx-auto mb-8 section-label fade-up">{{ t('cta.label') }}</div>

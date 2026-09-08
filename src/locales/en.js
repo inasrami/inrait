@@ -1,5 +1,4 @@
 export default {
-  // ── Nav ──────────────────────────────────────────────────
   nav: {
     work:     'Work',
     about:    'About',
@@ -10,13 +9,12 @@ export default {
     letsTalk: "Let's Talk",
   },
 
-  // ── Hero ─────────────────────────────────────────────────
   hero: {
     available:    'Open for projects · Sofia, Bulgaria',
     line1:        'WEB',
     line2:        'ENGINEERING',
     line3:        'THAT HITS.',
-    sub:          'We build fast, scalable, obsessively crafted digital products — the kind clients remember and users keep coming back to.',
+    sub:          'Fast, scalable, obsessively crafted digital products.',
     cta:          'Start a project',
     ctaWork:      'See our work',
     statProjectsVal: '5',
@@ -27,20 +25,18 @@ export default {
     statCode:     'Custom Code',
   },
 
-  // ── Philosophy ───────────────────────────────────────────
   philosophy: {
     label:          'Philosophy',
-    headline:       'Most websites exist. The best ones',
-    headlineEm:     ' speak',
-    headlineSuffix: ". We build the kind that make visitors stop scrolling and start trusting — before they've read a single word.",
+    headline:       'Websites that',
+    headlineEm:     ' work',
+    headlineSuffix: '. Built for speed, trust, and results.',
     pillars: [
-      { title: 'Speed is design.',   body: 'Every millisecond costs conversions. We write lean, optimized code because a beautiful interface that loads slow is a broken interface.' },
-      { title: 'UX is psychology.',  body: "Users don't read — they feel. Every layout decision, every micro-interaction guides attention and builds confidence without a word." },
-      { title: 'Code is craft.',     body: 'Scalable architecture, clean components, semantic HTML. Code you can hand off to any senior dev without embarrassment.' },
+      { title: 'Speed is design.',   body: 'Lean, optimized code. A beautiful interface that loads slow is a broken interface.' },
+      { title: 'UX is psychology.',  body: 'Every layout decision guides attention and builds confidence without a word.' },
+      { title: 'Code is craft.',     body: 'Scalable architecture, clean components, semantic HTML. No embarrassment.' },
     ],
   },
 
-  // ── Stats ────────────────────────────────────────────────
   stats: {
     label:        'By the numbers',
     projectsVal:  '5',
@@ -52,18 +48,12 @@ export default {
     delivery:     'Pixel Precision',
   },
 
-  // ── Services data (drives services.js dynamically) ───────
   servicesData: {
     website: {
       title: 'Business Website',
       tag:   'Most Popular',
-      body:  'Custom-built websites that establish credibility and convert visitors into clients. Architecture, design, performance, and deployment — end to end.',
-      deliverables: [
-        'Vue.js SPA or multi-page site',
-        'Mobile-first responsive design',
-        'SEO markup & Core Web Vitals optimisation',
-        'Git handoff + deployment support',
-      ],
+      body:  'Custom-built websites that convert visitors into clients. End to end.',
+      deliverables: [],
       addons: [
         { label: 'CMS integration (editable content)',    price: 200 },
         { label: 'Blog / news section',                   price: 150 },
@@ -75,13 +65,8 @@ export default {
     booking: {
       title: 'Custom Booking System',
       tag:   'For Hospitality',
-      body:  'Tailor-made reservation platforms for hotels, guesthouses, barbershops, and service businesses. Cut commission fees and own your bookings entirely.',
-      deliverables: [
-        'Real-time availability calendar',
-        'Admin dashboard for managing bookings',
-        'Automated confirmation emails',
-        'Mobile-optimised booking flow',
-      ],
+      body:  'Reservation platforms for hospitality and service businesses. Own your bookings entirely.',
+      deliverables: [],
       addons: [
         { label: 'Online payment (Stripe / PayPal)',       price: 250 },
         { label: 'SMS & email confirmation automation',    price: 200 },
@@ -93,13 +78,8 @@ export default {
     ecommerce: {
       title: 'E-commerce Store',
       tag:   'Sell Online',
-      body:  'Full-featured online stores built for performance. Product management, checkout, payments — designed to sell from day one and scale with your catalogue.',
-      deliverables: [
-        'Product catalogue & variant management',
-        'Secure checkout & payment gateway',
-        'Order & inventory management',
-        'Mobile-optimised shopping experience',
-      ],
+      body:  'Online stores built for performance. Designed to sell from day one and scale.',
+      deliverables: [],
       addons: [
         { label: 'Multi-gateway checkout (Stripe + PayPal)', price: 200 },
         { label: 'Advanced inventory & variant management',  price: 250 },
@@ -111,13 +91,8 @@ export default {
     automation: {
       title: 'Workflow Automation',
       tag:   'Save Time',
-      body:  'n8n automation pipelines that eliminate repetitive work — lead capture, CRM syncing, invoice generation, notification flows, and multi-system integrations.',
-      deliverables: [
-        'Custom n8n workflow design & build',
-        'CRM, email & calendar integrations',
-        'Self-hosted or cloud deployment',
-        'Full documentation & handover',
-      ],
+      body:  'n8n automation pipelines that eliminate repetitive work — lead capture, CRM, invoicing, notifications.',
+      deliverables: [],
       addons: [
         { label: 'CRM integration (HubSpot / Pipedrive)',  price: 200 },
         { label: 'Automated invoicing pipeline',           price: 180 },
@@ -129,13 +104,8 @@ export default {
     identity: {
       title: 'Visual Identity & Design',
       tag:   'Brand First',
-      body:  'Brand identity systems, UI/UX design, and marketing assets. We build brands that look intentional — from logo to colour palette to every client touchpoint.',
-      deliverables: [
-        'Logo design & brand guidelines',
-        'Adobe Suite production files',
-        'Typography & colour system',
-        'Social media & marketing assets',
-      ],
+      body:  'Brand identity systems and UI/UX design. From logo to colour palette to every touchpoint.',
+      deliverables: [],
       addons: [
         { label: 'Full brand guidelines document',          price: 150 },
         { label: 'Social media template pack (10 assets)', price: 180 },
@@ -147,13 +117,8 @@ export default {
     photography: {
       title: 'Photography & Media',
       tag:   'Visual Content',
-      body:  'Commercial photography and post-production for businesses that need their visual content to match the quality of their product.',
-      deliverables: [
-        'Commercial & brand photography',
-        'Professional retouching & colour grading',
-        'Delivered in web & print formats',
-        'Usage rights — full commercial licence',
-      ],
+      body:  'Commercial photography and post-production that matches the quality of your product.',
+      deliverables: [],
       addons: [
         { label: 'Additional half-day shoot',              price: 200 },
         { label: 'Drone aerial photography',               price: 300 },
@@ -164,7 +129,6 @@ export default {
     },
   },
 
-  // ── Services (homepage section) ──────────────────────────
   services: {
     label:          'What We Build',
     title:          'SERVICES',
@@ -180,14 +144,12 @@ export default {
     caseStudy:      'Case study',
   },
 
-  // ── Client logos ─────────────────────────────────────────
   logos: {
     trusted:  'Trusted by businesses across Bulgaria and Europe',
     yourLogo: 'Your brand here?',
     letsTalk: "Let's talk.",
   },
 
-  // ── Projects ─────────────────────────────────────────────
   projects: {
     label:       'Selected Work',
     title:       'PROJECTS',
@@ -214,23 +176,21 @@ export default {
     },
   },
 
-  // ── About ────────────────────────────────────────────────
   about: {
     label:        'The Studio',
     title:        'ABOUT INRAIT',
     available:    'Open for projects',
-    statement:    'INRAIT is a boutique digital studio based in Sofia. We work with hospitality businesses, service providers, and growing brands across Bulgaria and Europe — building the digital infrastructure they need to compete and convert.',
+    statement:    'A digital studio in Sofia, working with businesses across Bulgaria and Europe.',
     location:     'Sofia, Bulgaria · Serving clients across the EU · Remote-ready',
     startProject: 'Start a project',
     values: [
-      { title: 'Direct communication', body: 'You talk to the person doing the work. No account managers, no handoffs.' },
-      { title: 'Deadline-driven',      body: 'Agreed timelines are commitments. We scope carefully so we can deliver on time.' },
-      { title: 'Full ownership',       body: "Clean, documented code. You own everything — no lock-in, ever." },
-      { title: 'Outcome-focused',      body: "We build what generates results, not what looks impressive in a proposal." },
+      { title: 'Direct communication', body: 'You talk to the person building it. No middlemen.' },
+      { title: 'Deadline-driven',      body: 'Agreed timelines are commitments.' },
+      { title: 'Full ownership',       body: 'Clean code. You own everything — no lock-in.' },
+      { title: 'Outcome-focused',      body: "We build what generates results, not what looks impressive." },
     ],
   },
 
-  // ── Tech specs ───────────────────────────────────────────
   techSpecs: {
     label: 'Under the Hood',
     title: 'THE STACK',
@@ -238,58 +198,35 @@ export default {
     categories: ['Frontend & Frameworks', 'Backend & Data', 'Tools & Workflow', 'Visual & Creative'],
   },
 
-  // ── Testimonials ─────────────────────────────────────────
   testimonials: {
     label: 'Client Results',
     title: 'TESTIMONIALS',
-    items: [
-      {
-        quote:   'Working with INRAIT was unlike any agency experience we have had. The attention to detail was extraordinary — every interaction on our platform felt intentional. Delivered on time, on budget, zero surprises.',
-        name:    'Client Name',
-        role:    'Founder',
-        company: 'Company Name',
-      },
-      {
-        quote:   'We needed a booking system that felt premium enough for our clientele. What we received exceeded our expectations. The interface is fast, intuitive, and our guests actually compliment us on it.',
-        name:    'Client Name',
-        role:    'Owner',
-        company: 'Company Name',
-      },
-      {
-        quote:   'The team has a rare combination of engineering precision and design sensibility. The result speaks for itself. We have already started planning our second project together.',
-        name:    'Client Name',
-        role:    'CEO',
-        company: 'Company Name',
-      },
-    ],
+    items: [],
   },
 
-  // ── Process ──────────────────────────────────────────────
   process: {
     label:  'How We Work',
     title:  'THE PROCESS',
-    cta:    'Ready to build something extraordinary together?',
+    cta:    'Ready to build something together?',
     ctaBtn: 'Start the conversation',
     steps: [
-      { title: 'Discovery & Strategy',  body: 'We align on the real problem first. Who is this for? What do they need to feel? What does success look like in 6 months?' },
-      { title: 'Design Architecture',   body: 'We map the user journey, define the component structure, and establish the visual language before touching code.' },
-      { title: 'Engineering & Build',   body: 'Clean Vue components, semantic HTML, optimized assets, performance budgets from day one. No technical debt shipped.' },
-      { title: 'Review & Refinement',   body: "Cross-device testing, performance audits, accessibility checks. We don't ship until it meets the standard set at the start." },
+      { title: 'Discovery & Strategy',  body: 'Align on the real problem first. Who is it for? What does success look like?' },
+      { title: 'Design Architecture',   body: 'Map the user journey and establish the visual language before code.' },
+      { title: 'Engineering & Build',   body: 'Clean components, semantic HTML, performance budgets from day one.' },
+      { title: 'Review & Refinement',   body: "Cross-device testing and performance audits. We don't ship until it's right." },
     ],
   },
 
-  // ── CTA ──────────────────────────────────────────────────
   cta: {
     label: 'Ready?',
     line1: "LET'S BUILD",
     line2: 'TOGETHER.',
-    sub:   "Whether you have a clear vision or just a problem that needs solving — we want to hear it.",
+    sub:   "Clear vision or just a problem to solve — we want to hear it.",
     start: 'Start a project',
     email: 'Send an email',
     avail: 'Open for new projects — let\'s talk',
   },
 
-  // ── Marquee ──────────────────────────────────────────────
   marquee: {
     powered:    'POWERED BY',
     vuejs:      'VUE.JS',
@@ -299,9 +236,8 @@ export default {
     scale:      'SCALE',
   },
 
-  // ── Footer ───────────────────────────────────────────────
   footer: {
-    tagline:    'Web engineering from Sofia, Bulgaria. Clean code. Absolute performance. Built to scale.',
+    tagline:    'Web engineering from Sofia. Clean code. Absolute performance.',
     available:  'Open for projects',
     colWork:    'Work',
     colNav:     'Navigate',
@@ -317,7 +253,6 @@ export default {
     engineered: 'Engineered with precision.',
   },
 
-  // ── Contact page ─────────────────────────────────────────
   contact: {
     label:        'Get In Touch',
     line1:        "LET'S",
@@ -366,7 +301,6 @@ export default {
     ],
   },
 
-  // ── Services page ────────────────────────────────────────
   servicesPage: {
     label:            'What We Build',
     title:            'SERVICES',
@@ -389,7 +323,6 @@ export default {
     combineServices:  'Combine them to unlock automatic bundle discounts — the more you build together, the better the deal.',
   },
 
-  // ── Privacy ──────────────────────────────────────────────
   privacy: {
     label:    'Legal',
     title:    'PRIVACY POLICY',
@@ -411,7 +344,6 @@ export default {
     },
   },
 
-  // ── 404 ──────────────────────────────────────────────────
   notFound: {
     title:   'PAGE NOT FOUND',
     sub:     "The page you're looking for doesn't exist or has been moved. Let's get you back on track.",
@@ -427,7 +359,6 @@ export default {
     ],
   },
 
-  // ── Blog ─────────────────────────────────────────────────
   blog: {
     label:          'Insights',
     title:          'BLOG',
@@ -444,7 +375,6 @@ export default {
     articleNotFound:'Article not found.',
   },
 
-  // ── Cookie banner ────────────────────────────────────────
   cookie: {
     text:    'We use essential cookies to keep the site running. No tracking, no advertising.',
     policy:  'Privacy Policy',
@@ -452,13 +382,11 @@ export default {
     decline: 'Decline',
   },
 
-  // ── WhatsApp ─────────────────────────────────────────────
   whatsapp: {
     label:     'Chat on WhatsApp',
     ariaLabel: 'Chat on WhatsApp',
   },
 
-  // ── Timeline ─────────────────────────────────────────────
   timeline: {
     title: 'The Architecture.',
     items: [
@@ -469,52 +397,40 @@ export default {
     ],
   },
 
-  // ── Skills Strip ─────────────────────────────────────────
   skillsStrip: {
     row1: ['Vue.js 3', 'Tailwind CSS', 'JavaScript ES6+', 'MongoDB', 'Responsive Design', 'Git & GitHub', 'CSS Grid', 'Performance Optimization'],
     row2: ['UX Engineering', 'Component Architecture', 'REST APIs', 'Adobe Suite', 'Photography', 'SEO-Ready Markup', 'Dark UI Design', 'Vite Build System'],
   },
 
-  // ── Loader ───────────────────────────────────────────────
   loader: {
     loading: 'Loading…',
   },
 
-  // ── FAQ ──────────────────────────────────────────────────
   faq: {
     label: 'Got questions?',
     title: 'FAQ',
     items: [
       {
         q: 'How long does a website take to build?',
-        a: 'A standard business website takes 2–4 weeks from kick-off to launch. A booking system or e-commerce store typically takes 4–8 weeks. Timeline depends on how quickly feedback rounds move — we keep things tight.',
+        a: 'A standard website: 2–4 weeks. Booking systems or e-commerce: 4–8 weeks.',
       },
       {
         q: 'Do I need to provide content and images?',
-        a: 'Yes — you know your business best. We can advise on structure and copy direction, and we offer photography services if you need visuals. Final text and key assets come from you.',
-      },
-      {
-        q: 'Will I be able to update the site myself?',
-        a: 'If you want a CMS (editable content panel), we add one as an add-on. Otherwise the site is developer-maintained — which keeps it fast, clean, and secure. We\'re always available for content updates.',
+        a: 'Yes. We advise on structure and offer photography if needed.',
       },
       {
         q: 'What happens after the site launches?',
-        a: 'You get all source files, full ownership, and deployment support. There\'s no retainer required. We\'re available for updates, new features, or a second project whenever you\'re ready.',
+        a: 'You get all source files and full ownership. No retainer required.',
       },
       {
         q: 'Do you work with clients outside Bulgaria?',
-        a: 'Yes. We work fully remotely and have served clients across the EU. Communication is in English or Bulgarian — your choice. Payments in EUR.',
-      },
-      {
-        q: 'What if I\'m not happy with the result?',
-        a: 'Every project includes revision rounds built into the timeline. We don\'t close a project until you\'re satisfied. We scope carefully upfront so expectations are always aligned.',
+        a: 'Yes, fully remote across the EU. English or Bulgarian. Payments in EUR.',
       },
     ],
     ctaTitle: 'Still have questions?',
-    ctaSub:   'We respond to every enquiry personally — usually the same day.',
+    ctaSub:   'We respond personally — usually the same day.',
   },
 
-  // ── Comparison table ─────────────────────────────────────
   comparison: {
     label:    'Why INRAIT?',
     title:    'HOW WE COMPARE',

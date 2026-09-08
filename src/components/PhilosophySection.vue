@@ -1,16 +1,12 @@
 <template>
   <section id="philosophy" class="relative px-6 py-40 overflow-hidden">
 
-    <!-- Subtle accent line left -->
-    <div class="absolute left-0 top-1/2 w-[1px] h-40 -translate-y-1/2" style="background: linear-gradient(to bottom, transparent, var(--accent), transparent);" />
-
     <div class="max-w-[1000px] mx-auto">
 
       <div class="mb-12 section-label fade-up">{{ t('philosophy.label') }}</div>
 
       <h2
-        ref="textEl"
-        class="font-semibold text-gradient-reveal"
+        class="font-semibold text-text-main"
         style="
           font-size: clamp(26px, 4.5vw, 56px);
           letter-spacing: -0.02em;
@@ -42,14 +38,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
 
 useFadeUp()
 const { t } = useLanguage()
-
-const textEl = ref(null)
 
 const pillars = computed(() => t('philosophy.pillars'))
 
@@ -58,18 +52,4 @@ const pillarIcons = [
   '<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>',
   '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
 ]
-
-function onScroll() {
-  if (!textEl.value) return
-  const rect = textEl.value.getBoundingClientRect()
-  const wh   = window.innerHeight
-  if (rect.top < wh * 0.85 && rect.bottom > 0) {
-    let progress = 1 - rect.top / (wh * 0.75)
-    progress = Math.max(0, Math.min(1, progress))
-    textEl.value.style.backgroundPosition = `${(1 - progress) * 100}% 0`
-  }
-}
-
-onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
 </script>

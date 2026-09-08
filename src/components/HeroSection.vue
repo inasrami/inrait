@@ -1,13 +1,6 @@
 <template>
   <section class="relative flex flex-col items-center justify-center min-h-screen overflow-hidden grid-bg noise" style="padding-top: 80px;">
 
-    <div class="hero-glow" />
-
-    <div
-      class="absolute left-0 right-0"
-      style="top: 38%; height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(164,224,75,0.15) 30%, rgba(164,224,75,0.15) 70%, transparent 100%);"
-    />
-
     <div class="relative z-10 text-center px-6 max-w-[1000px] mx-auto w-full">
 
       <!-- Label -->
@@ -88,8 +81,6 @@ const { t, isBG } = useLanguage()
 const words = computed_words()
 
 function computed_words() {
-  // Returns reactive words based on language — called once, words don't need to be reactive
-  // since the effect restarts on language change via watcher in onMounted
   return ['ENGINEERING', 'DEVELOPMENT', 'DESIGN']
 }
 
@@ -101,9 +92,9 @@ function startTypewriter() {
   let wordIndex   = 0
   let charIndex   = 0
   let deleting    = false
-  const PAUSE     = 2200   // ms to hold full word
-  const TYPE_SPD  = 80     // ms per character typed
-  const DEL_SPD   = 40     // ms per character deleted
+  const PAUSE     = 2200
+  const TYPE_SPD  = 80
+  const DEL_SPD   = 40
 
   function tick() {
     const word    = words[wordIndex]
@@ -134,7 +125,6 @@ function startTypewriter() {
     }
   }
 
-  // Seed with first word already typed for instant impact
   displayedWord.value = words[0]
   charIndex = words[0].length
   isTyping.value = false
@@ -225,20 +215,16 @@ function scrollToWork() {
 
 // ── Lifecycle ─────────────────────────────────────────────
 onMounted(() => {
-  // Fade-ins
   document.querySelectorAll('.fade-in').forEach((el, i) => {
     setTimeout(() => el.classList.add('is-visible'), 100 + i * 50)
   })
 
-  // Typewriter — start after hero fades in
   setTimeout(startTypewriter, 800)
 
-  // Count-ups
   heroCountUp(() => projectsEl, 5,   '',  1400, v => { projectsCount.value = v })
   heroCountUp(() => yearsEl,    2,   '+', 1200, v => { yearsCount.value    = v })
   heroCountUp(() => codeEl,     100, '%', 1800, v => { codeCount.value     = v })
 
-  // Magnetic
   setTimeout(() => {
     applyMagnetic(magPrimary.value,   0.32)
     applyMagnetic(magSecondary.value, 0.28)
@@ -277,10 +263,10 @@ onUnmounted(() => {
   }
 }
 
-/* Typewriter */
 .typewriter-line {
   min-height: 1.05em;
   display: block;
+  font-size: clamp(58px, 8vw, 80px);
 }
 
 .typewriter-cursor {
@@ -301,7 +287,6 @@ onUnmounted(() => {
   50%       { opacity: 0; }
 }
 
-/* Magnetic wrapper — needs position for transform */
 .magnetic-wrap {
   display: inline-flex;
   will-change: transform;

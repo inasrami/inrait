@@ -1,8 +1,7 @@
 <template>
   <footer class="relative overflow-hidden" style="background: #000;">
 
-    <!-- Gradient overlay top -->
-    <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(164,224,75,0.2), transparent);" />
+    <div class="absolute top-0 left-0 right-0 h-px" style="background: var(--border);" />
 
     <div class="max-w-[1080px] mx-auto px-6 pt-20 pb-10">
 
@@ -60,7 +59,7 @@
       </div>
 
       <!-- Bottom bar -->
-      <div class="h-px mb-8" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
+      <div class="h-px mb-8" style="background: var(--border);" />
       <div class="flex flex-wrap justify-between items-center gap-4 text-[12px] text-text-dim">
         <p>{{ t('footer.copyright') }}</p>
         <div class="flex items-center gap-4">
@@ -80,7 +79,6 @@ import { RouterLink } from 'vue-router'
 
 const { t } = useLanguage()
 
-// Project titles are proper nouns — kept as-is regardless of language
 const projects = [
   { slug: 'barbers-unity',  title: 'Barbers Unity'  },
   { slug: 'shiftease',      title: 'ShiftEase'       },

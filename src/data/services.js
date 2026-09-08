@@ -17,7 +17,6 @@ const ADDON_IDS = {
   ecommerce:   ['eco-payment',  'eco-inventory', 'eco-reviews',  'eco-analytics', 'eco-discounts'],
   automation:  ['auto-crm',     'auto-invoice',  'auto-lead',    'auto-hosting',  'auto-report'],
   identity:    ['id-guide',     'id-social',     'id-print',     'id-ui',         'id-motion'],
-  photography: ['photo-extra',  'photo-drone',   'photo-video',  'photo-360',     'photo-rush'],
 }
 
 const ADDON_PRICES = {
@@ -26,16 +25,14 @@ const ADDON_PRICES = {
   ecommerce:   [200, 250, 180, 220, 160],
   automation:  [200, 180, 220, 250, 150],
   identity:    [150, 180, 120, 300, 250],
-  photography: [200, 300, 350, 400, 150],
 }
 
 const BASE_PRICES = {
   website:     900,
   booking:     1200,
-  ecommerce:   1500,
+  ecommerce:   2000,
   automation:  600,
   identity:    450,
-  photography: 250,
 }
 
 const HERO_FLAGS = {
@@ -44,7 +41,6 @@ const HERO_FLAGS = {
   ecommerce:   false,
   automation:  true,
   identity:    false,
-  photography: false,
 }
 
 const ICONS = {
@@ -53,10 +49,9 @@ const ICONS = {
   ecommerce:   '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.97 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/>',
   automation:  '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
   identity:    '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
-  photography: '<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>',
 }
 
-const SERVICE_KEYS = ['website', 'booking', 'ecommerce', 'automation', 'identity', 'photography']
+const SERVICE_KEYS = ['website', 'booking', 'ecommerce', 'automation', 'identity']
 
 // ─── Composable ───────────────────────────────────────────────────────────────
 

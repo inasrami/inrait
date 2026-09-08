@@ -1,9 +1,6 @@
 <template>
   <section class="relative px-6 py-32 overflow-hidden">
 
-    <div class="absolute left-0 top-1/2 w-[1px] h-60 -translate-y-1/2"
-      style="background: linear-gradient(to bottom, transparent, var(--accent), transparent);" />
-
     <div class="max-w-[780px] mx-auto">
 
       <div class="mb-4 section-label fade-up">{{ t('faq.label') }}</div>
@@ -139,7 +136,6 @@ function toggle(i) {
   max-width: 640px;
 }
 
-/* Accordion animation */
 .faq-body-enter-active,
 .faq-body-leave-active {
   transition: max-height 0.38s cubic-bezier(0.16,1,0.3,1),

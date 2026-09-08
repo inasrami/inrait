@@ -1,10 +1,6 @@
 <template>
   <section id="about" class="relative px-6 py-32 overflow-hidden">
 
-    <!-- Ambient glow -->
-    <div class="absolute right-0 -translate-y-1/2 pointer-events-none top-1/2"
-      style="width:600px;height:600px;background:radial-gradient(ellipse at right, rgba(164,224,75,0.05) 0%, transparent 70%);" />
-
     <div class="max-w-[1080px] mx-auto relative z-10">
 
       <!-- Header row -->

@@ -1,7 +1,7 @@
 <template>
   <section id="services" class="relative px-6 py-32" style="background: var(--surface);">
-    <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
-    <div class="absolute bottom-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
+    <div class="absolute top-0 left-0 right-0 h-px" style="background: var(--border);" />
+    <div class="absolute bottom-0 left-0 right-0 h-px" style="background: var(--border);" />
 
     <div class="max-w-[1080px] mx-auto">
       <div class="flex flex-wrap items-end justify-between gap-6 mb-16">
@@ -26,13 +26,7 @@
             <span class="service-tag">{{ service.tag }}</span>
           </div>
           <h3 class="font-semibold text-[21px] mb-3" style="letter-spacing:-0.02em;">{{ service.title }}</h3>
-          <p class="text-text-muted text-[14px] leading-relaxed mb-8">{{ service.body }}</p>
-          <ul class="flex flex-col flex-1 gap-2 mb-10">
-            <li v-for="item in service.deliverables" :key="item" class="flex items-start gap-2 text-[13px] text-text-muted">
-              <svg class="flex-shrink-0 mt-[3px]" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              {{ item }}
-            </li>
-          </ul>
+          <p class="text-text-muted text-[14px] leading-relaxed mb-8 flex-1">{{ service.body }}</p>
           <div class="card-footer">
             <div>
               <div class="text-[10px] uppercase tracking-widest text-text-dim mb-1">{{ t('services.from') }}</div>
@@ -46,20 +40,6 @@
         </div>
       </div>
 
-      <div class="more-strip fade-up">
-        <div class="flex items-start gap-3">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span class="text-[13px] text-text-muted leading-relaxed">
-            {{ t('services.alsoOffer') }} <strong class="text-text-main">{{ t('services.alsoOfferItems') }}</strong>
-            {{ t('services.bundle') }} <strong class="text-accent">{{ t('services.bundleOff') }}</strong>
-            {{ t('services.disclaimer') }}
-          </span>
-        </div>
-        <RouterLink to="/services" class="more-link" style="cursor:none;">
-          {{ t('services.buildPackage') }}
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </RouterLink>
-      </div>
     </div>
   </section>
 </template>
@@ -85,7 +65,4 @@ const heroServices = computed(() => SERVICES.value.filter(s => s.hero))
 .card-footer { display:flex; align-items:flex-end; justify-content:space-between; padding-top:20px; border-top:1px solid var(--border); margin-top:auto; }
 .card-cta { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--text-muted); border:1px solid var(--border-strong); border-radius:100px; padding:8px 16px; transition:color 0.2s ease,border-color 0.2s ease; }
 .card-cta:hover { color:var(--accent); border-color:rgba(164,224,75,0.35); }
-.more-strip { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; padding:20px 28px; border-radius:16px; border:1px solid var(--border); background:rgba(255,255,255,0.015); }
-.more-link { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--accent); white-space:nowrap; transition:gap 0.2s ease; }
-.more-link:hover { gap:10px; }
 </style>

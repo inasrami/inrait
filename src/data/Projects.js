@@ -84,6 +84,24 @@ export const projects = [
     featured: false,
     year: '2023',
   },
+
+  {
+    id: 'euroguard',
+    slug: 'euroguard',
+    tag: 'Verification Tool',
+    stack: ['Vanilla JS', 'HTML/CSS', 'Cryptography'],
+    title: 'EuroGuard',
+    tagline: 'Securely verifies Euro banknotes.',
+    description: 'A lightweight, privacy-first web app that validates serial numbers securely on the client side without servers.',
+    challenge: 'With Bulgaria\'s transition to the Euro, there is uncertainty and fear among locals regarding counterfeit banknotes.',
+    solution: 'A lightweight, privacy-first web app that validates serial numbers securely on the client side without servers.',
+    outcome: 'Instantly verifies authenticity mathematically using the official ECB checksum algorithm and maps the banknote to its exact printing facility.',
+    url: 'https://euro-guard.vercel.app',
+    image: '/images/euroguard.png',
+    color: '#60A5FA',
+    featured: false,
+    year: '2024',
+  },
 ]
 
 export function getProject(slug) {

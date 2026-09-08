@@ -2,13 +2,9 @@
   <section class="relative px-6 py-32 overflow-hidden" style="background: var(--surface);">
 
     <div class="absolute top-0 left-0 right-0 h-px"
-      style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
+      style="background: var(--border);" />
     <div class="absolute bottom-0 left-0 right-0 h-px"
-      style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
-
-    <!-- Glow centred on INRAIT column -->
-    <div class="absolute pointer-events-none"
-      style="top:50%; left:50%; transform:translate(-50%,-50%); width:500px; height:500px; background:radial-gradient(ellipse at center, rgba(164,224,75,0.06) 0%, transparent 70%);" />
+      style="background: var(--border);" />
 
     <div class="max-w-[860px] mx-auto relative z-10">
 
@@ -17,10 +13,6 @@
         style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
         {{ t('comparison.title') }}
       </h2>
-      <p class="text-text-muted text-[16px] mb-16 max-w-lg fade-up" style="transition-delay:0.1s; font-weight:300;">
-        {{ t('comparison.sub') }}
-      </p>
-
       <!-- Table -->
       <div class="comp-table fade-up" style="transition-delay:0.15s;">
 
@@ -43,7 +35,6 @@
         >
           <div class="comp-feature-cell">{{ row.feature }}</div>
 
-          <!-- INRAIT col — always positive highlight -->
           <div class="comp-col comp-col--inrait">
             <span v-if="row.inrait === true" class="cell-yes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -55,7 +46,6 @@
             <span v-else class="cell-price">{{ row.inrait }}</span>
           </div>
 
-          <!-- Freelancer col -->
           <div class="comp-col">
             <span v-if="row.freelancer === true" class="cell-neutral-yes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -65,7 +55,6 @@
             <span v-else class="cell-price-neutral">{{ row.freelancer }}</span>
           </div>
 
-          <!-- Agency col -->
           <div class="comp-col comp-col--last">
             <span v-if="row.agency === true" class="cell-neutral-yes">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -122,7 +111,6 @@ const rows = computed(() => t('comparison.rows'))
   background: rgba(255,255,255,0.015);
 }
 
-/* Header */
 .comp-header {
   background: rgba(255,255,255,0.025);
   border-bottom: 1px solid var(--border-strong);
@@ -149,7 +137,6 @@ const rows = computed(() => t('comparison.rows'))
   color: var(--text-muted);
 }
 
-/* INRAIT column gets accent highlight */
 .comp-col--inrait {
   background: rgba(164,224,75,0.05);
   border-left: 1px solid rgba(164,224,75,0.18);
@@ -167,7 +154,6 @@ const rows = computed(() => t('comparison.rows'))
   color: var(--text);
 }
 
-/* Cell states */
 .cell-yes {
   display: inline-flex;
   align-items: center;
@@ -213,7 +199,6 @@ const rows = computed(() => t('comparison.rows'))
   color: var(--text-muted);
 }
 
-/* Mobile — stack columns */
 @media (max-width: 640px) {
   .comp-row {
     grid-template-columns: 1fr 100px 90px 90px;
