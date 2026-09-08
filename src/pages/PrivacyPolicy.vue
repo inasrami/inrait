@@ -82,7 +82,7 @@
             {{ s.contactSection.body }}<br/>
             <strong>INRAIT Web Engineering</strong><br/>
             Sofia, Bulgaria<br/>
-            <a href="mailto:inkorami27@gmail.com">inkorami27@gmail.com</a><br/>
+            <a href="mailto:inrait@hotmail.com">inrait@hotmail.com</a><br/>
             <a href="tel:+359876566094">+359 876 566 094</a>
           </p>
         </section>

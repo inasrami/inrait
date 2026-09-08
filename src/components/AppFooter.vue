@@ -49,8 +49,8 @@
             <h4 class="text-[11px] font-semibold uppercase tracking-widest text-text-dim mb-4">{{ t('footer.colConnect') }}</h4>
             <div class="flex flex-col gap-3">
               <a href="https://linkedin.com/in/inasrami" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
-              <a href="https://github.com/inasrami" target="_blank" rel="noopener" class="footer-link">GitHub</a>
-              <a href="mailto:inkorami27@gmail.com" class="footer-link">Email</a>
+              <!-- <a href="https://github.com/inasrami" target="_blank" rel="noopener" class="footer-link">GitHub</a> -->
+              <a href="mailto:inrait@hotmail.com" class="footer-link">Email</a>
               <a href="tel:0876566094" class="footer-link">+359 876 566 094</a>
             </div>
           </div>

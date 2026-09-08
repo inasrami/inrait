@@ -21,5 +21,5 @@ import SiteLoader     from './components/SiteLoader.vue'
 import AppNav         from './components/AppNav.vue'
 import AppFooter      from './components/AppFooter.vue'
 import CookieBanner   from './components/CookieBanner.vue'
-import WhatsAppButton from './components/WhatsAppButton.vue'
+import WhatsAppButton from './components/WhatsappButton.vue'
 </script>

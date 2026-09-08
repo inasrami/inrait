@@ -19,7 +19,7 @@
         <RouterLink to="/contact" class="btn-primary text-[16px] px-10 py-5">
           {{ t('cta.start') }}
         </RouterLink>
-        <a href="mailto:inkorami27@gmail.com" class="btn-outline text-[16px] px-10 py-5">
+        <a href="mailto:inrait@hotmail.com" class="btn-outline text-[16px] px-10 py-5">
           {{ t('cta.email') }}
         </a>
       </div>
