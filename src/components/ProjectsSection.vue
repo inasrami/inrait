@@ -111,7 +111,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { projects } from '../data/projects.js'
+import { projects } from '../data/Projects.js'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useLanguage } from '../composables/useLanguage.js'
 
