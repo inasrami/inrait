@@ -43,6 +43,14 @@ const HERO_FLAGS = {
   identity:    false,
 }
 
+const ICONS = {
+  website:     '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+  booking:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  ecommerce:   '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.97 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/>',
+  automation:  '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  identity:    '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
+}
+
 
 const SERVICE_KEYS = ['website', 'booking', 'ecommerce', 'automation', 'identity']
 
