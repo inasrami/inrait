@@ -55,7 +55,7 @@
           <h2>{{ s.rights.heading }}</h2>
           <p>{{ s.rights.intro }}</p>
           <ul>
-            <li v-for="item in s.rights.items" :key="item"><strong>{{ item.split(' — ')[0] }}</strong> — {{ item.includes(' — ') ? item.split(' — ')[1] : '' }}</li>
+            <li v-for="item in s.rights.items" :key="item"><strong>{{ item.split(' - ')[0] }}</strong> - {{ item.includes(' - ') ? item.split(' - ')[1] : '' }}</li>
           </ul>
           <p>{{ s.rights.contact }}</p>
           <p>{{ s.rights.complaint }}</p>
@@ -111,7 +111,7 @@ const s = computed(() => t('privacy.sections'))
 
 useSeo({
   title:       'Privacy Policy',
-  description: 'INRAIT privacy policy — how we collect, use, and protect your personal data under GDPR and Bulgarian law.',
+  description: 'INRAIT privacy policy - how we collect, use, and protect your personal data under GDPR and Bulgarian law.',
   canonical:   '/privacy',
 })
 useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Privacy Policy', url: '/privacy' }]))

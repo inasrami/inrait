@@ -91,7 +91,7 @@ export default {
     automation: {
       title: 'Workflow Automation',
       tag:   'Save Time',
-      body:  'n8n automation pipelines that eliminate repetitive work — lead capture, CRM, invoicing, notifications.',
+      body:  'n8n automation pipelines that eliminate repetitive work - lead capture, CRM, invoicing, notifications.',
       deliverables: [],
       addons: [
         { label: 'CRM integration (HubSpot / Pipedrive)',  price: 200 },
@@ -139,7 +139,7 @@ export default {
     alsoOfferItems: 'E-commerce, Visual Identity & Photography.',
     bundle:         'Combine services for up to',
     bundleOff:      '15% off.',
-    disclaimer:     'All prices are estimates — final cost is agreed after a free consultation.',
+    disclaimer:     'All prices are estimates - final cost is agreed after a free consultation.',
     buildPackage:   'Build your package',
     caseStudy:      'Case study',
   },
@@ -186,7 +186,7 @@ export default {
     values: [
       { title: 'Direct communication', body: 'You talk to the person building it. No middlemen.' },
       { title: 'Deadline-driven',      body: 'Agreed timelines are commitments.' },
-      { title: 'Full ownership',       body: 'Clean code. You own everything — no lock-in.' },
+      { title: 'Full ownership',       body: 'Clean code. You own everything - no lock-in.' },
       { title: 'Outcome-focused',      body: "We build what generates results, not what looks impressive." },
     ],
   },
@@ -194,7 +194,7 @@ export default {
   techSpecs: {
     label: 'Under the Hood',
     title: 'THE STACK',
-    sub:   'The tools we use are chosen for performance, maintainability, and longevity — not trends.',
+    sub:   'The tools we use are chosen for performance, maintainability, and longevity - not trends.',
     categories: ['Frontend & Frameworks', 'Backend & Data', 'Tools & Workflow', 'Visual & Creative'],
   },
 
@@ -280,7 +280,7 @@ export default {
     locationLabel:'Location',
     locationVal:  'Sofia, Bulgaria · Remote-Ready',
     availTitle:   'Currently available',
-    availBody:    'Open for new projects. Every enquiry gets a personal response — usually within 24 hours.',
+    availBody:    'Open for new projects. Every enquiry gets a personal response - usually within 24 hours.',
     setupNote:    'To activate email sending, replace',
     setupLink:    'emailjs.com',
     types: [
@@ -304,15 +304,15 @@ export default {
   servicesPage: {
     label:            'What We Build',
     title:            'SERVICES',
-    sub:              'Select the services you need. Combine them to unlock automatic bundle discounts — the more you build together, the better the deal.',
+    sub:              'Select the services you need. Combine them to unlock automatic bundle discounts - the more you build together, the better the deal.',
     disclaimerStrong: 'All prices shown are starting estimates only.',
-    disclaimerBody:   'Final pricing is determined after a free consultation — every project is scoped individually based on complexity, timeline, and requirements. It can be lower or higher. No surprises.',
+    disclaimerBody:   'Final pricing is determined after a free consultation - every project is scoped individually based on complexity, timeline, and requirements. It can be lower or higher. No surprises.',
     bannerLabel:      'applied to your estimate',
     bannerMax:        'Maximum bundle discount unlocked.',
     bannerNext:       'Add one more service to unlock 15% off.',
     basePrice:        'Estimate from',
     addons:           'Add-ons',
-    addonsTitle:      'Optional add-ons — click to include in estimate',
+    addonsTitle:      'Optional add-ons - click to include in estimate',
     added:            'Added',
     estimate:         'estimate',
     getQuote:         'Get a quote',
@@ -320,7 +320,7 @@ export default {
     bookCall:         'Book a free call',
     visitSite:        'Visit site',
     selectServices:   'Select the services you need.',
-    combineServices:  'Combine them to unlock automatic bundle discounts — the more you build together, the better the deal.',
+    combineServices:  'Combine them to unlock automatic bundle discounts - the more you build together, the better the deal.',
   },
 
   privacy: {
@@ -336,7 +336,7 @@ export default {
       legal:        { heading: '4. Legal Basis for Processing (GDPR)', intro: 'We process your personal data under the following legal bases as defined by the EU General Data Protection Regulation (GDPR):', items: ['Legitimate interests (Art. 6(1)(f)): responding to business inquiries you initiate.', 'Contractual necessity (Art. 6(1)(b)): fulfilling a service agreement if we enter into one.', 'Consent (Art. 6(1)(a)): where you have explicitly opted in (e.g. cookie consent).'] },
       retention:    { heading: '5. Data Retention', body: 'We retain inquiry data for up to 2 years after last contact, or for the duration of any active business relationship, whichever is longer. After this period, data is securely deleted. You may request deletion at any time (see Section 7).' },
       thirdParty:   { heading: '6. Third-Party Services', emailjs: 'Our contact form uses EmailJS to deliver your message to our inbox. EmailJS processes form submissions on their infrastructure. You can review their privacy policy at emailjs.com/legal/privacy-policy.', hosting: 'Our website is hosted on infrastructure that may log standard server access data (IP address, browser type, timestamp) for security and operational purposes. These logs are not used for profiling and are retained for a maximum of 30 days.' },
-      rights:       { heading: '7. Your Rights Under GDPR', intro: 'As a data subject in the EU/EEA, you have the right to:', items: ['Access — request a copy of the personal data we hold about you', 'Rectification — request correction of inaccurate data', 'Erasure — request deletion of your data ("right to be forgotten")', 'Restriction — request that we limit how we process your data', 'Portability — receive your data in a structured, machine-readable format', 'Object — object to processing based on legitimate interests'], contact: 'To exercise any of these rights, email us at inrait@hotmail.com. We will respond within 30 days.', complaint: 'You also have the right to lodge a complaint with the Bulgarian Commission for Personal Data Protection (CPDP): cpdp.bg.' },
+      rights:       { heading: '7. Your Rights Under GDPR', intro: 'As a data subject in the EU/EEA, you have the right to:', items: ['Access - request a copy of the personal data we hold about you', 'Rectification - request correction of inaccurate data', 'Erasure - request deletion of your data ("right to be forgotten")', 'Restriction - request that we limit how we process your data', 'Portability - receive your data in a structured, machine-readable format', 'Object - object to processing based on legitimate interests'], contact: 'To exercise any of these rights, email us at inrait@hotmail.com. We will respond within 30 days.', complaint: 'You also have the right to lodge a complaint with the Bulgarian Commission for Personal Data Protection (CPDP): cpdp.bg.' },
       cookies:      { heading: '8. Cookies', body: 'This website uses only essential cookies necessary for the site to function. We do not use advertising cookies, social media tracking cookies, or third-party analytics cookies without your consent. A cookie consent banner is presented on your first visit where applicable.' },
       children:     { heading: "9. Children's Privacy", body: 'Our services are directed at businesses and adults. We do not knowingly collect personal data from individuals under the age of 16.' },
       changes:      { heading: '10. Changes to This Policy', body: 'We may update this Privacy Policy from time to time. When we do, we will update the "last updated" date at the top of this page. Continued use of the Site after changes constitutes acceptance of the updated policy.' },
@@ -428,13 +428,13 @@ export default {
       },
     ],
     ctaTitle: 'Still have questions?',
-    ctaSub:   'We respond personally — usually the same day.',
+    ctaSub:   'We respond personally - usually the same day.',
   },
 
   comparison: {
     label:    'Why INRAIT?',
     title:    'HOW WE COMPARE',
-    sub:      'Direct work with the person building the site — without agency overhead.',
+    sub:      'Direct work with the person building the site - without agency overhead.',
     col1:     'INRAIT',
     col2:     'Freelancer',
     col3:     'Agency',

@@ -184,7 +184,7 @@ useFadeUp()
 const { t } = useLanguage()
 useSeo({
   title:       'Contact',
-  description: 'Start a project with INRAIT. Get in touch for a free consultation — we respond within 24 hours.',
+  description: 'Start a project with INRAIT. Get in touch for a free consultation - we respond within 24 hours.',
   canonical:   '/contact',
 })
 useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Contact', url: '/contact' }]))

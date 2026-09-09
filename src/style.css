@@ -61,7 +61,7 @@
   border-bottom: 1px solid var(--border);
 }
 
-/* ─── Text Styles (flat — no gradients) ───────────────── */
+/* ─── Text Styles (flat - no gradients) ───────────────── */
 .text-gradient {
   color: var(--text);
 }

@@ -1,5 +1,5 @@
 /**
- * useSeo — per-page SEO: title, meta description, OG, Twitter, canonical, hreflang.
+ * useSeo - per-page SEO: title, meta description, OG, Twitter, canonical, hreflang.
  *
  * Usage:
  *   useSeo({
@@ -13,7 +13,7 @@
 const SITE_NAME   = 'INRAIT'
 const SITE_URL    = 'https://inrait.com'         // ← update when domain confirmed
 const DEFAULT_OG  = `${SITE_URL}/images/og-cover.jpg`
-const DEFAULT_DESC = 'Custom websites, booking systems, workflow automation and visual identity — built by INRAIT in Sofia, Bulgaria.'
+const DEFAULT_DESC = 'Custom websites, booking systems, workflow automation and visual identity - built by INRAIT in Sofia, Bulgaria.'
 
 export function useSeo({ title, description, canonical, image } = {}) {
   const fullTitle = title
@@ -32,7 +32,7 @@ export function useSeo({ title, description, canonical, image } = {}) {
   // Canonical
   if (canon) setLink('canonical', canon)
 
-  // hreflang — EN default + BG variant (once BG is live, update /bg/ path)
+  // hreflang - EN default + BG variant (once BG is live, update /bg/ path)
   setHreflang('en',        canon || SITE_URL)
   setHreflang('x-default', canon || SITE_URL)
   // setHreflang('bg', canon ? canon.replace(SITE_URL, `${SITE_URL}/bg`) : `${SITE_URL}/bg/`)

@@ -1,5 +1,5 @@
 /**
- * useMagnetic — makes an element subtly pull toward the cursor on hover.
+ * useMagnetic - makes an element subtly pull toward the cursor on hover.
  *
  * Usage:
  *   const { magnetRef } = useMagnetic({ strength: 0.35 })

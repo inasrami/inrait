@@ -1,5 +1,5 @@
 /**
- * INRAIT services — fully internationalised.
+ * INRAIT services - fully internationalised.
  *
  * Usage inside a component:
  *   import { useServices, getBundleDiscount } from '../data/services.js'
@@ -20,19 +20,19 @@ const ADDON_IDS = {
 }
 
 const ADDON_PRICES = {
-  website:     [199, 149, 179, 99, 99],
-  booking:     [249, 199, 149, 199, 149],
-  ecommerce:   [199, 249, 179, 199, 99],
-  automation:  [199, 179, 219, 249, 149],
-  identity:    [149, 199, 149, 499, 249],
+  website:     [199.99, 149.99, 179.99, 249.99, 299.99],
+  booking:     [249.99, 199.99, 149.99, 349.99, 179.99],
+  ecommerce:   [199.99, 249.99, 179.99, 219.99, 159.99],
+  automation:  [199.99, 179.99, 219.99, 249.99, 149.99],
+  identity:    [149.99, 179.99, 119.99, 299.99, 249.99],
 }
 
 const BASE_PRICES = {
-  website:     899,
-  booking:     1199,
-  ecommerce:   1799,
-  automation:  599,
-  identity:    499,
+  website:     899.99,
+  booking:     1199.99,
+  ecommerce:   1999.99,
+  automation:  599.99,
+  identity:    449.99,
 }
 
 const HERO_FLAGS = {

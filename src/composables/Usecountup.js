@@ -1,5 +1,5 @@
 /**
- * useCountUp — animates a number from 0 to `target` when the element
+ * useCountUp - animates a number from 0 to `target` when the element
  * scrolls into view. Returns a reactive `display` string.
  *
  * Usage:

@@ -24,7 +24,7 @@
           <div class="text-text-muted text-[13px] uppercase tracking-widest">{{ t('stats.performance') }}</div>
         </div>
 
-        <!-- ∞ rendered as SVG — no count-up needed -->
+        <!-- ∞ rendered as SVG - no count-up needed -->
         <div class="text-center fade-up" style="transition-delay: 0.3s">
           <div class="flex items-center justify-center mb-2 stat-number" style="height:1em;">
             <svg viewBox="14 -2 82 44" fill="none" xmlns="http://www.w3.org/2000/svg"

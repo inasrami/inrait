@@ -7,7 +7,7 @@ export const posts = [
     date: '2025-03-10',
     en: {
       title: 'Why Hotels Lose 30% of Bookings to Third-Party Platforms (And How to Take Them Back)',
-      excerpt: 'Booking.com and Airbnb charge 15–25% commission on every reservation. Most small hotels don\'t realise how much this costs them annually — or that a custom booking system pays for itself within months.',
+      excerpt: 'Booking.com and Airbnb charge 15–25% commission on every reservation. Most small hotels don\'t realise how much this costs them annually - or that a custom booking system pays for itself within months.',
       content: `
 Every hotel owner knows the feeling: you check the booking dashboard and another reservation came through Booking.com. Great. But after their commission, you've just handed over €30–50 on a €200 room.
 
@@ -41,14 +41,14 @@ The key is the experience: fast loading, mobile-first design, transparent pricin
 
 **What to do next**
 
-If you're running a hotel, guesthouse, or B&B in Bulgaria and you're paying 15%+ commission on most of your bookings, the maths are simple. A custom system is not a luxury — it's an investment with a calculable return.
+If you're running a hotel, guesthouse, or B&B in Bulgaria and you're paying 15%+ commission on most of your bookings, the maths are simple. A custom system is not a luxury - it's an investment with a calculable return.
 
 [Get in touch](/contact) to discuss what a direct booking system would look like for your property.
       `.trim(),
     },
     bg: {
       title: 'Защо хотелите губят 30% от резервациите си към платформи на трети страни (и как да ги върнат)',
-      excerpt: 'Booking.com и Airbnb вземат 15–25% комисионна от всяка резервация. Повечето малки хотели не осъзнават колко ги струва това годишно — или че собствена система за резервации се изплаща за месеци.',
+      excerpt: 'Booking.com и Airbnb вземат 15–25% комисионна от всяка резервация. Повечето малки хотели не осъзнават колко ги струва това годишно - или че собствена система за резервации се изплаща за месеци.',
       content: `
 Всеки хотелиер познава това усещане: проверяваш таблото с резервации и виждаш нова поръчка от Booking.com. Чудесно. Но след тяхната комисионна, току-що си предал €30–50 от стая за €200.
 
@@ -74,7 +74,7 @@ If you're running a hotel, guesthouse, or B&B in Bulgaria and you're paying 15%+
 
 **Следващата стъпка**
 
-Ако управляваш хотел, гостилница или B&B в България и плащаш 15%+ комисионна, математиката е проста. Собствената система не е лукс — тя е инвестиция с измерима възвращаемост.
+Ако управляваш хотел, гостилница или B&B в България и плащаш 15%+ комисионна, математиката е проста. Собствената система не е лукс - тя е инвестиция с измерима възвращаемост.
 
 [Свържи се с нас](/contact) за безплатна консултация.
       `.trim(),
@@ -88,7 +88,7 @@ If you're running a hotel, guesthouse, or B&B in Bulgaria and you're paying 15%+
     date: '2025-02-18',
     en: {
       title: '5 n8n Automations That Save Small Businesses 10+ Hours a Week',
-      excerpt: 'Workflow automation isn\'t just for enterprise. These five n8n pipelines are built specifically for small service businesses — and each one eliminates a specific category of repetitive work.',
+      excerpt: 'Workflow automation isn\'t just for enterprise. These five n8n pipelines are built specifically for small service businesses - and each one eliminates a specific category of repetitive work.',
       content: `
 Most small business owners are doing the same manual tasks every single week. Sending follow-up emails. Copying data between spreadsheets. Manually generating invoices. Creating tasks from form submissions.
 
@@ -100,7 +100,7 @@ Here are five automations that reliably save time for the businesses we work wit
 
 **1. Lead capture → CRM entry → follow-up email**
 
-When someone fills in your contact form, they expect a response. Most businesses respond within hours or days — by which point the lead has moved on.
+When someone fills in your contact form, they expect a response. Most businesses respond within hours or days - by which point the lead has moved on.
 
 An n8n workflow can: capture the form submission, create a contact in your CRM (HubSpot, Pipedrive, or a simple Google Sheet), and send a personalised follow-up email within 60 seconds. No manual work required.
 
@@ -139,7 +139,7 @@ These aren't theoretical workflows. We've built and deployed all five for client
     },
     bg: {
       title: '5 n8n автоматизации, които спестяват на малкия бизнес 10+ часа седмично',
-      excerpt: 'Автоматизацията на работни процеси не е само за големи компании. Тези пет n8n pipeline-а са създадени специално за малки бизнеси с услуги — и всеки елиминира конкретна категория повтаряща се работа.',
+      excerpt: 'Автоматизацията на работни процеси не е само за големи компании. Тези пет n8n pipeline-а са създадени специално за малки бизнеси с услуги - и всеки елиминира конкретна категория повтаряща се работа.',
       content: `
 Повечето собственици на малък бизнес правят едни и същи ръчни задачи всяка седмица. Изпращат последващи имейли. Копират данни между таблици. Ръчно генерират фактури.
 
@@ -183,7 +183,7 @@ These aren't theoretical workflows. We've built and deployed all five for client
     date: '2025-01-22',
     en: {
       title: 'Hiring a Web Design Studio in Sofia: What to Expect, What to Ask, and What to Avoid',
-      excerpt: 'The Sofia web design market ranges from €300 template jobs to €20,000 agency projects. Neither extreme is right for most businesses. Here\'s how to find the right fit — and the right questions to ask.',
+      excerpt: 'The Sofia web design market ranges from €300 template jobs to €20,000 agency projects. Neither extreme is right for most businesses. Here\'s how to find the right fit - and the right questions to ask.',
       content: `
 If you're a business in Sofia looking for a new website, you've probably already discovered that pricing is all over the place.
 
@@ -214,9 +214,9 @@ Website pricing in Sofia falls into roughly four tiers:
 **Red flags to avoid**
 
 - No portfolio or only mockups (no live URLs)
-- Unclear scope — "website" with no page count, no CMS decision, no mobile plan
+- Unclear scope - "website" with no page count, no CMS decision, no mobile plan
 - No contract or just a WhatsApp agreement
-- "We'll add SEO later" — SEO is structural, it must be built in from the start
+- "We'll add SEO later" - SEO is structural, it must be built in from the start
 - Unusually cheap quotes that don't explain what's included
 
 **What a fair engagement looks like**
@@ -225,7 +225,7 @@ A good studio should give you a written scope document before any money changes 
 
 If you're a small business in Sofia needing a professional website, you should expect to pay €900–2,500 for a custom-built site that's fast, mobile-first, and SEO-ready.
 
-If you're comparing quotes, [send them to us](/contact) — we're happy to explain what's included in ours.
+If you're comparing quotes, [send them to us](/contact) - we're happy to explain what's included in ours.
       `.trim(),
     },
     bg: {
@@ -258,11 +258,11 @@ If you're comparing quotes, [send them to us](/contact) — we're happy to expla
 **Червени флагове**
 
 - Няма портфолио или само мокъпи (без живи URL адреси)
-- Неясен обхват — "уебсайт" без брой страници, без решение за CMS
+- Неясен обхват - "уебсайт" без брой страници, без решение за CMS
 - Без договор или само WhatsApp споразумение
-- "Ще добавим SEO по-късно" — SEO е структурно, трябва да се изгради от самото начало
+- "Ще добавим SEO по-късно" - SEO е структурно, трябва да се изгради от самото начало
 
-Ако сравняваш оферти, [изпрати ни ги](/contact) — с радост ще обясним какво включва нашата.
+Ако сравняваш оферти, [изпрати ни ги](/contact) - с радост ще обясним какво включва нашата.
       `.trim(),
     },
   },

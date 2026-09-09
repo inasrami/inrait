@@ -1,7 +1,7 @@
 /**
- * useJsonLd — injects JSON-LD structured data into <head>.
+ * useJsonLd - injects JSON-LD structured data into <head>.
  * Automatically removes the script when the component unmounts
- * (important for SPA navigation — stale schemas must not persist).
+ * (important for SPA navigation - stale schemas must not persist).
  *
  * Usage:
  *   useJsonLd(schemaObject)
@@ -55,7 +55,7 @@ export function localBusinessSchema() {
     url: SITE_URL,
     logo: `${SITE_URL}/images/WhiteLogo.webp`,
     image: `${SITE_URL}/images/og-cover.jpg`,
-    description: 'Custom websites, booking systems, workflow automation (n8n), e-commerce and visual identity — built by INRAIT in Sofia, Bulgaria.',
+    description: 'Custom websites, booking systems, workflow automation (n8n), e-commerce and visual identity - built by INRAIT in Sofia, Bulgaria.',
     telephone: '+359876566094',
     email: 'inrait@hotmail.com',
     foundingDate: '2024',
@@ -162,7 +162,7 @@ export function serviceListSchema(services) {
             '@type': 'UnitPriceSpecification',
             price: svc.basePrice,
             priceCurrency: 'EUR',
-            description: 'Starting price — final cost agreed after consultation',
+            description: 'Starting price - final cost agreed after consultation',
           },
         },
       },

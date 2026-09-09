@@ -23,7 +23,7 @@
       </div>
     </section>
 
-    <!-- Bundle discount banner — shown when 2+ services selected -->
+    <!-- Bundle discount banner - shown when 2+ services selected -->
     <Transition name="banner">
       <div v-if="currentDiscount" class="discount-banner">
         <div class="max-w-[1080px] mx-auto px-6 flex items-center justify-between flex-wrap gap-4">
@@ -65,7 +65,7 @@
             :style="`animation-delay: ${i * 0.07}s`"
           >
 
-            <!-- Card header — click toggles service selection -->
+            <!-- Card header - click toggles service selection -->
             <div class="card-header" @click="toggleService(service.id)" data-cursor>
 
               <Transition name="badge">
@@ -116,7 +116,7 @@
               </ul>
             </div>
 
-            <!-- Price row + add-ons toggle — @click.stop prevents header toggle -->
+            <!-- Price row + add-ons toggle - @click.stop prevents header toggle -->
             <div class="price-row" @click.stop>
               <div>
                 <div class="price-label-sm">{{ t('servicesPage.basePrice') }}</div>
@@ -245,7 +245,7 @@ const { SERVICES } = useServices()
 
 useSeo({
   title:       'Services & Pricing',
-  description: 'Web engineering, booking systems, e-commerce, automation, design and photography — view all INRAIT services.',
+  description: 'Web engineering, booking systems, e-commerce, automation, design and photography - view all INRAIT services.',
   canonical:   '/services',
 })
 useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]))
@@ -299,7 +299,7 @@ const subtotal = computed(() => {
   return total
 })
 
-// currentDiscount is null when < 2 services selected — banner only shows when not null
+// currentDiscount is null when < 2 services selected - banner only shows when not null
 const currentDiscount = computed(() => getBundleDiscount(selectedServices.value.length))
 
 const discountedTotal = computed(() => {
