@@ -86,13 +86,7 @@
               </template>
             </button>
 
-            <!-- EmailJS setup note -->
-            <p class="text-[11px] text-text-dim text-center leading-relaxed">
-              {{ t('contact.setupNote') }} <code class="px-1 rounded bg-white/5">YOUR_SERVICE_ID</code>,
-              <code class="px-1 rounded bg-white/5">YOUR_TEMPLATE_ID</code>,
-              <code class="px-1 rounded bg-white/5">YOUR_PUBLIC_KEY</code> in <code class="px-1 rounded bg-white/5">Contact.vue</code>.
-              <a href="https://emailjs.com" target="_blank" rel="noopener" class="text-accent underline-offset-2 hover:underline" style="cursor: pointer;">{{ t('contact.setupLink') }}</a>
-            </p>
+          
 
           </form>
         </div>
@@ -195,9 +189,10 @@ const errorMsg  = ref('')
 
 const form = reactive({ name: '', email: '', type: '', budget: '', message: '' })
 
-const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID'
-const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY'
+// Access the environment variables here
+const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
 async function handleSubmit() {
   errorMsg.value = ''
