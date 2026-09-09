@@ -136,7 +136,7 @@
           <div class="p-8 card-glass">
             <h3 class="font-semibold text-[18px] mb-6">{{ t('contact.onlineTitle') }}</h3>
             <div class="flex flex-col gap-4">
-              <a href="https://linkedin.com/in/inasrami" target="_blank" rel="noopener" class="contact-item" data-cursor>
+              <a href="https://www.linkedin.com/company/135268437" target="_blank" rel="noopener" class="contact-item" data-cursor>
                 <div class="contact-icon">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
                 </div>
