@@ -57,11 +57,11 @@ const heroServices = computed(() => SERVICES.value.filter(s => s.hero))
 </script>
 
 <style scoped>
-.hero-card { display:flex; flex-direction:column; padding:32px; border-radius:24px; background:rgba(255,255,255,0.02); border:1px solid var(--border); transition:border-color 0.3s ease,transform 0.3s ease,box-shadow 0.3s ease; cursor: pointer; }
-.hero-card:hover { border-color:rgba(164,224,75,0.2); transform:translateY(-5px); box-shadow:0 24px 60px rgba(0,0,0,0.5); }
-.card-icon-wrap { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:rgba(164,224,75,0.07); border:1px solid rgba(164,224,75,0.18); }
+.hero-card { display:flex; flex-direction:column; padding:28px 0 24px; border-top:1px solid var(--border-strong); border-bottom:1px solid var(--border); transition:border-color 0.3s ease,transform 0.3s ease; cursor:pointer; }
+.hero-card:hover { border-color:var(--accent); transform:translateY(-5px); }
+.card-icon-wrap { width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-left:2px solid var(--accent); }
 .service-tag { font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); background:rgba(164,224,75,0.08); border:1px solid rgba(164,224,75,0.18); border-radius:100px; padding:4px 10px; }
 .card-footer { display:flex; align-items:flex-end; justify-content:space-between; padding-top:20px; border-top:1px solid var(--border); margin-top:auto; }
-.card-cta { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--text-muted); border:1px solid var(--border-strong); border-radius:100px; padding:8px 16px; transition:color 0.2s ease,border-color 0.2s ease; }
-.card-cta:hover { color:var(--accent); border-color:rgba(164,224,75,0.35); }
+.card-cta { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--text-muted); padding:8px 0; transition:color 0.2s ease,transform 0.2s ease; }
+.card-cta:hover { color:var(--accent); transform:translateX(4px); }
 </style>

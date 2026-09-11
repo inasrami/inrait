@@ -168,18 +168,17 @@ function formatDate(dateString) {
 .post-card {
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.018);
+  border-top: 2px solid var(--accent);
+  border-bottom: 1px solid var(--border);
+  background: transparent;
   overflow: hidden;
-  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.3s ease, transform 0.3s ease;
   cursor: pointer;
 }
 
 .post-card:hover {
-  border-color: rgba(164,224,75,0.22);
+  border-color: var(--text);
   transform: translateY(-5px);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.45);
 }
 
 .post-img-wrap {
@@ -230,7 +229,7 @@ function formatDate(dateString) {
 .post-content {
   display: flex;
   flex-direction: column;
-  padding: 24px 24px 20px;
+  padding: 24px 0 20px;
   flex: 1;
 }
 

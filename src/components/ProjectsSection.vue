@@ -215,14 +215,13 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
 
 .carousel-card {
   flex-shrink: 0; width: 420px; scroll-snap-align: start;
-  background: var(--surface-2); border: 1px solid var(--border); border-radius: 24px;
-  overflow: hidden; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.3s ease;
+  background: transparent; border-top: 2px solid var(--accent);
+  overflow: hidden; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease;
   text-decoration: none; color: inherit;
 }
 .carousel-card:hover:not(.is-dragging) {
   transform: translateY(-6px);
-  box-shadow: 0 32px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(164,224,75,0.15);
-  border-color: rgba(164,224,75,0.2);
+  border-color: var(--text);
 }
 
 .carousel-img-wrap { position: relative; height: 260px; overflow: hidden; background: var(--surface-3); }
@@ -230,7 +229,7 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
 .carousel-card:hover:not(.is-dragging) .carousel-img-wrap img { transform: scale(1.05); }
 .carousel-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%); }
 .carousel-index { position: absolute; bottom: 14px; right: 18px; font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; letter-spacing: 0.02em; color: rgba(255,255,255,0.12); pointer-events: none; }
-.carousel-info { padding: 24px 28px 28px; }
+.carousel-info { padding: 24px 0 28px; border-bottom: 1px solid var(--border); }
 
 .carousel-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
 .carousel-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(164,224,75,0.06); }

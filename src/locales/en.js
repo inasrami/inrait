@@ -114,6 +114,19 @@ export default {
         { label: 'Animated logo / intro (After Effects)',   price: 250 },
       ],
     },
+    marketing: {
+      title: 'Digital Marketing Retainer',
+      tag:   'Grow Consistently',
+      body:  'A focused monthly marketing retainer for Sofia businesses: strategy, content, campaigns, and measurable growth.',
+      deliverables: [],
+      addons: [
+        { label: 'Monthly campaign strategy',             price: 250 },
+        { label: 'Social content pack (8 posts)',         price: 200 },
+        { label: 'Meta / Google Ads setup',               price: 300 },
+        { label: 'Local SEO and Google Business Profile', price: 250 },
+        { label: 'Monthly performance report and call',   price: 150 },
+      ],
+    },
     photography: {
       title: 'Photography & Media',
       tag:   'Visual Content',
@@ -196,6 +209,15 @@ export default {
     title: 'THE STACK',
     sub:   'The tools we use are chosen for performance, maintainability, and longevity - not trends.',
     categories: ['Frontend & Frameworks', 'Backend & Data', 'Tools & Workflow', 'Visual & Creative'],
+    industriesTitle: 'Who We Build For',
+    industriesSub: 'We engineer specialized digital solutions tailored to the operational needs of modern businesses.',
+    idealFor: 'Ideal for:',
+    industries: [
+      { title: 'Service & Appointment', idealFor: 'Barbershops, salons, and personal care', value: 'We build custom booking platforms that eliminate no-shows and seamlessly manage schedules so you can focus on your clients, not your calendar.' },
+      { title: 'Automotive & Dealerships', idealFor: 'Auto retailers, detailers, and showrooms', value: 'High-performance showcase sites designed to highlight inventory with crisp, responsive layouts that drive inquiries and test drives.' },
+      { title: 'Boutique Hospitality', idealFor: 'Boutique hotels, guesthouses, and unique stays', value: 'Digital experiences that capture your unique atmosphere, paired with seamless direct-booking flows that reduce reliance on third-party platforms.' },
+      { title: 'Wellness & Specialized Retail', idealFor: 'Herbal dispensaries, wellness brands, e-commerce', value: 'From ground-up visual brand identity to high-converting online stores, we create digital storefronts that build trust and scale your sales.' },
+    ],
   },
 
   testimonials: {
@@ -290,6 +312,7 @@ export default {
       'Workflow Automation (n8n)',
       'Visual Identity & Design',
       'Photography & Media',
+      'Digital Marketing',
       'Something else',
     ],
     budgets: [

@@ -115,27 +115,24 @@ const valueIcons = [
 }
 
 .value-card {
-  padding: 28px 24px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.02);
+  padding: 28px 4px 24px;
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border);
   transition: border-color 0.25s ease, transform 0.25s ease;
 }
 
 .value-card:hover {
-  border-color: rgba(164,224,75,0.2);
+  border-color: var(--accent);
   transform: translateY(-3px);
 }
 
 .value-icon {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(164,224,75,0.07);
-  border: 1px solid rgba(164,224,75,0.15);
+  border-left: 2px solid var(--accent);
 }
 
 .about-strip {
@@ -144,9 +141,8 @@ const valueIcons = [
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 20px 28px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.015);
+  padding: 20px 0;
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border);
 }
 </style>

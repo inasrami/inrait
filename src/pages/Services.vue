@@ -347,13 +347,12 @@ const hasSelection = computed(() =>
 .card-entrance { opacity: 0; animation: cardIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
 
 .service-card {
-  border-radius: 20px; border: 1px solid var(--border);
-  background: rgba(255,255,255,0.018); overflow: hidden;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  border-top: 1px solid var(--border-strong); border-bottom: 1px solid var(--border);
+  background: transparent; overflow: hidden;
+  transition: border-color 0.3s ease, transform 0.3s ease;
 }
 .service-card--selected {
-  border-color: rgba(164,224,75,0.38);
-  box-shadow: 0 0 0 1px rgba(164,224,75,0.1), 0 16px 48px rgba(0,0,0,0.35);
+  border-color: var(--accent);
 }
 
 .selected-badge {
@@ -376,7 +375,7 @@ const hasSelection = computed(() =>
 .svc-icon {
   width: 40px; height: 40px; border-radius: 11px;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.18);
+  background: transparent; border-left: 2px solid rgba(164,224,75,0.5);
   flex-shrink: 0; margin-top: 2px;
   transition: background 0.25s ease, border-color 0.25s ease;
 }

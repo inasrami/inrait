@@ -17,6 +17,8 @@ const ADDON_IDS = {
   ecommerce:   ['eco-payment',  'eco-inventory', 'eco-reviews',  'eco-analytics', 'eco-discounts'],
   automation:  ['auto-crm',     'auto-invoice',  'auto-lead',    'auto-hosting',  'auto-report'],
   identity:    ['id-guide',     'id-social',     'id-print',     'id-ui',         'id-motion'],
+  marketing:   ['mkt-strategy', 'mkt-content',   'mkt-ads',       'mkt-seo',       'mkt-reporting'],
+
 }
 
 const ADDON_PRICES = {
@@ -25,6 +27,7 @@ const ADDON_PRICES = {
   ecommerce:   [199.99, 249.99, 179.99, 219.99, 159.99],
   automation:  [199.99, 179.99, 219.99, 249.99, 149.99],
   identity:    [149.99, 179.99, 119.99, 299.99, 249.99],
+  marketing:   [249.99, 199.99, 299.99, 249.99, 149.99],
 }
 
 const BASE_PRICES = {
@@ -33,6 +36,7 @@ const BASE_PRICES = {
   ecommerce:   1999.99,
   automation:  599.99,
   identity:    449.99,
+  marketing:   399.99,
 }
 
 const HERO_FLAGS = {
@@ -41,6 +45,7 @@ const HERO_FLAGS = {
   ecommerce:   false,
   automation:  true,
   identity:    false,
+  marketing:   true,
 }
 
 const ICONS = {
@@ -49,10 +54,11 @@ const ICONS = {
   ecommerce:   '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.97 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/>',
   automation:  '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
   identity:    '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
+  marketing:   '<path d="M3 11v2a2 2 0 002 2h2l3 5h2l-2-5 10-3V8L10 5 7 10H5a2 2 0 00-2 1z"/><path d="M21 8v8"/>',
 }
 
 
-const SERVICE_KEYS = ['website', 'booking', 'ecommerce', 'automation', 'identity']
+const SERVICE_KEYS = ['website', 'booking', 'ecommerce', 'automation', 'identity', 'marketing']
 
 // ─── Composable ───────────────────────────────────────────────────────────────
 
