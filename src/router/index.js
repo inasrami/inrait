@@ -10,13 +10,13 @@ import NotFound from "../pages/NotFound.vue";
 import Admin from '../pages/Admin.vue'
 
 const routes = [
-  { path: "/", component: Home, name: "home" },
-  { path: "/work/:slug", component: ProjectPage, name: "project" },
-  { path: "/contact", component: Contact, name: "contact" },
-  { path: "/services", component: Services, name: "services" },
-  { path: "/privacy", component: PrivacyPolicy, name: "privacy" },
-  { path: "/blog", component: Blog, name: "blog" },
-  { path: "/blog/:slug", component: BlogPost, name: "blog-post" },
+  { path: "/", alias: ["/bg", "/bg/"], component: Home, name: "home" },
+  { path: "/work/:slug", alias: "/bg/work/:slug", component: ProjectPage, name: "project" },
+  { path: "/contact", alias: "/bg/contact", component: Contact, name: "contact" },
+  { path: "/services", alias: "/bg/services", component: Services, name: "services" },
+  { path: "/privacy", alias: "/bg/privacy", component: PrivacyPolicy, name: "privacy" },
+  { path: "/blog", alias: "/bg/blog", component: Blog, name: "blog" },
+  { path: "/blog/:slug", alias: "/bg/blog/:slug", component: BlogPost, name: "blog-post" },
   { path: "/:pathMatch(.*)*", component: NotFound, name: "not-found" },
   {
     path: "/admin",
@@ -33,6 +33,19 @@ const router = createRouter({
     if (to.hash) return { el: to.hash, behavior: "smooth" };
     return { top: 0 };
   },
+});
+
+router.beforeEach((to) => {
+  const savedLanguage = localStorage.getItem('inrait_lang')
+  const isAdmin = to.path === '/admin' || to.path.startsWith('/admin/')
+  const isBulgarian = to.path === '/bg' || to.path.startsWith('/bg/')
+
+  if (savedLanguage === 'bg' && !isBulgarian && !isAdmin) {
+    const path = to.path === '/' ? '' : to.path
+    return `/bg${path}${to.fullPath.slice(to.path.length)}`
+  }
+
+  return true
 });
 
 export default router;

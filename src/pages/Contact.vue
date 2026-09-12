@@ -168,11 +168,13 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
 import { useLanguage } from '../composables/useLanguage.js'
 import { useJsonLd, breadcrumbSchema } from '../composables/Usejsonld.js'
+import { useServices } from '../data/services.js'
 
 useFadeUp()
 const { t } = useLanguage()
@@ -188,6 +190,53 @@ const submitted = ref(false)
 const errorMsg  = ref('')
 
 const form = reactive({ name: '', email: '', type: '', budget: '', message: '' })
+const route = useRoute()
+const { SERVICES } = useServices()
+
+const serviceTypeIndexes = {
+  website: 0,
+  booking: 1,
+  ecommerce: 2,
+  automation: 3,
+  identity: 4,
+  marketing: 6,
+}
+
+function queryIds(value) {
+  return (typeof value === 'string' ? value.split(',') : [])
+    .map(id => id.trim())
+    .filter(Boolean)
+}
+
+function prefillFromEstimator() {
+  const serviceIds = queryIds(route.query.services)
+  const addonIds = queryIds(route.query.addons)
+  const selectedServices = SERVICES.value.filter(service => serviceIds.includes(service.id))
+  const selectedAddons = SERVICES.value
+    .flatMap(service => service.addons)
+    .filter(addon => addonIds.includes(addon.id))
+
+  if (!selectedServices.length && !selectedAddons.length) return
+
+  if (selectedServices.length === 1) {
+    const typeIndex = serviceTypeIndexes[selectedServices[0].id]
+    form.type = typeIndex === undefined ? '' : t(`contact.types.${typeIndex}`)
+  }
+
+  const lines = [
+    `${t('contact.estimateServices')}`,
+    ...selectedServices.map(service => `- ${service.title}`),
+  ]
+
+  if (selectedAddons.length) {
+    lines.push('', t('contact.estimateAddons'))
+    lines.push(...selectedAddons.map(addon => `- ${addon.label}`))
+  }
+
+  form.message = `${lines.join('\n')}\n\n`
+}
+
+onMounted(prefillFromEstimator)
 
 // Access the environment variables here
 const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID

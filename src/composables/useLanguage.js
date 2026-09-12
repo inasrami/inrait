@@ -38,8 +38,17 @@ export function useLanguage() {
     setLang(lang.value === 'en' ? 'bg' : 'en')
   }
 
+  function localizedPath(path, language = lang.value) {
+    const englishPath = path === '/bg' || path === '/bg/'
+      ? '/'
+      : path.replace(/^\/bg(?=\/)/, '')
+
+    if (language === 'bg') return englishPath === '/' ? '/bg' : `/bg${englishPath}`
+    return englishPath
+  }
+
   const isEN = computed(() => lang.value === 'en')
   const isBG = computed(() => lang.value === 'bg')
 
-  return { t, locale, lang, currentLanguage: lang, setLang, toggleLang, isEN, isBG }
+  return { t, locale, lang, currentLanguage: lang, setLang, toggleLang, localizedPath, isEN, isBG }
 }

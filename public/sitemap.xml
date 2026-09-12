@@ -1,108 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-  xmlns:xhtml="http://www.w3.org/1999/xhtml"
->
-
-  <!-- Home -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Public routes from src/router/index.js. Dynamic routes are expanded from the local data sources. -->
   <url>
     <loc>https://inrait.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/"/>
-    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/"/>
   </url>
-
-  <!-- Services -->
-  <url>
-    <loc>https://inrait.com/services</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/services"/>
-    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/services"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/services"/>
-  </url>
-
-  <!-- Contact -->
   <url>
     <loc>https://inrait.com/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/contact" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/contact" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/contact" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/contact"/>
-    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/contact"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/contact"/>
   </url>
-
-  <!-- Privacy Policy -->
+  <url>
+    <loc>https://inrait.com/services</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/services" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/services" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/services" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
   <url>
     <loc>https://inrait.com/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/privacy" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/privacy" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
-
-  <!-- Project: Barbers Unity -->
-  <url>
-    <loc>https://inrait.com/work/barbers-unity</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Project: ShiftEase -->
-  <url>
-    <loc>https://inrait.com/work/shiftease</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Project: Hotel Prestige -->
-  <url>
-    <loc>https://inrait.com/work/hotel-prestige</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Project: DNA of Design -->
-  <url>
-    <loc>https://inrait.com/work/dna-of-design</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Project: Aurum -->
-  <url>
-    <loc>https://inrait.com/work/aurum</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-
-  <!-- Blog listing -->
   <url>
     <loc>https://inrait.com/blog</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog" />
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Blog: Why Hotels Lose Bookings -->
+  <url>
+    <loc>https://inrait.com/work/barbers-unity</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/barbers-unity" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/barbers-unity" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/barbers-unity" />
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://inrait.com/work/shiftease</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/shiftease" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/shiftease" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/shiftease" />
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://inrait.com/work/hotel-prestige</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/hotel-prestige" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/hotel-prestige" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/hotel-prestige" />
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://inrait.com/work/dna-of-design</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/dna-of-design" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/dna-of-design" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/dna-of-design" />
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://inrait.com/work/aurum</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/aurum" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/aurum" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/aurum" />
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <url>
     <loc>https://inrait.com/blog/why-hotels-lose-bookings</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/why-hotels-lose-bookings" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog/why-hotels-lose-bookings" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog/why-hotels-lose-bookings" />
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- Blog: n8n Automations -->
   <url>
     <loc>https://inrait.com/blog/n8n-automations-small-business</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/n8n-automations-small-business" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog/n8n-automations-small-business" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog/n8n-automations-small-business" />
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- Blog: Web Design Sofia -->
   <url>
     <loc>https://inrait.com/blog/web-design-sofia-what-to-expect</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/web-design-sofia-what-to-expect" />
+    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog/web-design-sofia-what-to-expect" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog/web-design-sofia-what-to-expect" />
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
-
 </urlset>

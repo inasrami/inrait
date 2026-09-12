@@ -21,7 +21,12 @@ export function useSeo({ title, description, canonical, image } = {}) {
     : `${SITE_NAME} · Web Engineering Studio Sofia`
   const desc    = description || DEFAULT_DESC
   const ogImg   = image       ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : DEFAULT_OG
-  const canon   = canonical   ? `${SITE_URL}${canonical}` : null
+  const isBulgarian = window.location.pathname === '/bg' || window.location.pathname.startsWith('/bg/')
+  const englishPath = canonical?.replace(/^\/bg(?=\/)/, '') || '/'
+  const routePath = isBulgarian && englishPath !== '/' ? `/bg${englishPath}` : isBulgarian ? '/bg' : englishPath
+  const canon = canonical ? `${SITE_URL}${routePath}` : null
+  const englishUrl = `${SITE_URL}${englishPath}`
+  const bulgarianUrl = `${SITE_URL}${englishPath === '/' ? '/bg' : `/bg${englishPath}`}`
 
   // Title
   document.title = fullTitle
@@ -32,10 +37,9 @@ export function useSeo({ title, description, canonical, image } = {}) {
   // Canonical
   if (canon) setLink('canonical', canon)
 
-  // hreflang - EN default + BG variant (once BG is live, update /bg/ path)
-  setHreflang('en',        canon || SITE_URL)
-  setHreflang('x-default', canon || SITE_URL)
-  // setHreflang('bg', canon ? canon.replace(SITE_URL, `${SITE_URL}/bg`) : `${SITE_URL}/bg/`)
+  setHreflang('en',        englishUrl)
+  setHreflang('bg',        bulgarianUrl)
+  setHreflang('x-default', englishUrl)
 
   // Open Graph
   setMeta('property', 'og:title',       fullTitle)
@@ -44,7 +48,7 @@ export function useSeo({ title, description, canonical, image } = {}) {
   setMeta('property', 'og:url',         canon || SITE_URL)
   setMeta('property', 'og:type',        'website')
   setMeta('property', 'og:site_name',   SITE_NAME)
-  setMeta('property', 'og:locale',      'en_GB')
+  setMeta('property', 'og:locale',      isBulgarian ? 'bg_BG' : 'en_GB')
 
   // Twitter card
   setMeta('name', 'twitter:card',        'summary_large_image')

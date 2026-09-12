@@ -39,7 +39,7 @@
         <span class="nav-divider" />
 
         <!-- Language toggle -->
-        <button class="lang-btn" @click="toggleLang" style="cursor: pointer;"
+        <button class="lang-btn" @click="switchLanguage" style="cursor: pointer;"
           :aria-label="`Switch to ${isBG ? 'English' : 'Bulgarian'}`">
 
           <span class="lang-code">{{ isBG ? 'BG' : 'EN' }}</span>
@@ -55,7 +55,7 @@
 
       <!-- Mobile right: lang + burger -->
       <div class="flex items-center gap-3 md:hidden">
-        <button class="lang-btn" @click="toggleLang" style="cursor: pointer;">
+        <button class="lang-btn" @click="switchLanguage" style="cursor: pointer;">
 
           <span class="lang-code">{{ isBG ? 'BG' : 'EN' }}</span>
         </button>
@@ -119,7 +119,7 @@ const mobileOpen    = ref(false)
 const scrolled      = ref(false)
 const activeSection = ref('')
 
-const { t, toggleLang, isBG } = useLanguage()
+const { t, setLang, localizedPath, isBG } = useLanguage()
 
 const navLinks = [
   { id: 'work',    labelKey: 'nav.work'    },
@@ -163,6 +163,16 @@ function scrollToSection(id) {
 
 function handleLogoClick() {
   if (route.path === '/') window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function switchLanguage() {
+  const nextLanguage = isBG.value ? 'en' : 'bg'
+  setLang(nextLanguage)
+  router.push({
+    path: localizedPath(route.path, nextLanguage),
+    query: route.query,
+    hash: route.hash,
+  })
 }
 
 onMounted(() => {

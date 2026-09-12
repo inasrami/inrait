@@ -53,7 +53,7 @@ export default {
       title: 'Business Website',
       tag:   'Most Popular',
       body:  'Custom-built websites that convert visitors into clients. End to end.',
-      deliverables: [],
+      deliverables: ['Responsive page structure', 'Conversion-focused copy layout', 'SEO-ready technical foundation'],
       addons: [
         { label: 'CMS integration (editable content)',    price: 200 },
         { label: 'Blog / news section',                   price: 150 },
@@ -66,7 +66,7 @@ export default {
       title: 'Custom Booking System',
       tag:   'For Hospitality',
       body:  'Reservation platforms for hospitality and service businesses. Own your bookings entirely.',
-      deliverables: [],
+      deliverables: ['Availability and booking flow', 'Admin reservation management', 'Confirmation email workflow'],
       addons: [
         { label: 'Online payment (Stripe / PayPal)',       price: 250 },
         { label: 'SMS & email confirmation automation',    price: 200 },
@@ -79,7 +79,7 @@ export default {
       title: 'E-commerce Store',
       tag:   'Sell Online',
       body:  'Online stores built for performance. Designed to sell from day one and scale.',
-      deliverables: [],
+      deliverables: ['Product catalogue and checkout', 'Mobile-first shopping experience', 'Order management foundation'],
       addons: [
         { label: 'Multi-gateway checkout (Stripe + PayPal)', price: 200 },
         { label: 'Advanced inventory & variant management',  price: 250 },
@@ -92,7 +92,7 @@ export default {
       title: 'Workflow Automation',
       tag:   'Save Time',
       body:  'n8n automation pipelines that eliminate repetitive work - lead capture, CRM, invoicing, notifications.',
-      deliverables: [],
+      deliverables: ['Workflow mapping and triggers', 'Third-party API integrations', 'Error handling and handover documentation'],
       addons: [
         { label: 'CRM integration (HubSpot / Pipedrive)',  price: 200 },
         { label: 'Automated invoicing pipeline',           price: 180 },
@@ -105,7 +105,7 @@ export default {
       title: 'Visual Identity & Design',
       tag:   'Brand First',
       body:  'Brand identity systems and UI/UX design. From logo to colour palette to every touchpoint.',
-      deliverables: [],
+      deliverables: ['Core visual direction', 'Logo and colour system', 'Reusable UI component direction'],
       addons: [
         { label: 'Full brand guidelines document',          price: 150 },
         { label: 'Social media template pack (10 assets)', price: 180 },
@@ -118,7 +118,7 @@ export default {
       title: 'Digital Marketing Retainer',
       tag:   'Grow Consistently',
       body:  'A focused monthly marketing retainer for Sofia businesses: strategy, content, campaigns, and measurable growth.',
-      deliverables: [],
+      deliverables: ['Monthly campaign planning', 'Content and channel coordination', 'Performance tracking and recommendations'],
       addons: [
         { label: 'Monthly campaign strategy',             price: 250 },
         { label: 'Social content pack (8 posts)',         price: 200 },
@@ -131,7 +131,7 @@ export default {
       title: 'Photography & Media',
       tag:   'Visual Content',
       body:  'Commercial photography and post-production that matches the quality of your product.',
-      deliverables: [],
+      deliverables: ['Pre-production planning', 'Edited image delivery', 'Web-ready image optimisation'],
       addons: [
         { label: 'Additional half-day shoot',              price: 200 },
         { label: 'Drone aerial photography',               price: 300 },
@@ -290,6 +290,8 @@ export default {
     budgetPh:     'Select budget',
     message:      'Tell us about the project',
     messagePh:    "What problem are you solving? Who is it for? What's the timeline?",
+    estimateServices: 'Services selected in the estimator:',
+    estimateAddons:   'Optional add-ons selected:',
     send:         'Send message',
     sending:      'Sending…',
     sent:         "Sent! We'll be in touch soon.",
@@ -436,6 +438,10 @@ export default {
       {
         q: 'How long does a website take to build?',
         a: 'A standard website: 2–4 weeks. Booking systems or e-commerce: 4–8 weeks.',
+      },
+      {
+        q: 'What drives the cost of a project?',
+        a: 'Cost depends on the number of pages, custom functionality, integrations, content and the timeline. The estimator shows starting prices; we confirm the final scope and quote after a free consultation.',
       },
       {
         q: 'Do I need to provide content and images?',

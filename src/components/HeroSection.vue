@@ -12,14 +12,16 @@
       
       <!-- Left Column: Massive Typography -->
       <div class="flex flex-col lg:col-span-8">
+        <p class="hero-availability mb-5 text-xs uppercase tracking-[0.18em] text-accent">
+          {{ t('hero.available') }}
+        </p>
         <h1 
           class="flex flex-col p-0 m-0 text-left uppercase hero-headline" 
           :class="isBG ? 'hero-headline--cyrillic' : ''"
         >
-          <!-- whitespace-nowrap strictly enforces the 3-line layout -->
-          <span class="block text-text-primary mb-[-2%] whitespace-nowrap">{{ t('hero.line1') }}</span>
-          <span class="block accent-text mb-[-2%] whitespace-nowrap">{{ t('hero.line2') }}</span>
-          <span class="block text-text-primary whitespace-nowrap">{{ t('hero.line3') }}</span>
+          <span class="block text-text-primary mb-[-2%]">{{ t('hero.line1') }}</span>
+          <span class="block accent-text mb-[-2%]">{{ t('hero.line2') }}</span>
+          <span class="block text-text-primary">{{ t('hero.line3') }}</span>
         </h1>
       </div>
 
@@ -69,6 +71,7 @@ function scrollToWork() {
   font-size: clamp(48px, 9vw, 220px);
   letter-spacing: 0.02em;
   line-height: 0.85;
+  text-wrap: balance;
 }
 
 .hero-headline--cyrillic {
@@ -77,6 +80,10 @@ function scrollToWork() {
   letter-spacing: 0em;
   line-height: 0.95;
   font-weight: 700;
+}
+
+.hero-availability {
+  font-weight: 600;
 }
 
 /* Stylish outline text for the accent line to create depth */
@@ -97,6 +104,16 @@ function scrollToWork() {
 @media (max-width: 1024px) {
   .hero-headline {
     line-height: 0.9;
+  }
+}
+
+@media (max-width: 639px) {
+  .hero-headline {
+    font-size: clamp(42px, 15vw, 90px);
+  }
+
+  .hero-headline--cyrillic {
+    font-size: clamp(38px, 13vw, 82px);
   }
 }
 </style>

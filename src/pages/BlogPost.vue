@@ -121,7 +121,10 @@ function localise(p) {
   return p[currentLanguage.value] ?? p.en ?? { title: '', content: '', excerpt: '' }
 }
 
-onMounted(async () => {
+async function loadPost() {
+  isLoading.value = true
+  post.value = null
+
   try {
     const q = query(collection(db, 'posts'), where('slug', '==', route.params.slug))
     const snapshot = await getDocs(q)
@@ -135,8 +138,16 @@ onMounted(async () => {
         readTime: data.readTime || '5',
         date:     data.date,
         image:    data.image || null,
-        en: { title: data.en?.title || '', content: data.en?.content || '' },
-        bg: { title: data.bg?.title || '', content: data.bg?.content || '' },
+        en: {
+          title:   data.en?.title || '',
+          excerpt: data.en?.excerpt || (data.en?.content || '').slice(0, 160),
+          content: data.en?.content || '',
+        },
+        bg: {
+          title:   data.bg?.title || '',
+          excerpt: data.bg?.excerpt || (data.bg?.content || '').slice(0, 160),
+          content: data.bg?.content || '',
+        },
       }
     }
   } catch (err) {
@@ -144,15 +155,17 @@ onMounted(async () => {
   } finally {
     isLoading.value = false
   }
-})
+}
 
-watch([post, currentLanguage], () => {
-  if (!post.value) return
-  const local = post.value[currentLanguage.value]
+onMounted(loadPost)
+watch(() => route.params.slug, loadPost)
+
+watch([post, currentLanguage, () => route.params.slug], () => {
+  const local = post.value ? localise(post.value) : null
   useSeo({
-    title:       local?.title,
-    description: (local?.content || '').slice(0, 160),
-    canonical:   `/blog/${post.value.slug}`,
+    title:       local?.title || t('blog.title'),
+    description: local?.excerpt || (local?.content || '').slice(0, 160),
+    canonical:   `/blog/${post.value?.slug || route.params.slug}`,
   })
 }, { immediate: true })
 
