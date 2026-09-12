@@ -2,7 +2,7 @@
   <section class="relative flex items-center w-full min-h-screen py-20 overflow-hidden bg-bg-primary">
     
     <!-- SVG Film Grain / Noise Texture (Tactile, non-AI feel) -->
-    <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.4] mix-blend-overlay bg-noise"></div>
+    <!-- <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.4] mix-blend-overlay bg-noise"></div> -->
 
     <!-- Single Asymmetrical Structural Line -->
     <div class="absolute top-0 bottom-0 right-0 lg:right-[33.333%] w-[1px] bg-text-muted/20 z-0 pointer-events-none hidden lg:block"></div>
@@ -12,9 +12,9 @@
       
       <!-- Left Column: Massive Typography -->
       <div class="flex flex-col lg:col-span-8">
-        <p class="hero-availability mb-5 text-xs uppercase tracking-[0.18em] text-accent">
+        <!-- <p class="hero-availability mb-5 text-xs uppercase tracking-[0.18em] text-accent">
           {{ t('hero.available') }}
-        </p>
+        </p> -->
         <h1 
           class="flex flex-col p-0 m-0 text-left uppercase hero-headline" 
           :class="isBG ? 'hero-headline--cyrillic' : ''"
