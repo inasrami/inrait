@@ -83,7 +83,7 @@ export function localBusinessSchema() {
       'Photography',
     ],
     sameAs: [
-      'https://www.linkedin.com/company/135268437',
+      'https://www.linkedin.com/company/inrait/?',
       'https://github.com/inasrami',
     ],
     priceRange: '€€',
