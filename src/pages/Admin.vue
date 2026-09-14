@@ -241,20 +241,30 @@ async function login() {
   try {
     const credentials = await signInWithEmailAndPassword(auth, email.value, password.value)
     const token = await credentials.user.getIdTokenResult()
-    if (!adminEmail || credentials.user.email?.toLowerCase() !== adminEmail || token.claims.admin !== true) {
+    if (!adminEmail) {
       await signOut(auth)
-      throw new Error('admin-not-authorized')
+      throw new Error('admin-not-configured')
+    }
+    if (credentials.user.email?.toLowerCase() !== adminEmail) {
+      await signOut(auth)
+      throw new Error('admin-email-mismatch')
+    }
+    if (token.claims.admin !== true) {
+      await signOut(auth)
+      throw new Error('admin-claim-missing')
     }
     isLoggedIn.value = true
     await loadPosts()
   } catch (err) {
-    loginError.value = err.message === 'admin-not-authorized'
-      ? 'This account is not authorized to access the admin panel.'
+    loginError.value = err.message === 'admin-not-configured'
+      ? 'Admin access is not configured. Add VITE_ADMIN_EMAIL and redeploy the site.'
+      : err.message === 'admin-email-mismatch'
+      ? 'This account email does not match the configured admin email.'
+      : err.message === 'admin-claim-missing'
+      ? 'This account is missing the Firebase admin claim. Add admin: true, then sign in again.'
       : err.message.includes('wrong-password') || err.message.includes('user-not-found')
       ? 'Invalid email or password.'
-      : !adminEmail
-        ? 'Admin access is not configured. Set VITE_ADMIN_EMAIL in the deployment environment.'
-        : 'Login failed. Check your credentials.'
+      : 'Login failed. Check your credentials.'
   } finally {
     loginLoading.value = false
   }
