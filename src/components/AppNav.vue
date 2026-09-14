@@ -167,12 +167,15 @@ function handleLogoClick() {
 
 function switchLanguage() {
   const nextLanguage = isBG.value ? 'en' : 'bg'
-  setLang(nextLanguage)
-  router.push({
-    path: localizedPath(route.path, nextLanguage),
+  const nextPath = localizedPath(route.path, nextLanguage)
+  const nextUrl = router.resolve({
+    path: nextPath,
     query: route.query,
     hash: route.hash,
-  })
+  }).href
+
+  setLang(nextLanguage)
+  window.location.assign(nextUrl)
 }
 
 onMounted(() => {
