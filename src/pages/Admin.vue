@@ -230,16 +230,10 @@ const publishStatus = ref(null)
 const previewLang   = ref('en')
 const bgPreview     = ref({ title: '', content: '' })
 
-// ── DeepL via corsproxy.io ────────────────────────────────
-const DEEPL_KEY = import.meta.env.VITE_DEEPL_API_KEY
-
 async function translateText(text, targetLang) {
-  const res = await fetch('https://corsproxy.io/?https://api-free.deepl.com/v2/translate', {
+  const res = await fetch('/api/translate', {
     method: 'POST',
-    headers: {
-      'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text: [text], target_lang: targetLang }),
   })
   if (!res.ok) throw new Error('Translation failed. Check your DeepL API key.')
