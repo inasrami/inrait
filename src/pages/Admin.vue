@@ -229,6 +229,7 @@ const loginLoading = ref(false)
 const loginError   = ref('')
 const email        = ref('')
 const password     = ref('')
+const adminEmail    = (import.meta.env.VITE_ADMIN_EMAIL || '').trim().toLowerCase()
 const posts        = ref([])
 const isLoadingPosts = ref(false)
 const deletingPostId = ref(null)
@@ -238,13 +239,22 @@ async function login() {
   loginError.value   = ''
   loginLoading.value = true
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    const credentials = await signInWithEmailAndPassword(auth, email.value, password.value)
+    const token = await credentials.user.getIdTokenResult()
+    if (!adminEmail || credentials.user.email?.toLowerCase() !== adminEmail || token.claims.admin !== true) {
+      await signOut(auth)
+      throw new Error('admin-not-authorized')
+    }
     isLoggedIn.value = true
     await loadPosts()
   } catch (err) {
-    loginError.value = err.message.includes('wrong-password') || err.message.includes('user-not-found')
+    loginError.value = err.message === 'admin-not-authorized'
+      ? 'This account is not authorized to access the admin panel.'
+      : err.message.includes('wrong-password') || err.message.includes('user-not-found')
       ? 'Invalid email or password.'
-      : 'Login failed. Check your credentials.'
+      : !adminEmail
+        ? 'Admin access is not configured. Set VITE_ADMIN_EMAIL in the deployment environment.'
+        : 'Login failed. Check your credentials.'
   } finally {
     loginLoading.value = false
   }

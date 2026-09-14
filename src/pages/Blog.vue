@@ -23,6 +23,10 @@
     </div>
 
     <!-- Empty -->
+    <div v-else-if="loadError" class="max-w-[1080px] mx-auto text-center py-20">
+      <p class="text-text-muted text-[16px]">{{ t('blog.loadError') }}</p>
+    </div>
+
     <div v-else-if="posts.length === 0" class="max-w-[1080px] mx-auto text-center py-20">
       <p class="text-text-muted text-[16px]">{{ t('blog.empty') }}</p>
     </div>
@@ -45,6 +49,8 @@
               :src="post.image"
               :alt="localise(post).title"
               class="post-img"
+              loading="lazy"
+              decoding="async"
               draggable="false"
             />
             <div v-else class="post-img-placeholder">
@@ -109,6 +115,7 @@ useSeo({
 
 const posts     = ref([])
 const isLoading = ref(true)
+const loadError = ref(false)
 
 function localise(post) {
   return post[currentLanguage.value] ?? post.en ?? { title: '', excerpt: '', content: '' }
@@ -141,6 +148,7 @@ onMounted(async () => {
     })
   } catch (err) {
     console.error('Error fetching posts:', err)
+    loadError.value = true
   } finally {
     isLoading.value = false
   }
@@ -240,6 +248,7 @@ function formatDate(dateString) {
   flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

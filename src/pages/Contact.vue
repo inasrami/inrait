@@ -18,16 +18,21 @@
 
         <!-- Form -->
         <div class="fade-up" style="transition-delay:0.15s;">
-          <form @submit.prevent="handleSubmit" class="flex flex-col gap-6" novalidate>
+          <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
+
+            <div class="form-trap" aria-hidden="true">
+              <label for="website">Website</label>
+              <input id="website" v-model="form.website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div class="form-group">
                 <label class="form-label">{{ t('contact.name') }}</label>
-                <input v-model="form.name" type="text" class="form-input" :placeholder="t('contact.namePh')" required />
+                <input v-model="form.name" type="text" class="form-input" :placeholder="t('contact.namePh')" autocomplete="name" required />
               </div>
               <div class="form-group">
                 <label class="form-label">{{ t('contact.email') }}</label>
-                <input v-model="form.email" type="email" class="form-input" :placeholder="t('contact.emailPh')" required />
+                <input v-model="form.email" type="email" class="form-input" :placeholder="t('contact.emailPh')" autocomplete="email" required />
               </div>
             </div>
 
@@ -54,8 +59,13 @@
                 required />
             </div>
 
+              <label class="flex items-start gap-3 text-[12px] text-text-muted">
+                <input v-model="form.consent" type="checkbox" class="mt-0.5" required />
+                <span>{{ t('contact.consent') }} <RouterLink to="/privacy" class="text-accent underline-offset-2 hover:underline">{{ t('contact.privacyLink') }}</RouterLink>.</span>
+              </label>
+
             <!-- Error message -->
-            <div v-if="errorMsg" class="flex items-center gap-3 p-4 rounded-xl"
+            <div v-if="errorMsg" class="flex items-center gap-3 p-4 rounded-xl" role="alert" aria-live="polite"
               style="background:rgba(255,80,80,0.07);border:1px solid rgba(255,80,80,0.2);">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6060" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -84,6 +94,10 @@
                 </svg>
                 {{ t('contact.sent') }}
               </template>
+            </button>
+
+            <button v-if="submitted" type="button" class="text-[13px] text-text-muted underline underline-offset-4" @click="resetForm">
+              {{ t('contact.sendAnother') }}
             </button>
 
           
@@ -139,15 +153,6 @@
                   <div class="text-[15px]">https://www.linkedin.com/company/inrait/?</div>
                 </div>
               </a>
-              <!-- <a href="https://github.com/inasrami" target="_blank" rel="noopener" class="contact-item" data-cursor>
-                <div class="contact-icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-                </div>
-                <div>
-                  <div class="text-[11px] text-text-dim uppercase tracking-widest mb-0.5">GitHub</div>
-                  <div class="text-[15px]">github.com/inasrami</div>
-                </div>
-              </a> -->
             </div>
           </div>
 
@@ -169,7 +174,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, RouterLink } from 'vue-router'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
 import { useLanguage } from '../composables/useLanguage.js'
@@ -189,7 +194,7 @@ const loading   = ref(false)
 const submitted = ref(false)
 const errorMsg  = ref('')
 
-const form = reactive({ name: '', email: '', type: '', budget: '', message: '' })
+const form = reactive({ name: '', email: '', type: '', budget: '', message: '', website: '', consent: false })
 const route = useRoute()
 const { SERVICES } = useServices()
 
@@ -246,8 +251,15 @@ const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 async function handleSubmit() {
   errorMsg.value = ''
 
-  if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+  if (form.website) return
+
+  if (!form.name.trim() || !form.email.trim() || !form.message.trim() || !form.consent) {
     errorMsg.value = t('contact.errorFill')
+    return
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+    errorMsg.value = t('contact.errorEmail')
     return
   }
 
@@ -264,12 +276,11 @@ async function handleSubmit() {
       from_email:   form.email,
       project_type: form.type   || 'Not specified',
       budget:       form.budget || 'Not specified',
-      message:      form.message,
-      to_email:     'inrait.web@gmail.com',
+        message:      form.message,
     })
 
     submitted.value = true
-    Object.assign(form, { name: '', email: '', type: '', budget: '', message: '' })
+    Object.assign(form, { name: '', email: '', type: '', budget: '', message: '', website: '', consent: false })
 
   } catch (err) {
     console.error('EmailJS error:', err)
@@ -277,6 +288,11 @@ async function handleSubmit() {
   } finally {
     loading.value = false
   }
+}
+
+function resetForm() {
+  submitted.value = false
+  errorMsg.value = ''
 }
 
 function loadScript(src) {
@@ -292,6 +308,7 @@ function loadScript(src) {
 
 <style scoped>
 .form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .form-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
 .form-input {
   background: rgba(255,255,255,0.04);

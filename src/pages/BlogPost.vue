@@ -185,8 +185,8 @@ const parsedContent = computed(() => {
   for (const line of lines) {
     const s = line.trim()
     if (!s) { flush(); continue }
-    if (s.startsWith('## ')) { flush(); blocks.push({ type: 'h2', text: s.slice(3) }); continue }
-    if (/^\*\*[^*]+\*\*$/.test(s)) { flush(); blocks.push({ type: 'h2', text: s.slice(2, -2) }); continue }
+    if (s.startsWith('## ')) { flush(); blocks.push({ type: 'h2', text: escapeHtml(s.slice(3)) }); continue }
+    if (/^\*\*[^*]+\*\*$/.test(s)) { flush(); blocks.push({ type: 'h2', text: escapeHtml(s.slice(2, -2)) }); continue }
     if (s === '---') { flush(); blocks.push({ type: 'hr' }); continue }
     if (s.startsWith('- ')) { listBuf.push(s.slice(2)); continue }
     flush()
@@ -198,13 +198,22 @@ const parsedContent = computed(() => {
 })
 
 function fmt(text) {
-  return text
+  return escapeHtml(text)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, (_, label, url) => {
-      const ext = !url.startsWith('/')
-      return `<a href="${url}"${ext ? ' target="_blank" rel="noopener"' : ''} style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">${label}</a>`
+    .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/g, (_, label, url) => {
+      const ext = url.startsWith('http')
+      return `<a href="${url}"${ext ? ' target="_blank" rel="noopener noreferrer"' : ''} style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;">${label}</a>`
     })
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;')
 }
 
 function formatDate(dateString) {

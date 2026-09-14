@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../pages/Home.vue";
-import ProjectPage from "../pages/ProjectPage.vue";
-import Contact from "../pages/Contact.vue";
-import Services from "../pages/Services.vue";
-import PrivacyPolicy from "../pages/PrivacyPolicy.vue";
-import Blog from "../pages/Blog.vue";
-import BlogPost from "../pages/BlogPost.vue";
-import NotFound from "../pages/NotFound.vue";
-import Admin from '../pages/Admin.vue'
+
+const Home = () => import('../pages/Home.vue')
+const ProjectPage = () => import('../pages/ProjectPage.vue')
+const Contact = () => import('../pages/Contact.vue')
+const Services = () => import('../pages/Services.vue')
+const PrivacyPolicy = () => import('../pages/PrivacyPolicy.vue')
+const Blog = () => import('../pages/Blog.vue')
+const BlogPost = () => import('../pages/BlogPost.vue')
+const NotFound = () => import('../pages/NotFound.vue')
+const Admin = () => import('../pages/Admin.vue')
 
 const routes = [
   { path: "/", alias: ["/bg", "/bg/"], component: Home, name: "home" },
