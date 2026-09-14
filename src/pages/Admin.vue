@@ -118,6 +118,35 @@
             </button>
           </div>
 
+          <div class="posts-section">
+            <div class="form-section-label">Published posts</div>
+            <p v-if="postsError" class="posts-error">{{ postsError }}</p>
+            <p v-else-if="isLoadingPosts" class="posts-empty">Loading posts…</p>
+            <p v-else-if="posts.length === 0" class="posts-empty">No published posts yet.</p>
+            <div v-else class="posts-list">
+              <div v-for="publishedPost in posts" :key="publishedPost.id" class="post-row">
+                <div class="post-row-info">
+                  <strong>{{ publishedPost.title }}</strong>
+                  <span>{{ formatPostDate(publishedPost.date) }}</span>
+                </div>
+                <button
+                  class="delete-post-btn"
+                  type="button"
+                  title="Delete post"
+                  :aria-label="`Delete ${publishedPost.title}`"
+                  :disabled="deletingPostId === publishedPost.id"
+                  @click="deletePost(publishedPost)"
+                >
+                  <span v-if="deletingPostId === publishedPost.id" class="spinner-sm" />
+                  <svg v-else width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
         </aside>
 
         <!-- RIGHT: Live preview -->
@@ -192,7 +221,7 @@
 import { ref, computed } from 'vue'
 import { auth, db } from '../firebase.js'
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore'
 
 // ── Auth ──────────────────────────────────────────────────
 const isLoggedIn   = ref(false)
@@ -200,6 +229,10 @@ const loginLoading = ref(false)
 const loginError   = ref('')
 const email        = ref('')
 const password     = ref('')
+const posts        = ref([])
+const isLoadingPosts = ref(false)
+const deletingPostId = ref(null)
+const postsError    = ref('')
 
 async function login() {
   loginError.value   = ''
@@ -207,6 +240,7 @@ async function login() {
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value)
     isLoggedIn.value = true
+    await loadPosts()
   } catch (err) {
     loginError.value = err.message.includes('wrong-password') || err.message.includes('user-not-found')
       ? 'Invalid email or password.'
@@ -221,6 +255,7 @@ async function logout() {
   isLoggedIn.value = false
   email.value = ''
   password.value = ''
+  posts.value = []
 }
 
 // ── Post state ────────────────────────────────────────────
@@ -229,6 +264,49 @@ const isPublishing  = ref(false)
 const publishStatus = ref(null)
 const previewLang   = ref('en')
 const bgPreview     = ref({ title: '', content: '' })
+
+async function loadPosts() {
+  isLoadingPosts.value = true
+  postsError.value = ''
+  try {
+    const snapshot = await getDocs(query(collection(db, 'posts'), orderBy('date', 'desc')))
+    posts.value = snapshot.docs.map(postDoc => {
+      const data = postDoc.data()
+      return {
+        id: postDoc.id,
+        title: data.en?.title || data.bg?.title || 'Untitled post',
+        date: data.date,
+      }
+    })
+  } catch (err) {
+    postsError.value = 'Could not load published posts.'
+  } finally {
+    isLoadingPosts.value = false
+  }
+}
+
+async function deletePost(publishedPost) {
+  if (!window.confirm(`Delete "${publishedPost.title}"? This cannot be undone.`)) return
+
+  deletingPostId.value = publishedPost.id
+  postsError.value = ''
+  try {
+    await deleteDoc(doc(db, 'posts', publishedPost.id))
+    posts.value = posts.value.filter(postItem => postItem.id !== publishedPost.id)
+  } catch (err) {
+    postsError.value = 'Could not delete the post. Check your permissions and try again.'
+  } finally {
+    deletingPostId.value = null
+  }
+}
+
+function formatPostDate(dateString) {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-GB', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  })
+}
 
 async function translateText(text, targetLang) {
   const res = await fetch('/api/translate', {
@@ -260,6 +338,7 @@ async function publishPost() {
       en: { title: post.value.titleEn,  content: post.value.contentEn },
       bg: { title: titleBg,             content: contentBg },
     })
+    await loadPosts()
 
     bgPreview.value     = { title: titleBg, content: contentBg }
     previewLang.value   = 'bg'
