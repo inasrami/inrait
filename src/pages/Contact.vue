@@ -136,7 +136,7 @@
                 </div>
                 <div>
                   <div class="text-[11px] text-text-dim uppercase tracking-widest mb-0.5">LinkedIn</div>
-                  <div class="text-[15px]">linkedin.com/in/inasrami</div>
+                  <div class="text-[15px]">https://www.linkedin.com/company/inrait/?</div>
                 </div>
               </a>
               <!-- <a href="https://github.com/inasrami" target="_blank" rel="noopener" class="contact-item" data-cursor>

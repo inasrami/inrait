@@ -466,6 +466,17 @@ const todayFormatted = new Date().toLocaleDateString('en-GB', {
 .publish-status { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 10px 14px; border-radius: 10px; }
 .publish-status.success { color: var(--accent); background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.2); }
 .publish-status.error   { color: #ff7070; background: rgba(255,60,60,0.07); border: 1px solid rgba(255,60,60,0.18); }
+.posts-section { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 20px; }
+.posts-empty, .posts-error { font-size: 13px; line-height: 1.5; color: var(--muted); }
+.posts-error { color: #ff7070; }
+.posts-list { display: flex; flex-direction: column; gap: 8px; }
+.post-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; }
+.post-row-info { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.post-row-info strong { overflow: hidden; color: var(--text); font-size: 13px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.post-row-info span { color: var(--dim); font-size: 11px; }
+.delete-post-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0; color: #ff7070; background: transparent; border: 1px solid transparent; border-radius: 7px; cursor: pointer; transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
+.delete-post-btn:hover:not(:disabled) { color: #ff9a9a; background: rgba(255,60,60,0.09); border-color: rgba(255,60,60,0.2); }
+.delete-post-btn:disabled { cursor: wait; opacity: 0.6; }
 
 /* ── Buttons ────────────────────────────────────────────── */
 .btn-accent { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: var(--accent); color: #000; font-weight: 700; font-size: 13px; border-radius: 100px; border: none; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
