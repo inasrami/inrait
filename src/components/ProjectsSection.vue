@@ -1,5 +1,5 @@
 <template>
-  <section id="work" class="py-36 overflow-hidden">
+  <section id="work" class="overflow-hidden py-36">
 
     <!-- Header -->
     <div class="px-6 max-w-[1080px] mx-auto mb-10">
@@ -206,7 +206,7 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
 .filter-tab--active { color: #000; background: var(--accent); border-color: var(--accent); }
 
 .carousel-track {
-  display: flex; gap: 20px; overflow-x: auto; overflow-y: visible;
+  display: flex; gap: 20px; overflow-x: auto; overflow-y: visible; margin-left: auto; margin-right: auto; max-width: 1080px;
   scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
   scrollbar-width: none; cursor: grab; padding-bottom: 8px; user-select: none;
 }
