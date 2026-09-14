@@ -49,12 +49,12 @@ const HERO_FLAGS = {
 }
 
 const ICONS = {
-  website:     '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
-  booking:     '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-  ecommerce:   '<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 001.97 1.61h9.72a2 2 0 001.97-1.61L23 6H6"/>',
-  automation:  '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
-  identity:    '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
-  marketing:   '<path d="M3 11v2a2 2 0 002 2h2l3 5h2l-2-5 10-3V8L10 5 7 10H5a2 2 0 00-2 1z"/><path d="M21 8v8"/>',
+  website:     '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
+  booking:     '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 15l2 2 5-5"/>',
+  ecommerce:   '<path d="M4 5h17l-2 9H7L5 2H2"/><path d="M7 18h.01M18 18h.01M7 18a2 2 0 102 2M18 18a2 2 0 102 2"/>',
+  automation:  '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 11l7-4M8.5 13l7 4"/>',
+  identity:    '<path d="M4 17.5V20h2.5L19 7.5 16.5 5 4 17.5zM15 6.5l2.5 2.5M12 21h9"/>',
+  marketing:   '<path d="M4 11v2a2 2 0 002 2h2l3 5h2l-2-5 10-3V8L11 5 8 10H6a2 2 0 00-2 1zM21 8v8"/>',
 }
 
 
@@ -78,6 +78,8 @@ export function useServices() {
         title:        data.title,
         tag:          data.tag,
         body:         data.body,
+        bestFor:      data.bestFor,
+        timeline:     data.timeline,
         deliverables: data.deliverables,
         // Merge locale label with static id and price
         addons: data.addons.map((addon, i) => ({

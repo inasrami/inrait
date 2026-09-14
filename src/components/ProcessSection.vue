@@ -1,5 +1,5 @@
 <template>
-  <section id="process" class="relative px-6 py-32 overflow-hidden">
+  <section id="process" class="relative px-6 py-36 overflow-hidden">
 
     <div class="max-w-[1080px] mx-auto">
 

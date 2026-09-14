@@ -1,11 +1,12 @@
 <template>
-  <section id="services" class="relative px-6 py-32" style="background: var(--surface);">
+  <section id="services" class="relative px-6 py-36" style="background: var(--surface);">
     <div class="absolute top-0 left-0 right-0 h-px" style="background: var(--border);" />
     <div class="absolute bottom-0 left-0 right-0 h-px" style="background: var(--border);" />
 
     <div class="max-w-[1080px] mx-auto">
       <div class="flex flex-wrap items-end justify-between gap-6 mb-16">
         <div>
+          <div class="section-kicker">{{ t('services.label') }}</div>
           <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
             {{ t('services.title') }}
           </h2>
@@ -16,13 +17,16 @@
         </RouterLink>
       </div>
 
-      <div class="grid grid-cols-1 gap-5 mb-10 md:grid-cols-3">
+      <div class="service-list mb-10">
         <div v-for="(service, i) in heroServices" :key="service.id" class="hero-card fade-up" :style="`transition-delay:${i * 0.1}s`">
           <div class="flex items-start justify-between mb-8">
             <div class="card-icon-wrap">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><g v-html="service.icon" /></svg>
             </div>
-            <span class="service-tag">{{ service.tag }}</span>
+            <div class="flex items-center gap-2">
+              <span class="service-tag">{{ service.tag }}</span>
+              <span class="service-timeline">{{ service.timeline }}</span>
+            </div>
           </div>
           <h3 class="font-semibold text-[21px] mb-3" style="letter-spacing:-0.02em;">{{ service.title }}</h3>
           <p class="text-text-muted text-[14px] leading-relaxed mb-8 flex-1">{{ service.body }}</p>
@@ -58,10 +62,19 @@ const heroServices = computed(() => SERVICES.value.filter(s => s.hero))
 
 <style scoped>
 .hero-card { display:flex; flex-direction:column; padding:28px 0 24px; border-top:1px solid var(--border-strong); border-bottom:1px solid var(--border); transition:border-color 0.3s ease,transform 0.3s ease; cursor:pointer; }
-.hero-card:hover { border-color:var(--accent); transform:translateY(-5px); }
-.card-icon-wrap { width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-left:2px solid var(--accent); }
-.service-tag { font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); background:rgba(164,224,75,0.08); border:1px solid rgba(164,224,75,0.18); border-radius:100px; padding:4px 10px; }
+.hero-card:hover { border-color:rgba(164,224,75,0.6); transform:translateY(-2px); }
+.service-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:44px; }
+.section-kicker { margin-bottom:12px; color:var(--accent); font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; }
+.card-icon-wrap { width:40px; height:40px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(164,224,75,0.18); border-radius:10px; background:rgba(164,224,75,0.07); transition:background 0.25s ease,transform 0.25s ease; }
+.hero-card:hover .card-icon-wrap { transform:translateY(-2px); }
+.service-tag { font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim); background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:100px; padding:4px 10px; }
+.service-timeline { color:var(--text-dim); font-size:11px; }
+.hero-card p { display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .card-footer { display:flex; align-items:flex-end; justify-content:space-between; padding-top:20px; border-top:1px solid var(--border); margin-top:auto; }
 .card-cta { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--text-muted); padding:8px 0; transition:color 0.2s ease,transform 0.2s ease; }
 .card-cta:hover { color:var(--accent); transform:translateX(4px); }
+
+@media (max-width: 767px) {
+  .service-list { grid-template-columns:1fr; column-gap:0; }
+}
 </style>

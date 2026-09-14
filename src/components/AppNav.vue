@@ -7,12 +7,13 @@
     <div class="max-w-[1080px] mx-auto h-full px-6 flex items-center justify-between">
 
       <!-- Logo -->
-      <RouterLink to="/" class="flex items-center select-none" @click="handleLogoClick">
-        <img src="/images/WhiteLogo.webp" alt="INRAIT" class="w-10 h-10" />
+      <RouterLink to="/" class="nav-brand flex items-center select-none" @click="handleLogoClick">
+        <img src="/images/WhiteLogo.webp" alt="" class="w-10 h-10" />
+        <span class="nav-wordmark">IN<span>R</span>AIT</span>
       </RouterLink>
 
       <!-- Desktop nav -->
-      <div class="items-center hidden gap-6 md:flex">
+      <div class="items-center hidden gap-7 md:flex">
 
         <!-- Scroll-anchor links (home page only) -->
         <a
@@ -196,6 +197,10 @@ watch(() => route.path, (path) => {
 .nav-link--active { color: var(--text) !important; }
 .nav-link--active::after { width: 100% !important; }
 
+.nav-brand { gap: 9px; }
+.nav-wordmark { color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.06em; line-height: 1; }
+.nav-wordmark span { color: var(--accent); }
+
 .blog-link { position: relative; }
 .blog-link::before {
   content: '';
@@ -220,7 +225,7 @@ watch(() => route.path, (path) => {
   align-items: center;
   gap: 5px;
   padding: 6px 12px;
-  border-radius: 50px;
+  border-radius: 8px;
   border: 1px solid var(--border-strong);
   background: rgba(255,255,255,0.04);
   font-size: 12px;
@@ -230,6 +235,9 @@ watch(() => route.path, (path) => {
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
   cursor: pointer;
 }
+
+.nav-brand img { transition: transform 0.3s ease; }
+.nav-brand:hover img { transform: rotate(-5deg) scale(1.04); }
 
 .lang-btn:hover {
   color: var(--text);

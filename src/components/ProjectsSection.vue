@@ -1,5 +1,5 @@
 <template>
-  <section id="work" class="py-32 overflow-hidden">
+  <section id="work" class="py-36 overflow-hidden">
 
     <!-- Header -->
     <div class="px-6 max-w-[1080px] mx-auto mb-10">
@@ -75,7 +75,7 @@
             </h3>
             <span class="text-text-dim text-[12px] mt-1 shrink-0 font-mono">{{ project.year }}</span>
           </div>
-          <p class="mb-5 text-text-muted" style="font-size: 14px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+          <p class="mb-5 text-text-muted" style="font-size: 14px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
             {{ project.description }}
           </p>
           <div class="flex items-center justify-between">

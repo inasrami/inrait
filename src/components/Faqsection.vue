@@ -1,5 +1,5 @@
 <template>
-  <section class="relative px-6 py-32 overflow-hidden">
+  <section class="relative px-6 py-36 overflow-hidden">
 
     <div class="max-w-[780px] mx-auto">
 

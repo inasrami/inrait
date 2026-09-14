@@ -1,5 +1,5 @@
 <template>
-  <section id="industries" class="relative px-6 py-32" style="background: var(--surface);">
+  <section id="industries" class="relative px-6 py-36" style="background: var(--surface);">
 
     <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
 

@@ -2,24 +2,16 @@
   <div class="services-page">
 
     <!-- Hero -->
-    <section class="relative px-6 pt-40 pb-20 overflow-hidden">
+    <section class="relative px-6 pt-24 pb-10 overflow-hidden services-hero">
       <div class="hero-glow" />
       <div class="max-w-[1080px] mx-auto relative z-10 text-center">
-        <h1 class="font-display fade-up text-[clamp(64px,12vw,130px)] leading-none mb-6" style="letter-spacing:0.02em; transition-delay:0.05s;">
+        <div class="services-kicker fade-up" style="transition-delay:0.02s;">{{ t('servicesPage.label') }}</div>
+        <h1 class="font-display fade-up text-[clamp(52px,8vw,92px)] leading-none mb-4" style="letter-spacing:0.02em; transition-delay:0.05s;">
           {{ t('servicesPage.title') }}
         </h1>
-        <p class="fade-up text-[17px] text-text-muted max-w-xl mx-auto leading-relaxed mb-8" style="font-weight:300; transition-delay:0.1s;">
+        <p class="fade-up text-[15px] text-text-muted max-w-lg mx-auto leading-relaxed" style="font-weight:300; transition-delay:0.1s;">
           {{ t('servicesPage.selectServices') }} {{ t('servicesPage.combineServices') }}
         </p>
-        <div class="disclaimer-box fade-up" style="transition-delay:0.18s;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          <p class="text-[13px] text-text-muted leading-relaxed text-left">
-            <strong class="text-text-main">{{ t('servicesPage.disclaimerStrong') }}</strong>
-            {{ t('servicesPage.disclaimerBody') }}
-          </p>
-        </div>
       </div>
     </section>
 
@@ -54,9 +46,9 @@
     </Transition>
 
     <!-- Services grid -->
-    <section class="px-6 pb-8">
+    <section class="px-6 pb-10">
       <div class="max-w-[1080px] mx-auto">
-        <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <div class="service-grid">
           <div
             v-for="(service, i) in SERVICES"
             :key="service.id"
@@ -64,6 +56,8 @@
             :class="{ 'service-card--selected': isSelected(service.id) }"
             :style="`animation-delay: ${i * 0.07}s`"
           >
+
+            <div class="service-index">0{{ i + 1 }}</div>
 
             <!-- Card header - click toggles service selection -->
             <div class="card-header" @click="toggleService(service.id)" data-cursor>
@@ -104,17 +98,51 @@
               </div>
             </div>
 
-            <!-- Deliverables -->
-            <div class="px-6 pb-4">
-              <ul class="grid grid-cols-2 gap-x-4 gap-y-2">
-                <li v-for="item in service.deliverables" :key="item" class="flex items-start gap-2 text-[12px] text-text-muted">
-                  <svg class="flex-shrink-0 mt-[2px]" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                  {{ item }}
-                </li>
-              </ul>
+            <div class="service-meta">
+              <span><span class="comparison-label">{{ t('servicesPage.timeline') }}</span> {{ service.timeline }}</span>
+              <button class="details-toggle" type="button" @click.stop="toggleDetails(service.id)">
+                {{ openDetails === service.id ? t('servicesPage.hideDetails') : t('servicesPage.viewDetails') }}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" :class="{ 'chevron--open': openDetails === service.id }">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
             </div>
+
+            <div class="addon-preview">
+              <div class="comparison-label">{{ t('servicesPage.addons') }}</div>
+              <div class="addon-grid">
+                <button
+                  v-for="addon in service.addons"
+                  :key="addon.id"
+                  type="button"
+                  class="addon-chip"
+                  :class="{ 'addon-chip--checked': isAddonSelected(addon.id) }"
+                  @click.stop="toggleAddon(addon.id, service.id)"
+                >
+                  <span class="addon-chip-mark">{{ isAddonSelected(addon.id) ? '✓' : '+' }}</span>
+                  <span class="addon-chip-label">{{ addon.label }}</span>
+                  <span class="addon-chip-price">€{{ addon.price }}</span>
+                </button>
+              </div>
+            </div>
+
+            <Transition name="details">
+              <div v-if="openDetails === service.id" class="service-details">
+                <div class="comparison-item comparison-item--wide">
+                  <span class="comparison-label">{{ t('servicesPage.bestFor') }}</span>
+                  <span class="comparison-value">{{ service.bestFor }}</span>
+                </div>
+                <div class="comparison-label included-label">{{ t('servicesPage.included') }}</div>
+                <ul class="grid grid-cols-2 gap-x-4 gap-y-2">
+                  <li v-for="item in service.deliverables" :key="item" class="flex items-start gap-2 text-[12px] text-text-muted">
+                    <svg class="flex-shrink-0 mt-[2px]" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    {{ item }}
+                  </li>
+                </ul>
+              </div>
+            </Transition>
 
             <!-- Price row + add-ons toggle - @click.stop prevents header toggle -->
             <div class="price-row" @click.stop>
@@ -124,64 +152,24 @@
                   €{{ service.basePrice.toLocaleString() }}
                 </div>
               </div>
-              <button
-                class="addon-toggle"
-                :class="{ 'addon-toggle--open': openAddons === service.id }"
-                @click.stop="toggleAddons(service.id)"
-                style="cursor: pointer;"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                {{ t('servicesPage.addons') }}
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                  class="chevron" :class="{ 'chevron--open': openAddons === service.id }">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
-              </button>
-            </div>
-
-            <!-- Add-ons drawer -->
-            <Transition name="drawer">
-              <div v-if="openAddons === service.id" class="addons-drawer" @click.stop>
-                <div class="addons-header">{{ t('servicesPage.addonsTitle') }}</div>
-                <div class="flex flex-col gap-1.5">
-                  <div
-                    v-for="addon in service.addons"
-                    :key="addon.id"
-                    class="addon-row"
-                    :class="{ 'addon-row--checked': isAddonSelected(addon.id) }"
-                    @click.stop="toggleAddon(addon.id, service.id)"
-                    style="cursor: pointer;"
-                  >
-                    <div class="addon-check" :class="{ 'addon-check--on': isAddonSelected(addon.id) }">
-                      <svg v-if="isAddonSelected(addon.id)" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    </div>
-                    <span class="addon-label">{{ addon.label }}</span>
-                    <span class="addon-price">+€{{ addon.price }}</span>
-                  </div>
-                </div>
+              <div class="price-actions">
+                <button class="service-cta" type="button" @click.stop="toggleService(service.id)">
+                  {{ isSelected(service.id) ? t('servicesPage.added') : t('servicesPage.chooseService') }}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </button>
               </div>
-            </Transition>
+            </div>
 
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Bottom disclaimer -->
-    <div class="max-w-[1080px] mx-auto px-6 mb-10">
-      <div class="bottom-disclaimer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <span class="text-[12px] text-text-dim leading-relaxed">
-          {{ t('servicesPage.bottomNote') }}
-          <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor: pointer;">{{ t('servicesPage.bookCall') }}</RouterLink>
-        </span>
-      </div>
+    <div class="services-footer-note">
+      <span>{{ t('servicesPage.bottomNote') }}</span>
+      <RouterLink to="/contact" class="text-accent underline-offset-2 hover:underline" style="cursor: pointer;">{{ t('servicesPage.bookCall') }}</RouterLink>
     </div>
 
     <!-- Sticky quote bar -->
@@ -256,7 +244,7 @@ useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url:
 
 const selectedServices = ref([])
 const selectedAddons   = ref([])
-const openAddons       = ref(null)
+const openDetails      = ref(null)
 
 function isSelected(id)      { return selectedServices.value.includes(id) }
 function isAddonSelected(id) { return selectedAddons.value.includes(id) }
@@ -268,7 +256,6 @@ function toggleService(id) {
     // Also deselect any addons belonging to this service
     const addonIds = serviceById(id)?.addons.map(a => a.id) ?? []
     selectedAddons.value = selectedAddons.value.filter(a => !addonIds.includes(a))
-    if (openAddons.value === id) openAddons.value = null
   } else {
     selectedServices.value = [...selectedServices.value, id]
   }
@@ -286,8 +273,9 @@ function toggleAddon(addonId, serviceId) {
   }
 }
 
-function toggleAddons(id) {
-  openAddons.value = openAddons.value === id ? null : id
+function toggleDetails(id) {
+  const closing = openDetails.value === id
+  openDetails.value = closing ? null : id
 }
 
 const subtotal = computed(() => {
@@ -318,13 +306,10 @@ const hasSelection = computed(() =>
 
 <style scoped>
 .services-page { min-height: 100vh; }
+.services-hero { border-bottom: 1px solid var(--border); }
+.services-kicker { margin-bottom: 14px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
 
-.disclaimer-box {
-  display: inline-flex; align-items: flex-start; gap: 12px;
-  max-width: 560px; margin: 0 auto; padding: 16px 20px;
-  border-radius: 14px; border: 1px solid rgba(164,224,75,0.15);
-  background: rgba(164,224,75,0.04); text-align: left;
-}
+.service-grid { display: grid; grid-template-columns: minmax(0, 980px); gap: 0; }
 
 .discount-banner {
   position: sticky; top: 56px; z-index: 40;
@@ -351,13 +336,17 @@ const hasSelection = computed(() =>
 .card-entrance { opacity: 0; animation: cardIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
 
 .service-card {
-  border-top: 1px solid var(--border-strong); border-bottom: 1px solid var(--border);
-  background: transparent; overflow: hidden;
-  transition: border-color 0.3s ease, transform 0.3s ease;
+  display: grid; grid-template-columns: 48px minmax(0, 1fr);
+  border: 0; border-top: 1px solid var(--border-strong);
+  border-radius: 0; background: transparent; overflow: hidden;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
+.service-card:last-child { border-bottom: 1px solid var(--border-strong); }
+.service-card:hover { background: rgba(255,255,255,0.025); }
 .service-card--selected {
-  border-color: var(--accent);
+  border-top-color: rgba(164,224,75,0.65); background: rgba(164,224,75,0.045);
 }
+.service-index { grid-column: 1; grid-row: 1 / span 5; padding: 29px 0 0; color: var(--text-dim); font-family: 'DM Mono', 'Fira Code', monospace; font-size: 10px; letter-spacing: 0.08em; }
 
 .selected-badge {
   position: absolute; top: 18px; right: 60px;
@@ -371,24 +360,26 @@ const hasSelection = computed(() =>
 
 .card-header {
   position: relative; display: flex; align-items: flex-start;
-  gap: 14px; padding: 26px 22px 18px;
+  grid-column: 2; gap: 14px; padding: 28px 0 16px;
   user-select: none; cursor: pointer; transition: background 0.2s ease;
 }
 .card-header:hover { background: rgba(255,255,255,0.02); }
+.card-header p { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 .svc-icon {
   width: 40px; height: 40px; border-radius: 11px;
   display: flex; align-items: center; justify-content: center;
-  background: transparent; border-left: 2px solid rgba(164,224,75,0.5);
+  background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.18);
   flex-shrink: 0; margin-top: 2px;
-  transition: background 0.25s ease, border-color 0.25s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
+.card-header:hover .svc-icon { transform: translateY(-2px); }
 .svc-icon--on { background: var(--accent); border-color: var(--accent); }
 
 .svc-tag {
   font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--accent);
-  background: rgba(164,224,75,0.08); border: 1px solid rgba(164,224,75,0.18);
+  text-transform: uppercase; color: var(--text-dim);
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
   border-radius: 100px; padding: 3px 9px; white-space: nowrap;
 }
 
@@ -403,8 +394,26 @@ const hasSelection = computed(() =>
 
 .price-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 22px; border-top: 1px solid var(--border);
+  grid-column: 2; gap: 16px; padding: 18px 0 24px; border-top: 1px solid var(--border);
 }
+.service-meta { grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 16px; color: var(--text-muted); font-size: 12px; }
+.service-meta .comparison-label { display: inline; margin-right: 6px; }
+.details-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 0; color: var(--text-muted); background: none; border: 0; font-size: 12px; cursor: pointer; transition: color 0.2s ease; }
+.details-toggle:hover { color: var(--accent); }
+.details-toggle svg { transition: transform 0.25s ease; }
+.addon-preview { grid-column: 2; padding: 0 0 20px; }
+.addon-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 9px; }
+.addon-chip { display: flex; align-items: center; gap: 7px; min-width: 0; padding: 8px 9px; color: var(--text-muted); background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 7px; text-align: left; cursor: pointer; transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease; }
+.addon-chip:hover { color: var(--text); background: rgba(255,255,255,0.06); border-color: var(--border-strong); }
+.addon-chip--checked { color: var(--text); background: rgba(164,224,75,0.09); border-color: rgba(164,224,75,0.45); }
+.addon-chip-mark { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; flex-shrink: 0; color: var(--accent); font-size: 13px; font-weight: 700; }
+.addon-chip--checked .addon-chip-mark { color: #000; background: var(--accent); border-radius: 50%; font-size: 10px; }
+.addon-chip-label { min-width: 0; font-size: 11px; line-height: 1.3; }
+.addon-chip-price { margin-left: auto; flex-shrink: 0; color: var(--text-dim); font-size: 10px; }
+.service-details { grid-column: 2; display: flex; flex-direction: column; gap: 14px; padding: 17px 0 20px; background: rgba(0,0,0,0.16); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.included-label { margin-top: 2px; }
+.details-enter-active, .details-leave-active { overflow: hidden; transition: opacity 0.22s ease, max-height 0.3s ease; max-height: 300px; }
+.details-enter-from, .details-leave-to { max-height: 0; opacity: 0; }
 .price-label-sm {
   font-size: 10px; text-transform: uppercase;
   letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 3px;
@@ -419,6 +428,18 @@ const hasSelection = computed(() =>
 }
 .addon-toggle:hover,
 .addon-toggle--open { color: var(--accent); border-color: rgba(164,224,75,0.35); background: rgba(164,224,75,0.04); }
+
+.comparison-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(130px, 0.7fr); gap: 12px; padding: 0 22px 20px; }
+.comparison-item { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.comparison-item--wide { padding-right: 8px; }
+.comparison-label { color: var(--text-dim); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.comparison-value { color: var(--text-muted); font-size: 12px; line-height: 1.5; }
+.comparison-value--strong { color: var(--text); font-weight: 600; }
+.deliverables-block { padding: 0 22px 20px; }
+.price-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.service-cta { display: inline-flex; align-items: center; gap: 7px; border: 0; border-radius: 100px; padding: 8px 13px; background: var(--accent); color: #000; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+.service-cta:hover { background: #b8f05a; transform: translateY(-1px); }
+.service-card--selected .service-cta { background: rgba(164,224,75,0.12); color: var(--accent); border: 1px solid rgba(164,224,75,0.3); }
 
 .chevron { transition: transform 0.25s ease; }
 .chevron--open { transform: rotate(180deg); }
@@ -459,6 +480,7 @@ const hasSelection = computed(() =>
   display: flex; align-items: flex-start; gap: 10px; padding: 14px 18px;
   border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.01);
 }
+.services-footer-note { display: flex; justify-content: center; gap: 8px; padding: 0 24px 38px; color: var(--text-dim); font-size: 12px; text-align: center; }
 
 .quote-bar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
@@ -492,4 +514,15 @@ const hasSelection = computed(() =>
   background: rgba(164,224,75,0.1); border: 1px solid rgba(164,224,75,0.22);
   border-radius: 100px; padding: 2px 7px; letter-spacing: 0.04em;
 }
+
+@media (max-width: 560px) {
+  .service-card { grid-template-columns: 32px minmax(0, 1fr); }
+  .service-index { padding-top: 25px; }
+  .card-header, .service-meta, .addon-preview, .service-details, .price-row { grid-column: 2; }
+  .addon-grid { grid-template-columns: 1fr; }
+  .comparison-grid { grid-template-columns: 1fr; gap: 14px; }
+  .price-row { align-items: flex-start; flex-direction: column; }
+  .price-actions { width: 100%; justify-content: flex-start; }
+}
+
 </style>

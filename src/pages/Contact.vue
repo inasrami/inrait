@@ -17,7 +17,13 @@
       <div class="grid grid-cols-1 gap-16 lg:grid-cols-2">
 
         <!-- Form -->
-        <div class="fade-up" style="transition-delay:0.15s;">
+        <div class="contact-form-panel fade-up" style="transition-delay:0.15s;">
+          <div class="form-heading">
+            <span class="form-kicker">01 / {{ t('contact.label') }}</span>
+            <h2>{{ t('contact.message') }}</h2>
+            <p>{{ t('contact.sub') }}</p>
+          </div>
+
           <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
 
             <div class="form-trap" aria-hidden="true">
@@ -28,17 +34,17 @@
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div class="form-group">
                 <label class="form-label">{{ t('contact.name') }}</label>
-                <input v-model="form.name" type="text" class="form-input" :placeholder="t('contact.namePh')" autocomplete="name" required />
+                <input v-model="form.name" id="contact-name" name="name" type="text" class="form-input" :placeholder="t('contact.namePh')" autocomplete="name" required />
               </div>
               <div class="form-group">
                 <label class="form-label">{{ t('contact.email') }}</label>
-                <input v-model="form.email" type="email" class="form-input" :placeholder="t('contact.emailPh')" autocomplete="email" required />
+                <input v-model="form.email" id="contact-email" name="email" type="email" class="form-input" :placeholder="t('contact.emailPh')" autocomplete="email" required />
               </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">{{ t('contact.type') }}</label>
-              <select v-model="form.type" class="form-input">
+              <select v-model="form.type" id="project-type" name="project_type" class="form-input">
                 <option value="">{{ t('contact.typePh') }}</option>
                 <option v-for="(opt, i) in t('contact.types')" :key="i" :value="opt">{{ opt }}</option>
               </select>
@@ -46,7 +52,7 @@
 
             <div class="form-group">
               <label class="form-label">{{ t('contact.budget') }}</label>
-              <select v-model="form.budget" class="form-input">
+              <select v-model="form.budget" id="project-budget" name="budget" class="form-input">
                 <option value="">{{ t('contact.budgetPh') }}</option>
                 <option v-for="(opt, i) in t('contact.budgets')" :key="i" :value="opt">{{ opt }}</option>
               </select>
@@ -54,13 +60,13 @@
 
             <div class="form-group">
               <label class="form-label">{{ t('contact.message') }}</label>
-              <textarea v-model="form.message" class="form-input" rows="5"
+              <textarea v-model="form.message" id="project-message" name="message" class="form-input" rows="5"
                 :placeholder="t('contact.messagePh')"
                 required />
             </div>
 
-              <label class="flex items-start gap-3 text-[12px] text-text-muted">
-                <input v-model="form.consent" type="checkbox" class="mt-0.5" required />
+              <label class="consent-row">
+                <input v-model="form.consent" type="checkbox" required />
                 <span>{{ t('contact.consent') }} <RouterLink to="/privacy" class="text-accent underline-offset-2 hover:underline">{{ t('contact.privacyLink') }}</RouterLink>.</span>
               </label>
 
@@ -73,7 +79,7 @@
               <span class="text-[13px]" style="color:#ff9090;">{{ errorMsg }}</span>
             </div>
 
-            <button type="submit" class="btn-primary w-full justify-center py-5 text-[16px]"
+            <button type="submit" class="form-submit btn-primary w-full justify-center py-5 text-[16px]"
               :disabled="loading || submitted" style="cursor: pointer;">
               <!-- Idle -->
               <template v-if="!loading && !submitted">
@@ -95,6 +101,11 @@
                 {{ t('contact.sent') }}
               </template>
             </button>
+
+            <div class="form-footnote">
+              <span class="availability-dot" />
+              <span>{{ t('contact.availTitle') }} · {{ t('contact.availBody') }}</span>
+            </div>
 
             <button v-if="submitted" type="button" class="text-[13px] text-text-muted underline underline-offset-4" @click="resetForm">
               {{ t('contact.sendAnother') }}
@@ -307,26 +318,37 @@ function loadScript(src) {
 </script>
 
 <style scoped>
+.contact-form-panel { padding: 28px; background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 16px; }
+.form-heading { padding-bottom: 24px; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+.form-kicker { display: block; margin-bottom: 12px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.form-heading h2 { max-width: 380px; color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 400; letter-spacing: 0.02em; line-height: 0.95; }
+.form-heading p { max-width: 400px; margin-top: 12px; color: var(--text-muted); font-size: 14px; line-height: 1.65; }
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 .form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .form-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
 .form-input {
-  background: rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.2);
   border: 1px solid var(--border-strong);
-  border-radius: 12px;
-  padding: 14px 16px;
+  border-radius: 8px;
+  padding: 15px 16px;
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 15px;
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
-  cursor: pointer;
+  cursor: text;
   resize: none;
   width: 100%;
 }
 .form-input::placeholder { color: var(--text-dim); }
-.form-input:focus { border-color: rgba(164,224,75,0.5); background: rgba(164,224,75,0.03); }
+.form-input:focus { border-color: var(--accent); background: rgba(164,224,75,0.035); box-shadow: 0 0 0 3px rgba(164,224,75,0.08); }
+.form-input[type="select"], select.form-input { cursor: pointer; }
 .form-input option { background: #111; color: var(--text); }
+.consent-row { display: flex; align-items: flex-start; gap: 10px; color: var(--text-muted); font-size: 12px; line-height: 1.5; cursor: pointer; }
+.consent-row input { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
+.form-submit { min-height: 58px; border-radius: 8px; }
+.form-footnote { display: flex; align-items: flex-start; gap: 8px; color: var(--text-dim); font-size: 11px; line-height: 1.5; }
+.availability-dot { width: 7px; height: 7px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
 .contact-item {
   display: flex; align-items: center; gap: 14px;
@@ -336,7 +358,7 @@ function loadScript(src) {
 .contact-item:last-child { border-bottom: none; }
 .contact-item:hover .contact-icon { background: rgba(164,224,75,0.15); }
 .contact-icon {
-  width: 42px; height: 42px; border-radius: 10px;
+  width: 40px; height: 40px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; background: rgba(164,224,75,0.07);
   border: 1px solid rgba(164,224,75,0.15); transition: background 0.2s ease;
@@ -350,4 +372,9 @@ function loadScript(src) {
   flex-shrink: 0;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 640px) {
+  .contact-form-panel { padding: 22px 18px; }
+  .form-heading { margin-bottom: 22px; }
+}
 </style>

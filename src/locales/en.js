@@ -11,9 +11,9 @@ export default {
 
   hero: {
     available:    'Open for projects · Sofia, Bulgaria',
-    line1:        'WEBSITES',
-    line2:        'AND SYSTEMS',
-    line3:        'FROM SOFIA.',
+    line1:        'WEBSITES.',
+    line2:        'SYSTEMS.',
+    line3:        'AUTOMATION.',
     sub:          'Booking platforms, stores, and automations for hotels, restaurants, and service businesses.',
     cta:          'Start a project',
     ctaWork:      'See our work',
@@ -53,6 +53,8 @@ export default {
       title: 'Business Website',
       tag:   'Most Popular',
       body:  'Custom-built websites that convert visitors into clients. End to end.',
+      bestFor: 'Businesses that need a credible, conversion-focused online presence.',
+      timeline: '2–4 weeks',
       deliverables: ['Responsive page structure', 'Conversion-focused copy layout', 'SEO-ready technical foundation'],
       addons: [
         { label: 'CMS integration (editable content)',    price: 200 },
@@ -66,6 +68,8 @@ export default {
       title: 'Custom Booking System',
       tag:   'For Hospitality',
       body:  'Reservation platforms for hospitality and service businesses. Own your bookings entirely.',
+      bestFor: 'Hotels, venues, clinics, and service teams managing appointments.',
+      timeline: '4–6 weeks',
       deliverables: ['Availability and booking flow', 'Admin reservation management', 'Confirmation email workflow'],
       addons: [
         { label: 'Online payment (Stripe / PayPal)',       price: 250 },
@@ -79,6 +83,8 @@ export default {
       title: 'E-commerce Store',
       tag:   'Sell Online',
       body:  'Online stores built for performance. Designed to sell from day one and scale.',
+      bestFor: 'Product businesses ready to launch or improve online sales.',
+      timeline: '5–8 weeks',
       deliverables: ['Product catalogue and checkout', 'Mobile-first shopping experience', 'Order management foundation'],
       addons: [
         { label: 'Multi-gateway checkout (Stripe + PayPal)', price: 200 },
@@ -92,6 +98,8 @@ export default {
       title: 'Workflow Automation',
       tag:   'Save Time',
       body:  'n8n automation pipelines that eliminate repetitive work - lead capture, CRM, invoicing, notifications.',
+      bestFor: 'Teams losing time to repetitive manual tasks and disconnected tools.',
+      timeline: '2–4 weeks',
       deliverables: ['Workflow mapping and triggers', 'Third-party API integrations', 'Error handling and handover documentation'],
       addons: [
         { label: 'CRM integration (HubSpot / Pipedrive)',  price: 200 },
@@ -105,6 +113,8 @@ export default {
       title: 'Visual Identity & Design',
       tag:   'Brand First',
       body:  'Brand identity systems and UI/UX design. From logo to colour palette to every touchpoint.',
+      bestFor: 'New or evolving brands that need a consistent visual system.',
+      timeline: '2–3 weeks',
       deliverables: ['Core visual direction', 'Logo and colour system', 'Reusable UI component direction'],
       addons: [
         { label: 'Full brand guidelines document',          price: 150 },
@@ -118,6 +128,8 @@ export default {
       title: 'Digital Marketing Retainer',
       tag:   'Grow Consistently',
       body:  'A focused monthly marketing retainer for Sofia businesses: strategy, content, campaigns, and measurable growth.',
+      bestFor: 'Businesses that want consistent marketing without a full-time team.',
+      timeline: 'Monthly',
       deliverables: ['Monthly campaign planning', 'Content and channel coordination', 'Performance tracking and recommendations'],
       addons: [
         { label: 'Monthly campaign strategy',             price: 250 },
@@ -340,6 +352,12 @@ export default {
     bannerMax:        'Maximum bundle discount unlocked.',
     bannerNext:       'Add one more service to unlock 15% off.',
     basePrice:        'Estimate from',
+    bestFor:          'Best for',
+    included:         'What is included',
+    timeline:         'Typical timeline',
+    chooseService:    'Choose service',
+    viewDetails:      'View details',
+    hideDetails:      'Hide details',
     addons:           'Add-ons',
     addonsTitle:      'Optional add-ons - click to include in estimate',
     added:            'Added',
