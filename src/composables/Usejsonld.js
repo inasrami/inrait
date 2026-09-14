@@ -57,7 +57,7 @@ export function localBusinessSchema() {
     image: `${SITE_URL}/images/og-cover.jpg`,
     description: 'Custom websites, booking systems, workflow automation (n8n), e-commerce and visual identity - built by INRAIT in Sofia, Bulgaria.',
     telephone: '+359876566094',
-    email: 'inrait@hotmail.com',
+    email: 'inrait.web@gmail.com',
     foundingDate: '2024',
     address: {
       '@type': 'PostalAddress',

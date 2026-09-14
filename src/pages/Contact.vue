@@ -97,13 +97,13 @@
           <div class="p-8 card-glass">
             <h3 class="font-semibold text-[18px] mb-6">{{ t('contact.directTitle') }}</h3>
             <div class="flex flex-col gap-5">
-              <a href="mailto:inrait@hotmail.com" class="contact-item" data-cursor>
+              <a href="mailto:inrait.web@gmail.com" class="contact-item" data-cursor>
                 <div class="contact-icon">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
                 <div>
                   <div class="text-[11px] text-text-dim uppercase tracking-widest mb-0.5">{{ t('contact.emailLabel') }}</div>
-                  <div class="text-[15px]">inrait@hotmail.com</div>
+                  <div class="text-[15px]">inrait.web@gmail.com</div>
                 </div>
               </a>
               <a href="tel:+359876566094" class="contact-item" data-cursor>
@@ -265,7 +265,7 @@ async function handleSubmit() {
       project_type: form.type   || 'Not specified',
       budget:       form.budget || 'Not specified',
       message:      form.message,
-      to_email:     'inrait@hotmail.com',
+      to_email:     'inrait.web@gmail.com',
     })
 
     submitted.value = true

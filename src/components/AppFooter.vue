@@ -50,7 +50,7 @@
             <div class="flex flex-col gap-3">
               <a href="https://www.linkedin.com/company/inrait/?" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
               <!-- <a href="https://github.com/inasrami" target="_blank" rel="noopener" class="footer-link">GitHub</a> -->
-              <a href="mailto:inrait@hotmail.com" class="footer-link">Email</a>
+              <a href="mailto:inrait.web@gmail.com" class="footer-link">Email</a>
               <a href="tel:0876566094" class="footer-link">+359 876 566 094</a>
             </div>
           </div>
