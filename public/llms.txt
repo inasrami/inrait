@@ -1,0 +1,21 @@
+# INRAIT
+
+> INRAIT is a digital agency based in Sofia providing web application development, UI/UX design, and workflow automation services.
+
+## About Us
+We build scalable web applications, design intuitive user interfaces, and automate business processes to help clients streamline their digital operations.
+
+## Core Services
+- **Web Application Development:** Full-stack frontend and backend development utilizing Vue.js, JavaScript/TypeScript, and Tailwind CSS.
+- **Workflow Automation:** Custom business logic and automation pipelines built with n8n, webhooks, and third-party API integrations.
+- **UI/UX & Branding:** Interface design, vector graphics, logos, and product mockups.
+- **Hosting & Infrastructure:** Secure deployment pipelines using Docker, Dokploy, and Traefik.
+
+## Key Links
+- [Our Services](https://inrait.com/services)
+- [Portfolio & Case Studies](https://inrait.com/portfolio)
+- [Client Booking/Onboarding](https://inrait.com/contact)
+
+## Contact Information
+- Website: https://inrait.com
+- General Inquiries: hello@inrait.com
