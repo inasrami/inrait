@@ -31,7 +31,7 @@ const ADDON_PRICES = {
 }
 
 const BASE_PRICES = {
-  website:     899.99,
+  website:     699.99,
   booking:     1199.99,
   ecommerce:   1999.99,
   automation:  599.99,
