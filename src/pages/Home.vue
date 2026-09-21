@@ -3,6 +3,7 @@
     <HeroSection />
     <PhilosophySection />
     <ServicesSection />
+    <IntegrationsSection />
     <ProjectsSection />
     <ComparisonTable />
     <AboutSection />
@@ -19,6 +20,7 @@ import { useJsonLd, localBusinessSchema, webSiteSchema, breadcrumbSchema } from 
 import HeroSection         from '../components/HeroSection.vue'
 import PhilosophySection   from '../components/PhilosophySection.vue'
 import ServicesSection     from '../components/ServicesSection.vue'
+import IntegrationsSection from '../components/IntegrationsSection.vue'
 import ProjectsSection     from '../components/ProjectsSection.vue'
 import ComparisonTable     from '../components/Comparisontable.vue'
 import AboutSection        from '../components/AboutSection.vue'

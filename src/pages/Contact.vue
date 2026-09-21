@@ -214,8 +214,9 @@ const serviceTypeIndexes = {
   booking: 1,
   ecommerce: 2,
   automation: 3,
-  identity: 4,
-  marketing: 6,
+  ai: 4,
+  identity: 5,
+  marketing: 7,
 }
 
 function queryIds(value) {

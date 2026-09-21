@@ -92,6 +92,7 @@ export default {
         { label: 'Product reviews & ratings system',         price: 180 },
         { label: 'Sales analytics dashboard',               price: 220 },
         { label: 'Discount codes & flash sale engine',       price: 160 },
+        { label: 'Courier & shipping integration (Speedy, Econt & other local carriers)', price: 230 },
       ],
     },
     automation: {
@@ -139,6 +140,21 @@ export default {
         { label: 'Monthly performance report and call',   price: 150 },
       ],
     },
+    ai: {
+      title: 'AI Automation',
+      tag:   'AI Powered',
+      body:  'Custom AI agents and assistants that handle repetitive work - support replies, document processing, lead qualification.',
+      bestFor: 'Teams losing hours every week to repetitive text, email and data work.',
+      timeline: '3–6 weeks',
+      deliverables: ['Workflow audit and automation plan', 'Custom AI agent integrated with your stack', 'Guardrails, monitoring and handover documentation'],
+      addons: [
+        { label: 'Website chatbot with your knowledge base', price: 350 },
+        { label: 'Voice agent for inbound calls',            price: 400 },
+        { label: 'Document & invoice data extraction',       price: 280 },
+        { label: 'AI reporting and insights dashboard',      price: 300 },
+        { label: 'Team training session and playbook',       price: 250 },
+      ],
+    },
     photography: {
       title: 'Photography & Media',
       tag:   'Visual Content',
@@ -157,7 +173,7 @@ export default {
   services: {
     label:          'What We Build',
     title:          'SERVICES',
-    viewAll:        'View all 6 services',
+    viewAll:        'View all 7 services',
     from:           'Starting from',
     details:        'Details',
     alsoOffer:      'We also offer',
@@ -173,6 +189,32 @@ export default {
     trusted:  'Trusted by businesses across Bulgaria and Europe',
     yourLogo: 'Your brand here?',
     letsTalk: "Let's talk.",
+  },
+
+  integrations: {
+    landing: {
+      label: 'Local Delivery & Payments',
+      title: 'Built for the Bulgarian Market',
+      body:  "We connect your store or workflow to the couriers, banks, and platforms Bulgarian businesses already run on.",
+      seeMore: 'See all integrations',
+    },
+    page: {
+      label: 'Works With What You Already Use',
+      title: 'Integration Ecosystem',
+      body:  "From couriers to payment gateways, ERPs, and marketing tools - we connect your store or workflow to the platforms your business already runs on.",
+    },
+    categories: {
+      all:          'All',
+      delivery:     'Delivery',
+      payments:     'Payment Methods',
+      erp:          'ERP',
+      marketing:    'Marketing',
+      distributors: 'Distributors',
+      chat:         'Chat Apps',
+      sales:        'Sales Channels',
+    },
+    note:  "Don't see a platform you use?",
+    cta:   "Let's talk.",
   },
 
   projects: {
@@ -328,6 +370,7 @@ export default {
       'Custom Booking System',
       'E-commerce Store',
       'Workflow Automation (n8n)',
+      'AI Automation',
       'Visual Identity & Design',
       'Photography & Media',
       'Digital Marketing',
@@ -503,4 +546,26 @@ export default {
     no:     'No',
     varies: 'Varies',
   },
+  ai: {
+  title: 'AI Automation',
+  tag: 'AI',
+  body: 'Custom AI agents and assistants that handle repetitive work — support replies, document processing, lead qualification — wired into the tools you already use.',
+  bestFor: 'Teams losing hours a week to repetitive text, email or data work',
+  timeline: '3–6 weeks',
+  deliverables: [
+    'Workflow audit & automation plan',
+    'Custom AI agent / assistant setup',
+    'Integration with your existing stack',
+    'Prompt & knowledge base tuning',
+    'Guardrails and human-review steps',
+    'Usage monitoring & cost controls',
+  ],
+  addons: [
+    { label: 'Website chatbot with your knowledge base' },
+    { label: 'Voice agent for inbound calls' },
+    { label: 'Document & invoice data extraction' },
+    { label: 'AI reporting and insights dashboard' },
+    { label: 'Team training session & playbook' },
+  ],
+},
 }

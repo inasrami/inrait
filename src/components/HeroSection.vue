@@ -94,15 +94,15 @@ function scrollToWork() {
   /* Adjusted fluid scaling (9vw instead of 13vw) so the long "AND SYSTEMS" line fits on smaller screens without overflowing */
   font-size: clamp(52px, 9vw, 170px);
   letter-spacing: 0.02em;
-  line-height: 0.85;
+  line-height: 0.90;
   text-wrap: balance;
 }
 
 .hero-headline--cyrillic {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  font-size: clamp(40px, 8vw, 170px);
+  font-size: clamp(40px, 7vw, 170px);
   letter-spacing: 0em;
-  line-height: 0.95;
+  line-height: 1;
   font-weight: 700;
 }
 
