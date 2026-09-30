@@ -30,8 +30,8 @@ import FaqSection          from '../components/Faqsection.vue'
 import CtaSection          from '../components/CtaSection.vue'
 
 useSeo({
-  title:       'Web Engineering Studio Sofia',
-  description: 'Custom websites, booking systems, workflow automation (n8n), e-commerce and visual identity - built by INRAIT in Sofia, Bulgaria.',
+  title:       'Websites, Booking Systems & Automation in Sofia',
+  description: 'Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU. Get a free estimate.',
   canonical:   '/',
 })
 
