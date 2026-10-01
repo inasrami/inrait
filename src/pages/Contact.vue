@@ -81,25 +81,27 @@
 
             <button type="submit" class="form-submit btn-primary w-full justify-center py-5 text-[16px]"
               :disabled="loading || submitted" style="cursor: pointer;">
-              <!-- Idle -->
-              <template v-if="!loading && !submitted">
-                {{ t('contact.send') }}
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                </svg>
-              </template>
-              <!-- Sending -->
-              <template v-else-if="loading">
-                <span class="spinner" />
-                {{ t('contact.sending') }}
-              </template>
-              <!-- Success -->
-              <template v-else>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                {{ t('contact.sent') }}
-              </template>
+              <Transition name="btn-state" mode="out-in">
+                <!-- Idle -->
+                <span v-if="!loading && !submitted" key="idle" class="btn-state">
+                  {{ t('contact.send') }}
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                </span>
+                <!-- Sending -->
+                <span v-else-if="loading" key="loading" class="btn-state">
+                  <span class="spinner" />
+                  {{ t('contact.sending') }}
+                </span>
+                <!-- Success -->
+                <span v-else key="sent" class="btn-state">
+                  <svg class="check-pop" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  {{ t('contact.sent') }}
+                </span>
+              </Transition>
             </button>
 
             <div class="form-footnote">
@@ -348,6 +350,17 @@ function loadScript(src) {
 .consent-row { display: flex; align-items: flex-start; gap: 10px; color: var(--text-muted); font-size: 12px; line-height: 1.5; cursor: pointer; }
 .consent-row input { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
 .form-submit { min-height: 58px; border-radius: 8px; }
+
+/* Submit button state swap: quick fade out, slightly longer fade in (100ms + 200ms) */
+.btn-state { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-state-leave-active { transition: opacity 100ms ease-out; }
+.btn-state-enter-active { transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+.btn-state-enter-from, .btn-state-leave-to { opacity: 0; }
+.check-pop { transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+.btn-state-enter-from .check-pop { transform: scale(0.6); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-state-enter-from .check-pop { transform: none; }
+}
 .form-footnote { display: flex; align-items: flex-start; gap: 8px; color: var(--text-dim); font-size: 11px; line-height: 1.5; }
 .availability-dot { width: 7px; height: 7px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 

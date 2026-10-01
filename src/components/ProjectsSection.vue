@@ -51,10 +51,10 @@
 
       <RouterLink
         v-for="(project, i) in filteredProjects"
-        :key="project.id"
+        :key="`${activeFilter}-${project.id}`"
         :to="`/work/${project.slug}`"
         class="carousel-card"
-        :class="{ 'is-dragging': dragging }"
+        :class="{ 'is-dragging': dragging, 'card-refilter': hasFiltered }"
         @click.prevent="handleClick(project)"
       >
         <!-- Image -->
@@ -122,6 +122,7 @@ const router      = useRouter()
 const trackEl     = ref(null)
 const activeIndex = ref(0)
 const activeFilter = ref('all')
+const hasFiltered  = ref(false)   // true after the first filter click, so initial load doesn't replay the entrance
 
 const filters = computed(() => [
   { key: 'all',        label: t('projects.filter.all')        },
@@ -137,6 +138,8 @@ const filteredProjects = computed(() =>
 )
 
 function setFilter(key) {
+  if (key === activeFilter.value) return
+  hasFiltered.value = true
   activeFilter.value = key
   activeIndex.value = 0
   if (trackEl.value) trackEl.value.scrollTo({ left: 0, behavior: 'smooth' })
@@ -145,28 +148,56 @@ function setFilter(key) {
 // Drag-to-scroll
 const dragging   = ref(false)
 let dragStartX   = 0
+let dragStartT   = 0
+let dragStartIdx = 0
+let lastDelta    = 0
 let scrollStartX = 0
 let didDrag      = false
+let snapTimer    = null
+
+const FLICK_VELOCITY = 0.11   // px per ms
 
 function onDragStart(e) {
+  clearTimeout(snapTimer)
   dragging.value = true
   didDrag        = false
+  lastDelta      = 0
   dragStartX     = e.clientX
+  dragStartT     = performance.now()
   scrollStartX   = trackEl.value.scrollLeft
+  dragStartIdx   = Math.round(scrollStartX / CARD_WIDTH)
   trackEl.value.style.cursor = 'grabbing'
+  // Snap would fight the pointer while dragging; hand control back on release.
+  trackEl.value.style.scrollSnapType = 'none'
 }
 
 function onDragMove(e) {
   if (!dragging.value) return
   const delta = e.clientX - dragStartX
+  lastDelta = delta
   if (Math.abs(delta) > 4) didDrag = true
   trackEl.value.scrollLeft = scrollStartX - delta
   updateActiveIndex()
 }
 
 function onDragEnd() {
+  if (!dragging.value) return
   dragging.value = false
-  if (trackEl.value) trackEl.value.style.cursor = 'grab'
+  const el = trackEl.value
+  if (!el) return
+  el.style.cursor = 'grab'
+
+  if (!didDrag) { el.style.scrollSnapType = ''; return }
+
+  // Settle on the nearest card, or step one card on a quick flick.
+  const velocity = Math.abs(lastDelta) / Math.max(performance.now() - dragStartT, 1)
+  let target = Math.round(el.scrollLeft / CARD_WIDTH)
+  if (velocity > FLICK_VELOCITY) target = dragStartIdx + (lastDelta < 0 ? 1 : -1)
+  target = Math.max(0, Math.min(filteredProjects.value.length - 1, target))
+  scrollToIndex(target)
+
+  // Re-enable snapping once the smooth scroll has had time to finish.
+  snapTimer = setTimeout(() => { if (trackEl.value) trackEl.value.style.scrollSnapType = '' }, 500)
 }
 
 function handleClick(project) {
@@ -211,6 +242,15 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
   scrollbar-width: none; cursor: grab; padding-bottom: 8px; user-select: none;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
+
+/* Entrance for cards after a filter change (220ms, no stagger: tabs are clicked repeatedly) */
+.card-refilter { animation: refilterIn 220ms cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+@keyframes refilterIn {
+  from { opacity: 0; transform: translateY(8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes refilterIn { from { opacity: 0; } }
+}
 .carousel-spacer { flex-shrink: 0; width: calc((100vw - 1080px) / 2); min-width: 24px; }
 
 .carousel-card {
