@@ -213,6 +213,7 @@ const { SERVICES } = useServices()
 
 const serviceTypeIndexes = {
   website: 0,
+  onepager: 0,
   booking: 1,
   ecommerce: 2,
   automation: 3,

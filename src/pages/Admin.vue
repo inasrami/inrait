@@ -219,9 +219,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useSeo } from '../composables/useSeo.js'
 import { auth, db } from '../firebase.js'
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { collection, addDoc, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore'
+
+useSeo({ title: 'Admin', noindex: true })
 
 // ── Auth ──────────────────────────────────────────────────
 const isLoggedIn   = ref(false)

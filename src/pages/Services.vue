@@ -226,7 +226,7 @@
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSeo } from '../composables/useSeo.js'
-import { useJsonLd, breadcrumbSchema } from '../composables/Usejsonld.js'
+import { useJsonLd, breadcrumbSchema, serviceListSchema } from '../composables/Usejsonld.js'
 import { useServices, getBundleDiscount } from '../data/services.js'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
@@ -240,7 +240,10 @@ useSeo({
   description: 'Web engineering, booking systems, e-commerce, automation, design and photography - view all INRAIT services.',
   canonical:   '/services',
 })
-useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]))
+useJsonLd([
+  breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]),
+  serviceListSchema(SERVICES.value),
+])
 
 const selectedServices = ref([])
 const selectedAddons   = ref([])

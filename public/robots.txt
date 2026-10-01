@@ -4,5 +4,6 @@ Allow: /
 # Block irrelevant paths
 Disallow: /src/
 Disallow: /.vite/
+Disallow: /admin
 
 Sitemap: https://inrait.com/sitemap.xml

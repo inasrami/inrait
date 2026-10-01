@@ -12,6 +12,7 @@ import { useLanguage } from '../composables/useLanguage.js'
 // ─── Static data (never changes per language) ─────────────────────────────────
 
 const ADDON_IDS = {
+  onepager:    ['one-seo',     'one-i18n',      'one-anim'],
   website:     ['website-cms',  'website-blog',  'website-seo',  'website-i18n',  'website-anim'],
   booking:     ['booking-pay',  'booking-sms',   'booking-gcal', 'booking-multi', 'booking-promo'],
   ecommerce:   ['eco-payment',  'eco-inventory', 'eco-reviews',  'eco-analytics', 'eco-discounts'],
@@ -22,6 +23,7 @@ const ADDON_IDS = {
 }
 
 const ADDON_PRICES = {
+  onepager:    [79.99, 99.99, 99.99],
   website:     [199.99, 149.99, 179.99, 99.99, 99.99],
   booking:     [249.99, 199.99, 149.99, 349.99, 179.99],
   ecommerce:   [199.99, 249.99, 179.99, 219.99, 159.99],
@@ -32,6 +34,7 @@ const ADDON_PRICES = {
 }
 
 const BASE_PRICES = {
+  onepager:    350,
   website:     699.99,
   booking:     1199.99,
   ecommerce:   1999.99,
@@ -42,6 +45,7 @@ const BASE_PRICES = {
 }
 
 const HERO_FLAGS = {
+  onepager:    true,
   website:     true,
   booking:     true,
   ecommerce:   false,
@@ -52,6 +56,7 @@ const HERO_FLAGS = {
 }
 
 const ICONS = {
+  onepager:    '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
   website:     '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
   booking:     '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 15l2 2 5-5"/>',
   ecommerce:   '<path d="M4 5h17l-2 9H7L5 2H2"/><path d="M7 18h.01M18 18h.01M7 18a2 2 0 102 2M18 18a2 2 0 102 2"/>',
@@ -62,7 +67,7 @@ const ICONS = {
 }
 
 
-const SERVICE_KEYS = ['website', 'ai', 'ecommerce', 'automation', 'booking', 'identity', 'marketing']
+const SERVICE_KEYS = ['onepager', 'website' , 'ai', 'ecommerce', 'automation', 'booking', 'identity', 'marketing']
 // ─── Composable ───────────────────────────────────────────────────────────────
 
 export function useServices() {

@@ -3,6 +3,7 @@
  *
  * Usage:
  *   useSeo({
+ *     noindex:     true,                        // optional: keep the page out of search results
  *     title:       'Services',                  // appended as "Services · INRAIT"
  *     description: 'Custom web engineering...',
  *     canonical:   '/services',                 // path, not full URL
@@ -13,12 +14,12 @@
 const SITE_NAME   = 'INRAIT'
 const SITE_URL    = 'https://inrait.com'         // ← update when domain confirmed
 const DEFAULT_OG  = `${SITE_URL}/images/og-cover.jpg`
-const DEFAULT_DESC = 'Custom websites, booking systems, workflow automation and visual identity - built by INRAIT in Sofia, Bulgaria.'
+const DEFAULT_DESC = 'Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU. Get a free estimate.'
 
-export function useSeo({ title, description, canonical, image } = {}) {
+export function useSeo({ title, description, canonical, image, noindex = false } = {}) {
   const fullTitle = title
     ? `${title} · ${SITE_NAME}`
-    : `${SITE_NAME} · Web Engineering Studio Sofia`
+    : `${SITE_NAME} · Websites, Booking Systems & Automation in Sofia`
   const desc    = description || DEFAULT_DESC
   const ogImg   = image       ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : DEFAULT_OG
   const isBulgarian = window.location.pathname === '/bg' || window.location.pathname.startsWith('/bg/')
@@ -34,8 +35,12 @@ export function useSeo({ title, description, canonical, image } = {}) {
   // Standard meta
   setMeta('name', 'description', desc)
 
-  // Canonical
+  // Robots - reset on every page so a noindex from one route never leaks to the next
+  setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow')
+
+  // Canonical - remove the previous page's tag when this page has none (e.g. 404)
   if (canon) setLink('canonical', canon)
+  else document.querySelector('link[rel="canonical"]')?.remove()
 
   setHreflang('en',        englishUrl)
   setHreflang('bg',        bulgarianUrl)

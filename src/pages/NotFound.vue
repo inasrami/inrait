@@ -73,7 +73,7 @@ const { t } = useLanguage()
 useSeo({
   title:       '404 - Page Not Found',
   description: 'The page you are looking for does not exist. Return to the INRAIT homepage.',
-  canonical:   '/404',
+  noindex:     true,
 })
 
 </script>

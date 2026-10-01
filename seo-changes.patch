@@ -1,0 +1,412 @@
+diff --git a/index.html b/index.html
+index 974590c..436b607 100644
+--- a/index.html
++++ b/index.html
+@@ -10,19 +10,14 @@
+       name="description"
+       content="Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU. Get a free estimate."
+     />
+-    <meta
+-      name="keywords"
+-      content="web design Sofia, web development Bulgaria, уеб дизайн София, booking system, n8n automation, Vue.js developer Bulgaria"
+-    />
+     <meta name="author" content="INRAIT Web Engineering" />
+     <meta name="robots" content="index, follow" />
+-    <link rel="canonical" href="https://inrait.com" />
+ 
+     <!-- Open Graph -->
+-    <meta property="og:title" content="INRAIT · Web Engineering Studio" />
++    <meta property="og:title" content="INRAIT · Websites, Booking Systems & Automation in Sofia" />
+     <meta
+       property="og:description"
+-      content="Custom websites, booking systems, workflow automation and design from Sofia, Bulgaria."
++      content="Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU."
+     />
+     <meta
+       property="og:image"
+@@ -36,10 +31,10 @@
+ 
+     <!-- Twitter -->
+     <meta name="twitter:card" content="summary_large_image" />
+-    <meta name="twitter:title" content="INRAIT · Web Engineering Studio" />
++    <meta name="twitter:title" content="INRAIT · Websites, Booking Systems & Automation in Sofia" />
+     <meta
+       name="twitter:description"
+-      content="Custom websites, booking systems, automation and design from Sofia, Bulgaria."
++      content="Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU."
+     />
+     <meta
+       name="twitter:image"
+diff --git a/public/robots.txt b/public/robots.txt
+index b073399..64eaa61 100644
+--- a/public/robots.txt
++++ b/public/robots.txt
+@@ -4,5 +4,6 @@ Allow: /
+ # Block irrelevant paths
+ Disallow: /src/
+ Disallow: /.vite/
++Disallow: /admin
+ 
+ Sitemap: https://inrait.com/sitemap.xml
+\ No newline at end of file
+diff --git a/public/sitemap.xml b/public/sitemap.xml
+index c2eb2da..a9004be 100644
+--- a/public/sitemap.xml
++++ b/public/sitemap.xml
+@@ -6,6 +6,16 @@
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/" />
+     <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg" />
+     <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/" />
++    <lastmod>2026-10-01</lastmod>
++    <changefreq>weekly</changefreq>
++    <priority>1.0</priority>
++  </url>
++  <url>
++    <loc>https://inrait.com/bg</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/" />
++    <lastmod>2026-10-01</lastmod>
+     <changefreq>weekly</changefreq>
+     <priority>1.0</priority>
+   </url>
+@@ -14,6 +24,16 @@
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/contact" />
+     <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/contact" />
+     <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/contact" />
++    <lastmod>2026-10-01</lastmod>
++    <changefreq>monthly</changefreq>
++    <priority>0.8</priority>
++  </url>
++  <url>
++    <loc>https://inrait.com/bg/contact</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/contact" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/contact" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/contact" />
++    <lastmod>2026-10-01</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.8</priority>
+   </url>
+@@ -22,6 +42,16 @@
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/services" />
+     <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/services" />
+     <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/services" />
++    <lastmod>2026-10-01</lastmod>
++    <changefreq>monthly</changefreq>
++    <priority>0.9</priority>
++  </url>
++  <url>
++    <loc>https://inrait.com/bg/services</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/services" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/services" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/services" />
++    <lastmod>2026-10-01</lastmod>
+     <changefreq>monthly</changefreq>
+     <priority>0.9</priority>
+   </url>
+@@ -33,6 +63,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.3</priority>
+   </url>
++  <url>
++    <loc>https://inrait.com/bg/privacy</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/privacy" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/privacy" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/privacy" />
++    <changefreq>yearly</changefreq>
++    <priority>0.3</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/blog</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog" />
+@@ -41,7 +79,14 @@
+     <changefreq>weekly</changefreq>
+     <priority>0.7</priority>
+   </url>
+-
++  <url>
++    <loc>https://inrait.com/bg/blog</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog" />
++    <changefreq>weekly</changefreq>
++    <priority>0.7</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/work/barbers-unity</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/barbers-unity" />
+@@ -50,6 +95,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.7</priority>
+   </url>
++  <url>
++    <loc>https://inrait.com/bg/work/barbers-unity</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/barbers-unity" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/barbers-unity" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/barbers-unity" />
++    <changefreq>yearly</changefreq>
++    <priority>0.7</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/work/shiftease</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/shiftease" />
+@@ -58,6 +111,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.7</priority>
+   </url>
++  <url>
++    <loc>https://inrait.com/bg/work/shiftease</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/shiftease" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/shiftease" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/shiftease" />
++    <changefreq>yearly</changefreq>
++    <priority>0.7</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/work/hotel-prestige</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/hotel-prestige" />
+@@ -66,6 +127,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.7</priority>
+   </url>
++  <url>
++    <loc>https://inrait.com/bg/work/hotel-prestige</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/hotel-prestige" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/hotel-prestige" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/hotel-prestige" />
++    <changefreq>yearly</changefreq>
++    <priority>0.7</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/work/dna-of-design</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/dna-of-design" />
+@@ -74,6 +143,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.6</priority>
+   </url>
++  <url>
++    <loc>https://inrait.com/bg/work/dna-of-design</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/dna-of-design" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/dna-of-design" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/dna-of-design" />
++    <changefreq>yearly</changefreq>
++    <priority>0.6</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/work/aurum</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/aurum" />
+@@ -82,7 +159,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.6</priority>
+   </url>
+-
++  <url>
++    <loc>https://inrait.com/bg/work/aurum</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/work/aurum" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/work/aurum" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/work/aurum" />
++    <changefreq>yearly</changefreq>
++    <priority>0.6</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/blog/why-hotels-lose-bookings</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/why-hotels-lose-bookings" />
+@@ -91,6 +175,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.6</priority>
+   </url>
++  <url>
++    <loc>https://inrait.com/bg/blog/why-hotels-lose-bookings</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/why-hotels-lose-bookings" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog/why-hotels-lose-bookings" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog/why-hotels-lose-bookings" />
++    <changefreq>yearly</changefreq>
++    <priority>0.6</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/blog/n8n-automations-small-business</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/n8n-automations-small-business" />
+@@ -99,6 +191,14 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.6</priority>
+   </url>
++  <url>
++    <loc>https://inrait.com/bg/blog/n8n-automations-small-business</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/n8n-automations-small-business" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog/n8n-automations-small-business" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog/n8n-automations-small-business" />
++    <changefreq>yearly</changefreq>
++    <priority>0.6</priority>
++  </url>
+   <url>
+     <loc>https://inrait.com/blog/web-design-sofia-what-to-expect</loc>
+     <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/web-design-sofia-what-to-expect" />
+@@ -107,4 +207,28 @@
+     <changefreq>yearly</changefreq>
+     <priority>0.6</priority>
+   </url>
+-</urlset>
+\ No newline at end of file
++  <url>
++    <loc>https://inrait.com/bg/blog/web-design-sofia-what-to-expect</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/blog/web-design-sofia-what-to-expect" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/blog/web-design-sofia-what-to-expect" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/blog/web-design-sofia-what-to-expect" />
++    <changefreq>yearly</changefreq>
++    <priority>0.6</priority>
++  </url>
++  <url>
++    <loc>https://inrait.com/integrations</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/integrations" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/integrations" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/integrations" />
++    <changefreq>monthly</changefreq>
++    <priority>0.5</priority>
++  </url>
++  <url>
++    <loc>https://inrait.com/bg/integrations</loc>
++    <xhtml:link rel="alternate" hreflang="en" href="https://inrait.com/integrations" />
++    <xhtml:link rel="alternate" hreflang="bg" href="https://inrait.com/bg/integrations" />
++    <xhtml:link rel="alternate" hreflang="x-default" href="https://inrait.com/integrations" />
++    <changefreq>monthly</changefreq>
++    <priority>0.5</priority>
++  </url>
++</urlset>
+diff --git a/src/composables/useSeo.js b/src/composables/useSeo.js
+index 2d9226f..7234fa4 100644
+--- a/src/composables/useSeo.js
++++ b/src/composables/useSeo.js
+@@ -3,6 +3,7 @@
+  *
+  * Usage:
+  *   useSeo({
++ *     noindex:     true,                        // optional: keep the page out of search results
+  *     title:       'Services',                  // appended as "Services · INRAIT"
+  *     description: 'Custom web engineering...',
+  *     canonical:   '/services',                 // path, not full URL
+@@ -13,12 +14,12 @@
+ const SITE_NAME   = 'INRAIT'
+ const SITE_URL    = 'https://inrait.com'         // ← update when domain confirmed
+ const DEFAULT_OG  = `${SITE_URL}/images/og-cover.jpg`
+-const DEFAULT_DESC = 'Custom websites, booking systems, workflow automation and visual identity - built by INRAIT in Sofia, Bulgaria.'
++const DEFAULT_DESC = 'Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU. Get a free estimate.'
+ 
+-export function useSeo({ title, description, canonical, image } = {}) {
++export function useSeo({ title, description, canonical, image, noindex = false } = {}) {
+   const fullTitle = title
+     ? `${title} · ${SITE_NAME}`
+-    : `${SITE_NAME} · Web Engineering Studio Sofia`
++    : `${SITE_NAME} · Websites, Booking Systems & Automation in Sofia`
+   const desc    = description || DEFAULT_DESC
+   const ogImg   = image       ? (image.startsWith('http') ? image : `${SITE_URL}${image}`) : DEFAULT_OG
+   const isBulgarian = window.location.pathname === '/bg' || window.location.pathname.startsWith('/bg/')
+@@ -34,8 +35,12 @@ export function useSeo({ title, description, canonical, image } = {}) {
+   // Standard meta
+   setMeta('name', 'description', desc)
+ 
+-  // Canonical
++  // Robots - reset on every page so a noindex from one route never leaks to the next
++  setMeta('name', 'robots', noindex ? 'noindex, nofollow' : 'index, follow')
++
++  // Canonical - remove the previous page's tag when this page has none (e.g. 404)
+   if (canon) setLink('canonical', canon)
++  else document.querySelector('link[rel="canonical"]')?.remove()
+ 
+   setHreflang('en',        englishUrl)
+   setHreflang('bg',        bulgarianUrl)
+diff --git a/src/data/Projects.js b/src/data/Projects.js
+index d3b5ed7..c43d678 100644
+--- a/src/data/Projects.js
++++ b/src/data/Projects.js
+@@ -11,7 +11,7 @@ export const projects = [
+     solution: 'Built a dual-dashboard system: one for barbers to manage their schedules, services, and client history - one for clients to browse, book, and track appointments. Every decision prioritized speed and trust.',
+     outcome: 'Reduced average booking time from 4 minutes (phone) to under 60 seconds. Clean, native-feeling mobile interface that increased return bookings.',
+     url: 'https://barbersunity.com',
+-    image: '/images/barbersUnity.png',
++    image: '/images/barbersUnity.webp',
+     color: '#A4E04B',
+     featured: true,
+     year: '2024',
+@@ -28,7 +28,7 @@ export const projects = [
+     solution: 'Smart conflict detection, drag-drop scheduling grid, one-click Excel export via SheetJS. No login required - just open and work.',
+     outcome: 'Cut scheduling time by 70% in user testing. Adopted by several small business owners as their primary scheduling workflow.',
+     url: 'https://shift-ease-kappa.vercel.app',
+-    image: '/images/shiftEase.png',
++    image: '/images/shiftEase.webp',
+     color: '#60a5fa',
+     featured: true,
+     year: '2024',
+@@ -45,7 +45,7 @@ export const projects = [
+     solution: 'Rich imagery layouts, smooth animated transitions, real-time availability engine, and a streamlined multi-step checkout that feels effortless.',
+     outcome: 'Delivered a production-ready system with admin dashboard, room management, and automated confirmation emails.',
+     url: 'https://hotel-prestige.vercel.app',
+-    image: '/images/hotelprestige.png',
++    image: '/images/hotelprestige.webp',
+     color: '#f59e0b',
+     featured: true,
+     year: '2024',
+@@ -79,7 +79,7 @@ export const projects = [
+     solution: 'Cinematic entrance animations, rich golden typography system, immersive full-bleed photography layouts, and interaction design that rewards curious users.',
+     outcome: 'A showcase piece that demonstrates the ceiling of Vue.js frontend craftsmanship.',
+     url: 'https://inasrami.github.io/aurum-luxury/',
+-    image: '/images/aurum.png',
++    image: '/images/aurum.webp',
+     color: '#fbbf24',
+     featured: false,
+     year: '2023',
+diff --git a/src/pages/Admin.vue b/src/pages/Admin.vue
+index a7457de..d38bb1f 100644
+--- a/src/pages/Admin.vue
++++ b/src/pages/Admin.vue
+@@ -219,10 +219,13 @@
+ 
+ <script setup>
+ import { ref, computed } from 'vue'
++import { useSeo } from '../composables/useSeo.js'
+ import { auth, db } from '../firebase.js'
+ import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
+ import { collection, addDoc, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore'
+ 
++useSeo({ title: 'Admin', noindex: true })
++
+ // ── Auth ──────────────────────────────────────────────────
+ const isLoggedIn   = ref(false)
+ const loginLoading = ref(false)
+diff --git a/src/pages/NotFound.vue b/src/pages/NotFound.vue
+index e4e9d57..b893fd7 100644
+--- a/src/pages/NotFound.vue
++++ b/src/pages/NotFound.vue
+@@ -73,7 +73,7 @@ const { t } = useLanguage()
+ useSeo({
+   title:       '404 - Page Not Found',
+   description: 'The page you are looking for does not exist. Return to the INRAIT homepage.',
+-  canonical:   '/404',
++  noindex:     true,
+ })
+ 
+ </script>
+diff --git a/src/pages/Services.vue b/src/pages/Services.vue
+index 5cb35e7..9ad9de9 100644
+--- a/src/pages/Services.vue
++++ b/src/pages/Services.vue
+@@ -226,7 +226,7 @@
+ import { ref, computed } from 'vue'
+ import { RouterLink } from 'vue-router'
+ import { useSeo } from '../composables/useSeo.js'
+-import { useJsonLd, breadcrumbSchema } from '../composables/Usejsonld.js'
++import { useJsonLd, breadcrumbSchema, serviceListSchema } from '../composables/Usejsonld.js'
+ import { useServices, getBundleDiscount } from '../data/services.js'
+ import { useFadeUp } from '../composables/useFadeUp'
+ import { useLanguage } from '../composables/useLanguage.js'
+@@ -240,7 +240,10 @@ useSeo({
+   description: 'Web engineering, booking systems, e-commerce, automation, design and photography - view all INRAIT services.',
+   canonical:   '/services',
+ })
+-useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]))
++useJsonLd([
++  breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]),
++  serviceListSchema(SERVICES.value),
++])
+ 
+ const selectedServices = ref([])
+ const selectedAddons   = ref([])

@@ -53,14 +53,14 @@ useFadeUp()
 const { t } = useLanguage()
 const { SERVICES } = useServices()
 
-// Limits the array to exactly 3 items to maintain the tight 3-column layout
-const topServices = computed(() => SERVICES.value.filter(s => s.hero).slice(0, 3))
+// Featured services shown on the landing page (flagged `hero` in data/services.js), max 4 for the 4-column grid
+const topServices = computed(() => SERVICES.value.filter(s => s.hero).slice(0, 4))
 </script>
 
 <style scoped>
 .service-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -118,7 +118,13 @@ const topServices = computed(() => SERVICES.value.filter(s => s.hero).slice(0, 3
   text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+  .service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
   .service-grid {
     grid-template-columns: 1fr;
   }

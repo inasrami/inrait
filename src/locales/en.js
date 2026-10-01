@@ -64,6 +64,19 @@ export default {
         { label: 'Premium animations (GSAP)',             price: 300 },
       ],
     },
+    onepager: {
+      title: 'One-Page Website',
+      tag:   'Quick Start',
+      body:  'A clean, fast one-page site to get your business online. Ready in 3–7 days.',
+      bestFor: 'Freelancers, new businesses, and events that need a credible online presence now.',
+      timeline: '3–7 days',
+      deliverables: ['Responsive single-page design', 'Clear call to action and contact section', 'SEO-ready technical foundation'],
+      addons: [
+        { label: 'On-page SEO setup (meta tags, sitemap)', price: 80 },
+        { label: 'Second language version',                price: 100 },
+        { label: 'Scroll animations',                      price: 100 },
+      ],
+    },
     booking: {
       title: 'Custom Booking System',
       tag:   'For Hospitality',
@@ -173,7 +186,7 @@ export default {
   services: {
     label:          'What We Build',
     title:          'SERVICES',
-    viewAll:        'View all 7 services',
+    viewAll:        'View all 8 services',
     from:           'Starting from',
     details:        'Details',
     alsoOffer:      'We also offer',
@@ -503,7 +516,7 @@ export default {
     items: [
       {
         q: 'How long does a website take to build?',
-        a: 'A standard website: 2–4 weeks. Booking systems or e-commerce: 4–8 weeks.',
+        a: 'A one-page website: 3–7 days. A standard multi-page website: 2–4 weeks. Booking systems or e-commerce: 4–8 weeks.',
       },
       {
         q: 'What drives the cost of a project?',
