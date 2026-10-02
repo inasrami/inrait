@@ -1,22 +1,24 @@
 <template>
-  <section id="process" class="relative px-6 py-36 overflow-hidden">
+  <section id="process" class="relative px-6 py-36">
 
-    <div class="max-w-[1080px] mx-auto">
+    <div class="max-w-[1080px] mx-auto process-layout">
 
-      <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] mb-20" style="letter-spacing:0.02em; line-height:1;">
-        {{ t('process.title') }}
-      </h2>
+      <div class="process-intro">
+        <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
+          {{ t('process.title') }}
+        </h2>
+      </div>
 
-      <!-- Process steps -->
-      <div class="relative grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-0">
-
-        <div class="absolute top-0 bottom-0 hidden w-px -translate-x-1/2 md:block left-1/2" style="background: var(--border-strong);" />
+      <!-- Process steps scroll beside the pinned heading on wide screens. -->
+      <div ref="processSteps" class="process-steps">
+        <div class="process-line">
+          <div class="process-line-fill" />
+        </div>
 
         <div
           v-for="(step, i) in steps"
           :key="step.title"
-          class="relative pb-16 last:pb-0 fade-up"
-          :class="i % 2 === 1 ? 'md:mt-24' : ''"
+          class="process-step relative pb-16 last:pb-0 fade-up"
           :style="`transition-delay: ${i * 0.12}s`"
         >
           <div
@@ -39,7 +41,7 @@
       </div>
 
       <!-- CTA after process -->
-      <div class="mt-24 text-center fade-up">
+      <div class="process-cta mt-24 text-center fade-up">
         <p class="text-text-muted text-[17px] mb-8">{{ t('process.cta') }}</p>
         <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-[18px]">
           {{ t('process.ctaBtn') }}
@@ -52,13 +54,16 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
+import { useScrollProgress } from '../composables/useScrollProgress.js'
 
 useFadeUp()
 const { t } = useLanguage()
+const processSteps = ref(null)
+useScrollProgress(processSteps, { mode: 'span', anchor: 0.55, prop: '--process-progress' })
 
 const steps = computed(() => t('process.steps'))
 
@@ -69,3 +74,60 @@ const stepIcons = [
   '<polyline points="20 6 9 17 4 12"/>',
 ]
 </script>
+
+<style scoped>
+.process-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: clamp(32px, 8vw, 112px);
+}
+
+.process-intro {
+  position: sticky;
+  top: clamp(100px, 18vh, 160px);
+}
+
+.process-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding-left: 24px;
+}
+
+.process-line {
+  position: absolute;
+  top: 0;
+  bottom: 80px;
+  left: 0;
+  width: 1px;
+  background: var(--border-strong);
+}
+
+.process-line-fill {
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleY(var(--process-progress, 0));
+  transform-origin: top;
+}
+
+.process-cta {
+  grid-column: 1 / -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-line-fill { transform: scaleY(1); }
+}
+
+@media (max-width: 767px) {
+  .process-layout {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .process-intro {
+    position: static;
+  }
+}
+</style>

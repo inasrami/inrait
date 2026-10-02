@@ -35,7 +35,7 @@
     color: var(--text);
     font-size: 16px;
     line-height: 1.55;
-    overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -123,6 +123,87 @@
 
 .fade-in.is-visible {
   opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .fade-up,
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Scroll reveals use masks so content stays in its layout while it is uncovered. */
+.scroll-reveal-panel,
+.scroll-reveal-card,
+.scroll-reveal-title,
+.scroll-reveal-reading,
+.scroll-reveal-image {
+  --reveal-ease: cubic-bezier(0.2, 0.75, 0.25, 1);
+  transition:
+    clip-path 850ms var(--reveal-ease) var(--reveal-delay, 0ms),
+    opacity 650ms ease var(--reveal-delay, 0ms),
+    filter 850ms var(--reveal-ease) var(--reveal-delay, 0ms);
+  will-change: clip-path, opacity;
+}
+
+.scroll-reveal-panel {
+  clip-path: inset(0 0 14% 0 round 12px);
+  opacity: 0.25;
+  filter: blur(3px);
+}
+
+.scroll-reveal-card {
+  clip-path: inset(0 0 100% 0 round 8px);
+  opacity: 0.35;
+  filter: blur(2px);
+}
+
+.scroll-reveal-title {
+  clip-path: inset(0 100% 0 0);
+  opacity: 0.45;
+  filter: blur(2px);
+}
+
+.scroll-reveal-reading {
+  clip-path: inset(0 0 0 12%);
+  opacity: 0.35;
+  filter: blur(2px);
+}
+
+.scroll-reveal-image {
+  clip-path: inset(0 0 100% 0);
+  opacity: 0.35;
+  filter: blur(3px);
+}
+
+.scroll-reveal-panel.is-revealed,
+.scroll-reveal-card.is-revealed,
+.scroll-reveal-title.is-revealed,
+.scroll-reveal-reading.is-revealed,
+.scroll-reveal-image.is-revealed {
+  clip-path: inset(0);
+  opacity: 1;
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal-panel,
+  .scroll-reveal-card,
+  .scroll-reveal-title,
+  .scroll-reveal-reading,
+  .scroll-reveal-image {
+    clip-path: none;
+    opacity: 1;
+    filter: none;
+    transition: none;
+    will-change: auto;
+  }
 }
 
 /* ─── Buttons ───────────────────────────────────────────── */

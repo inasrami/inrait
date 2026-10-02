@@ -14,7 +14,7 @@
         </p>
       </div>
 
-      <div class="industries-list">
+      <div ref="industriesList" class="industries-list">
         <div
           v-for="(industry, i) in industries"
           :key="industry.title"
@@ -38,12 +38,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
+import { useScrollProgressMany } from '../composables/useScrollProgress.js'
 
 useFadeUp()
 const { t } = useLanguage()
+const industriesList = ref(null)
+useScrollProgressMany(industriesList, '.industry-item', { mode: 'enter', start: 0.95, end: 0.55, prop: '--industry-progress' })
 
 const industryIcons = [
   '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
@@ -73,6 +76,9 @@ const industries = computed(() =>
   gap: 16px;
   padding: 28px 0 32px;
   border-top: 1px solid var(--border);
+  --industry-reveal: clamp(0, var(--industry-progress, 1), 1);
+  translate: calc((1 - var(--industry-reveal)) * -32px) 0;
+  scale: calc(0.98 + var(--industry-reveal) * 0.02);
 }
 
 .industry-index {
@@ -100,5 +106,9 @@ const industries = computed(() =>
 @media (max-width: 767px) {
   .industries-list { grid-template-columns: 1fr; }
   .industry-item { grid-template-columns: 30px 28px minmax(0, 1fr); gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .industry-item { --industry-progress: 1 !important; }
 }
 </style>

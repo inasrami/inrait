@@ -11,10 +11,12 @@
     <ProcessSection />
     <FaqSection />
     <CtaSection />
+    <SectionRail />
   </div>
 </template>
 
 <script setup>
+import SectionRail from '../components/SectionRail.vue'
 import { useSeo }          from '../composables/useSeo.js'
 import { useJsonLd, localBusinessSchema, webSiteSchema, breadcrumbSchema } from '../composables/Usejsonld.js'
 import HeroSection         from '../components/HeroSection.vue'

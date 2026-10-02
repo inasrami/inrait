@@ -1,5 +1,5 @@
 <template>
-  <section id="work" class="overflow-hidden py-36">
+  <section ref="workSection" id="work" class="overflow-hidden py-36">
 
     <!-- Header -->
     <div class="px-6 max-w-[1080px] mx-auto mb-10">
@@ -114,12 +114,17 @@ import { RouterLink, useRouter } from 'vue-router'
 import { projects } from '../data/Projects.js'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useLanguage } from '../composables/useLanguage.js'
+import { useScrollProgress } from '../composables/useScrollProgress.js'
 
 useFadeUp()
 const { t } = useLanguage()
 
 const router      = useRouter()
 const trackEl     = ref(null)
+const workSection = ref(null)
+
+// --py (0 → 1) while the section crosses mid-screen: images drift slower than the page
+useScrollProgress(workSection, { mode: 'span', anchor: 0.5, prop: '--py' })
 const activeIndex = ref(0)
 const activeFilter = ref('all')
 const hasFiltered  = ref(false)   // true after the first filter click, so initial load doesn't replay the entrance
@@ -265,7 +270,10 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
 }
 
 .carousel-img-wrap { position: relative; height: 260px; overflow: hidden; background: var(--surface-3); }
-.carousel-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); pointer-events: none; }
+.carousel-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
+  /* scroll parallax via the individual properties, so the hover transform below still composes */
+  scale: 1.12; translate: 0 calc((var(--py, 0.5) - 0.5) * -36px); }
+@media (prefers-reduced-motion: reduce) { .carousel-img-wrap img { scale: 1; translate: none; } }
 .carousel-card:hover:not(.is-dragging) .carousel-img-wrap img { transform: scale(1.05); }
 .carousel-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%); }
 .carousel-index { position: absolute; bottom: 14px; right: 18px; font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; letter-spacing: 0.02em; color: rgba(255,255,255,0.12); pointer-events: none; }

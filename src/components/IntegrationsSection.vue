@@ -12,12 +12,13 @@
         </p>
       </div>
 
-      <div class="chips-grid fade-up" style="transition-delay:0.15s;">
+      <div ref="chips" class="chips-grid fade-up" style="transition-delay:0.15s;">
         <span
-          v-for="item in BG_ITEMS"
+          v-for="(item, i) in BG_ITEMS"
           :key="item.name"
           class="integration-chip"
           :class="{ 'integration-chip--logo': hasLogo(item) }"
+          :style="`--chip-offset:${i % 2 ? '-28px' : '28px'}`"
         >
           <span v-if="hasLogo(item)" class="chip-logo-wrap">
             <img :src="item.logo" :alt="item.name" loading="lazy" @error="onLogoError(item)" />
@@ -40,13 +41,16 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
+import { useScrollProgressMany } from '../composables/useScrollProgress.js'
 
 useFadeUp()
 const { t } = useLanguage()
+const chips = ref(null)
+useScrollProgressMany(chips, '.integration-chip', { mode: 'enter', start: 0.95, end: 0.6, prop: '--chip-progress' })
 
 // Domain used to fetch each company's icon. Fix any wrong ones here.
 const DOMAINS = {
@@ -106,6 +110,7 @@ function onLogoError(item) {
   border: 1px solid var(--border); background: rgba(255,255,255,0.025);
   color: var(--text-muted); font-size: 12.5px; font-weight: 500;
   transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  translate: calc((1 - clamp(0, var(--chip-progress, 1), 1)) * var(--chip-offset, 28px)) 0;
 }
 .integration-chip--logo { padding-left: 6px; }
 .integration-chip:hover { color: var(--text); background: rgba(255,255,255,0.06); border-color: var(--border-strong); }
@@ -116,6 +121,10 @@ function onLogoError(item) {
   padding: 3px; overflow: hidden;
 }
 .chip-logo-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+@media (prefers-reduced-motion: reduce) {
+  .integration-chip { --chip-progress: 1 !important; }
+}
 
 .see-more-btn {
   display: inline-flex; align-items: center; gap: 8px;

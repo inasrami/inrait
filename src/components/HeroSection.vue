@@ -1,5 +1,5 @@
 <template>
-  <section class="relative flex items-end w-full min-h-[min(900px,100svh)] overflow-hidden bg-bg-primary hero-section">
+  <section ref="heroSection" class="relative flex items-end w-full min-h-[min(900px,100svh)] overflow-hidden bg-bg-primary hero-section">
     <img class="hero-project-image" src="/images/wall.jpg" alt="Abstract purple structural artwork" />
     <div class="hero-project-overlay" />
 
@@ -33,10 +33,14 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
+import { useScrollProgress } from '../composables/useScrollProgress.js'
 
 const { t, isBG } = useLanguage()
+const heroSection = ref(null)
+useScrollProgress(heroSection, { mode: 'leave', prop: '--hero-progress' })
 
 function scrollToWork() {
   document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })
@@ -83,6 +87,8 @@ function scrollToWork() {
   grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
   align-items: end;
   gap: 64px;
+  translate: 0 calc(var(--hero-progress, 0) * -56px);
+  opacity: calc(1 - var(--hero-progress, 0) * 1.1);
 }
 
 /* Tight, massive typography left-aligned */
@@ -152,5 +158,9 @@ function scrollToWork() {
   }
 
   .hero-copy { max-width: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-content-grid { translate: none; opacity: 1; }
 }
 </style>

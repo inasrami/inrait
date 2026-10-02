@@ -24,9 +24,12 @@ import AppNav         from './components/AppNav.vue'
 import AppFooter      from './components/AppFooter.vue'
 import CookieBanner   from './components/CookieBanner.vue'
 import WhatsAppButton from './components/WhatsappButton.vue'
+import { useScrollScenes } from './composables/useScrollScenes.js'
 
 const route = useRoute()
 const { setLang } = useLanguage()
+
+useScrollScenes()
 
 watch(() => route.path, (path) => {
   setLang(path === '/bg' || path.startsWith('/bg/') ? 'bg' : 'en')

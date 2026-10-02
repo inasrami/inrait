@@ -14,12 +14,12 @@
         </RouterLink>
       </div>
 
-      <div class="service-grid">
+      <div ref="grid" class="service-grid">
         <div
           v-for="(service, i) in topServices"
           :key="service.id"
-          class="flex flex-col service-card fade-up"
-          :style="`transition-delay:${i * 0.08}s`"
+          class="flex flex-col service-card"
+          :style="`--i:${i}`"
         >
           <div class="mb-4 card-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><g v-html="service.icon" /></svg>
@@ -43,15 +43,20 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
 import { useServices } from '../data/services.js'
 import { useFadeUp } from '../composables/useFadeUp'
+import { useScrollProgressMany } from '../composables/useScrollProgress.js'
 
 useFadeUp()
 const { t } = useLanguage()
 const { SERVICES } = useServices()
+
+// --s (0 → 1) rides each card up into place as the grid enters; --i staggers them
+const grid = ref(null)
+useScrollProgressMany(grid, '.service-card', { mode: 'enter', start: 0.95, end: 0.6, prop: '--s' })
 
 // Featured services shown on the landing page (flagged `hero` in data/services.js), max 4 for the 4-column grid
 const topServices = computed(() => SERVICES.value.filter(s => s.hero).slice(0, 4))
@@ -70,6 +75,13 @@ const topServices = computed(() => SERVICES.value.filter(s => s.hero).slice(0, 4
   border: 1px solid var(--border);
   border-radius: 12px;
   transition: all 0.2s ease;
+
+  /* Scroll-linked entrance. Uses the individual translate/scale properties so they
+     compose with the hover transform below. Defaults to fully visible without JS. */
+  --k: clamp(0, calc(var(--s, 1) * 1.5 - var(--i, 0) * 0.14), 1);
+  translate: 0 calc((1 - var(--k)) * 40px);
+  scale: calc(0.94 + var(--k) * 0.06);
+  opacity: calc(0.1 + var(--k) * 0.9);
 }
 
 .service-card:hover {
@@ -116,6 +128,10 @@ const topServices = computed(() => SERVICES.value.filter(s => s.hero).slice(0, 4
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .service-card { --s: 1 !important; }
 }
 
 @media (max-width: 900px) {

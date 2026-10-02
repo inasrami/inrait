@@ -22,12 +22,12 @@
       </p>
 
       <!-- Values grid -->
-      <div class="grid grid-cols-1 gap-4 mb-16 sm:grid-cols-2 lg:grid-cols-4">
+      <div ref="valuesGrid" class="grid grid-cols-1 gap-4 mb-16 sm:grid-cols-2 lg:grid-cols-4">
         <div
           v-for="(val, i) in values"
           :key="val.title"
           class="value-card fade-up"
-          :style="`transition-delay:${0.1 + i * 0.07}s`"
+          :style="`--i:${i}; transition-delay:${0.1 + i * 0.07}s`"
         >
           <div class="mb-5 value-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -64,13 +64,16 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
+import { useScrollProgressMany } from '../composables/useScrollProgress.js'
 
 useFadeUp()
 const { t } = useLanguage()
+const valuesGrid = ref(null)
+useScrollProgressMany(valuesGrid, '.value-card', { mode: 'enter', start: 0.95, end: 0.55, prop: '--value-progress' })
 
 const values = computed(() => t('about.values'))
 
@@ -119,6 +122,9 @@ const valueIcons = [
   border-top: 1px solid var(--border-strong);
   border-bottom: 1px solid var(--border);
   transition: border-color 0.25s ease, transform 0.25s ease;
+  --value-reveal: clamp(0, calc(var(--value-progress, 1) * 1.5 - var(--i, 0) * 0.12), 1);
+  translate: 0 calc((1 - var(--value-reveal)) * 32px);
+  scale: calc(0.97 + var(--value-reveal) * 0.03);
 }
 
 .value-card:hover {
@@ -144,5 +150,9 @@ const valueIcons = [
   padding: 20px 0;
   border-top: 1px solid var(--border-strong);
   border-bottom: 1px solid var(--border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .value-card { --value-progress: 1 !important; }
 }
 </style>
