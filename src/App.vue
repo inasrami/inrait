@@ -1,6 +1,7 @@
 <template>
   <div style="background: var(--bg);">
     <SiteLoader />
+    <ScrollProgress />
     <AppNav />
 
     <RouterView v-slot="{ Component }">
@@ -21,6 +22,7 @@ import { RouterView, useRoute } from 'vue-router'
 import { useLanguage } from './composables/useLanguage.js'
 import SiteLoader     from './components/SiteLoader.vue'
 import AppNav         from './components/AppNav.vue'
+import ScrollProgress from './components/ScrollProgress.vue'
 import AppFooter      from './components/AppFooter.vue'
 import CookieBanner   from './components/CookieBanner.vue'
 import WhatsAppButton from './components/WhatsappButton.vue'

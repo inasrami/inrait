@@ -1,0 +1,854 @@
+diff --git a/src/App.vue b/src/App.vue
+index d0b5da0..72f1b9c 100644
+--- a/src/App.vue
++++ b/src/App.vue
+@@ -1,6 +1,7 @@
+ <template>
+   <div style="background: var(--bg);">
+     <SiteLoader />
++    <ScrollProgress />
+     <AppNav />
+ 
+     <RouterView v-slot="{ Component }">
+@@ -21,6 +22,7 @@ import { RouterView, useRoute } from 'vue-router'
+ import { useLanguage } from './composables/useLanguage.js'
+ import SiteLoader     from './components/SiteLoader.vue'
+ import AppNav         from './components/AppNav.vue'
++import ScrollProgress from './components/ScrollProgress.vue'
+ import AppFooter      from './components/AppFooter.vue'
+ import CookieBanner   from './components/CookieBanner.vue'
+ import WhatsAppButton from './components/WhatsappButton.vue'
+diff --git a/src/components/CtaSection.vue b/src/components/CtaSection.vue
+index 27fc834..270fbb5 100644
+--- a/src/components/CtaSection.vue
++++ b/src/components/CtaSection.vue
+@@ -4,7 +4,7 @@
+     <div class="max-w-[760px] mx-auto text-center relative z-10">
+ 
+       <h2
+-        class="font-display fade-up"
++        class="font-display zoom-in"
+         style="font-size: clamp(64px, 12vw, 140px); letter-spacing: 0.02em; line-height: 0.92; transition-delay: 0.1s; margin-bottom: 32px;"
+       >
+         {{ t('cta.line1') }}<br/>
+diff --git a/src/components/HeroSection.vue b/src/components/HeroSection.vue
+index 1d728dd..540a287 100644
+--- a/src/components/HeroSection.vue
++++ b/src/components/HeroSection.vue
+@@ -1,9 +1,9 @@
+ <template>
+-  <section class="relative flex items-end w-full min-h-[min(900px,100svh)] overflow-hidden bg-bg-primary hero-section">
++  <section ref="heroEl" class="relative flex items-end w-full min-h-[min(900px,100svh)] overflow-hidden bg-bg-primary hero-section">
+     <img class="hero-project-image" src="/images/wall.jpg" alt="Abstract purple structural artwork" />
+     <div class="hero-project-overlay" />
+ 
+-    <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 pb-12 md:pb-16">
++    <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 pb-12 md:pb-16 hero-inner">
+       <div class="hero-content-grid">
+         <h1
+           class="flex flex-col p-0 m-0 text-left uppercase hero-headline"
+@@ -33,11 +33,17 @@
+ </template>
+ 
+ <script setup>
++import { ref } from 'vue'
+ import { RouterLink } from 'vue-router'
+ import { useLanguage } from '../composables/useLanguage.js'
++import { useScrollScene } from '../composables/useScrollScene.js'
+ 
+ const { t, isBG } = useLanguage()
+ 
++// Parallax: as you scroll off the hero, the copy lags behind and fades (--p: 0 → 1)
++const heroEl = ref(null)
++useScrollScene(heroEl, { type: 'leave' })
++
+ function scrollToWork() {
+   document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })
+ }
+@@ -66,6 +72,13 @@ function scrollToWork() {
+   isolation: isolate;
+ }
+ 
++/* Scroll parallax - driven by --p from useScrollScene (transform/opacity only) */
++.hero-inner {
++  will-change: transform, opacity;
++  transform: translate3d(0, calc(var(--p, 0) * 120px), 0);
++  opacity: calc(1 - var(--p, 0) * 1.3);
++}
++
+ .hero-section::before {
+   content: '';
+   position: absolute;
+diff --git a/src/components/PhilosophySection.vue b/src/components/PhilosophySection.vue
+index a830ec8..47c9e5f 100644
+--- a/src/components/PhilosophySection.vue
++++ b/src/components/PhilosophySection.vue
+@@ -1,53 +1,157 @@
+ <template>
+-  <section id="philosophy" class="relative px-6 py-40 overflow-hidden">
+-
+-    <div class="max-w-[1000px] mx-auto">
+-
+-      <h2
+-        class="font-semibold text-text-main"
+-        style="
+-          font-size: clamp(26px, 4.5vw, 56px);
+-          letter-spacing: -0.02em;
+-          line-height: 1.12;
+-          max-width: 900px;
+-        "
+-      >
+-        {{ t('philosophy.headline') }}<em style="font-style:italic; color: var(--accent);">{{ t('philosophy.headlineEm') }}</em>{{ t('philosophy.headlineSuffix') }}
+-      </h2>
+-
+-      <div class="my-16 divider" />
+-
+-      <div class="grid grid-cols-1 gap-8 mt-4 md:grid-cols-3">
+-        <div v-for="(pillar, i) in pillars" :key="pillar.title" class="fade-up" :style="`transition-delay: ${i * 0.12}s`">
+-          <div class="mb-4">
+-            <div class="inline-flex p-3 border rounded-xl" style="border-color: rgba(164,224,75,0.2); background: rgba(164,224,75,0.05);">
+-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+-                <g v-html="pillarIcons[i]" />
+-              </svg>
++  <section id="philosophy" class="relative">
++
++    <!-- Pinned stage: the headline stays on screen and lights up word by word as you scroll -->
++    <div ref="sceneEl" class="phil-scene">
++      <div class="phil-sticky">
++        <div class="phil-inner">
++          <h2 class="phil-headline" :style="{ '--span': span }">
++            <template v-for="(tk, k) in tokens" :key="k"><span
++                v-if="tk.word"
++                class="phil-word"
++                :class="{ 'phil-word--em': tk.em }"
++                :style="{ '--i': tk.i }"
++              >{{ tk.text }}</span><template v-else>{{ ' ' }}</template></template>
++          </h2>
++
++          <div class="phil-line" aria-hidden="true"><span /></div>
++        </div>
++      </div>
++    </div>
++
++    <!-- Pillars -->
++    <div class="px-6 pb-40 pt-8 md:pt-16">
++      <div class="max-w-[1000px] mx-auto">
++        <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
++          <div v-for="(pillar, i) in pillars" :key="pillar.title" class="fade-up" :style="`transition-delay: ${i * 0.12}s`">
++            <div class="mb-4">
++              <div class="inline-flex p-3 border rounded-xl" style="border-color: rgba(164,224,75,0.2); background: rgba(164,224,75,0.05);">
++                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
++                  <g v-html="pillarIcons[i]" />
++                </svg>
++              </div>
+             </div>
++            <h3 class="font-semibold text-[18px] mb-2 text-text-main">{{ pillar.title }}</h3>
++            <p class="text-text-muted text-[15px] leading-relaxed">{{ pillar.body }}</p>
+           </div>
+-          <h3 class="font-semibold text-[18px] mb-2 text-text-main">{{ pillar.title }}</h3>
+-          <p class="text-text-muted text-[15px] leading-relaxed">{{ pillar.body }}</p>
+         </div>
+       </div>
+-
+     </div>
++
+   </section>
+ </template>
+ 
+ <script setup>
+-import { computed } from 'vue'
++import { ref, computed } from 'vue'
+ import { useFadeUp } from '../composables/useFadeUp'
+ import { useLanguage } from '../composables/useLanguage.js'
++import { useScrollScene } from '../composables/useScrollScene.js'
+ 
+ useFadeUp()
+ const { t } = useLanguage()
+ 
++const sceneEl = ref(null)
++useScrollScene(sceneEl, { type: 'pin' })
++
+ const pillars = computed(() => t('philosophy.pillars'))
+ 
++// Split the headline (plain + accent + suffix parts) into words so each one can fade in on its own.
++const tokens = computed(() => {
++  const parts = [
++    { text: t('philosophy.headline'),       em: false },
++    { text: t('philosophy.headlineEm'),     em: true  },
++    { text: t('philosophy.headlineSuffix'), em: false },
++  ]
++  const out = []
++  let i = 0
++  for (const part of parts) {
++    for (const chunk of String(part.text || '').split(/(\s+)/)) {
++      if (!chunk) continue
++      if (/^\s+$/.test(chunk)) out.push({ word: false })
++      else out.push({ word: true, text: chunk, em: part.em, i: i++ })
++    }
++  }
++  return out
++})
++
++const wordCount = computed(() => tokens.value.filter((x) => x.word).length)
++
++// Words finish revealing at 80% of the pinned scroll, leaving a short hold before it releases.
++// 3 = how many words are mid-fade at the same time (soft edge).
++const span = computed(() => ((wordCount.value + 3) / 0.8).toFixed(3))
++
+ const pillarIcons = [
+   '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+   '<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>',
+   '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+ ]
+-</script>
+\ No newline at end of file
++</script>
++
++<style scoped>
++/* Default layout (no JS / reduced motion / very short screens): a normal, fully readable section */
++.phil-sticky {
++  padding: 160px 24px 0;
++}
++
++.phil-inner {
++  max-width: 1000px;
++  margin: 0 auto;
++}
++
++.phil-headline {
++  font-weight: 600;
++  color: var(--text);
++  font-size: clamp(30px, 5.6vw, 76px);
++  letter-spacing: -0.02em;
++  line-height: 1.08;
++  max-width: 1000px;
++}
++
++.phil-word--em {
++  font-style: italic;
++  color: var(--accent);
++}
++
++.phil-line {
++  height: 1px;
++  margin-top: 56px;
++  background: var(--border-strong);
++}
++
++.phil-line span {
++  display: block;
++  height: 100%;
++  background: var(--accent);
++  transform-origin: left center;
++  transform: scaleX(0);
++}
++
++/* ── Pinned mode (class added by useScrollScene) ───────────────────────── */
++.phil-scene.is-pinned {
++  height: calc(100vh * 2.4);
++  height: calc(100svh * 2.4);
++}
++
++.phil-scene.is-pinned .phil-sticky {
++  position: sticky;
++  top: 0;
++  height: 100vh;
++  height: 100svh;
++  display: flex;
++  align-items: center;
++  padding: 72px 24px 0;
++}
++
++.phil-scene.is-pinned .phil-inner {
++  width: 100%;
++}
++
++/* progress 0 → 1 across the pin; each word waits its turn (--i) and fades over ~3 words */
++.phil-scene.is-pinned .phil-word {
++  opacity: clamp(0.14, calc(0.14 + 0.86 * ((var(--p, 0) * var(--span) - var(--i)) / 3)), 1);
++}
++
++.phil-scene.is-pinned .phil-line span {
++  transform: scaleX(var(--p, 0));
++}
++</style>
+diff --git a/src/components/ProcessSection.vue b/src/components/ProcessSection.vue
+index ad1ec1e..c2ef5b9 100644
+--- a/src/components/ProcessSection.vue
++++ b/src/components/ProcessSection.vue
+@@ -1,71 +1,235 @@
+ <template>
+-  <section id="process" class="relative px-6 py-36 overflow-hidden">
+-
+-    <div class="max-w-[1080px] mx-auto">
+-
+-      <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] mb-20" style="letter-spacing:0.02em; line-height:1;">
+-        {{ t('process.title') }}
+-      </h2>
+-
+-      <!-- Process steps -->
+-      <div class="relative grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-0">
+-
+-        <div class="absolute top-0 bottom-0 hidden w-px -translate-x-1/2 md:block left-1/2" style="background: var(--border-strong);" />
+-
+-        <div
+-          v-for="(step, i) in steps"
+-          :key="step.title"
+-          class="relative pb-16 last:pb-0 fade-up"
+-          :class="i % 2 === 1 ? 'md:mt-24' : ''"
+-          :style="`transition-delay: ${i * 0.12}s`"
+-        >
+-          <div
+-            class="font-display text-[80px] leading-none mb-4"
+-            style="color: transparent; -webkit-text-stroke: 2px rgba(164,224,75,0.2); letter-spacing: 0.02em;"
+-          >
+-            0{{ i + 1 }}
+-          </div>
++  <section id="process" class="relative">
++
++    <!-- Pinned stage: the title stays put while the steps slide in sideways as you scroll down -->
++    <div ref="sceneEl" class="proc-scene">
++      <div class="proc-sticky">
++
++        <div class="proc-head">
++          <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
++            {{ t('process.title') }}
++          </h2>
++        </div>
++
++        <div class="proc-viewport">
++          <div ref="trackEl" class="proc-track" :style="{ '--last': steps.length }">
++            <div class="proc-spacer proc-spacer--lead" aria-hidden="true" />
+ 
+-          <div class="flex items-start gap-4">
+-            <div class="p-3 rounded-xl shrink-0" style="background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.15); margin-top: 2px;">
+-              <svg v-html="stepIcons[i]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+-            </div>
+-            <div>
+-              <h3 class="font-semibold text-[20px] mb-2" style="letter-spacing: -0.01em;">{{ step.title }}</h3>
+-              <p class="text-text-muted text-[15px] leading-relaxed">{{ step.body }}</p>
+-            </div>
++            <article
++              v-for="(step, i) in steps"
++              :key="step.title"
++              class="proc-card"
++              :style="{ '--k': i }"
++            >
++              <div class="proc-num">0{{ i + 1 }}</div>
++
++              <div class="flex items-start gap-4">
++                <div class="p-3 rounded-xl shrink-0" style="background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.15); margin-top: 2px;">
++                  <svg v-html="stepIcons[i]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
++                </div>
++                <div>
++                  <h3 class="font-semibold text-[20px] mb-2" style="letter-spacing: -0.01em;">{{ step.title }}</h3>
++                  <p class="text-text-muted text-[15px] leading-relaxed">{{ step.body }}</p>
++                </div>
++              </div>
++            </article>
++
++            <!-- Final panel: call to action -->
++            <article class="proc-card proc-card--cta" :style="{ '--k': steps.length }">
++              <p class="text-[clamp(22px,2.6vw,30px)] font-semibold mb-8" style="letter-spacing:-0.02em; line-height:1.2;">{{ t('process.cta') }}</p>
++              <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-[18px]">
++                {{ t('process.ctaBtn') }}
++                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
++              </RouterLink>
++            </article>
++
++            <div class="proc-spacer proc-spacer--trail" aria-hidden="true" />
+           </div>
+         </div>
+-      </div>
+ 
+-      <!-- CTA after process -->
+-      <div class="mt-24 text-center fade-up">
+-        <p class="text-text-muted text-[17px] mb-8">{{ t('process.cta') }}</p>
+-        <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-[18px]">
+-          {{ t('process.ctaBtn') }}
+-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+-        </RouterLink>
+-      </div>
++        <div class="proc-progress" aria-hidden="true"><span /></div>
+ 
++      </div>
+     </div>
++
+   </section>
+ </template>
+ 
+ <script setup>
+-import { computed } from 'vue'
++import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+ import { RouterLink } from 'vue-router'
+ import { useFadeUp } from '../composables/useFadeUp'
+ import { useLanguage } from '../composables/useLanguage.js'
++import { useScrollScene } from '../composables/useScrollScene.js'
+ 
+ useFadeUp()
+ const { t } = useLanguage()
+ 
+ const steps = computed(() => t('process.steps'))
+ 
++const sceneEl = ref(null)
++const trackEl = ref(null)
++
++// Horizontal distance the track has to travel; also stretches the wrapper so scrolling has room to play.
++function measure(el) {
++  const track = trackEl.value
++  if (!track) return
++  const viewport = track.parentElement
++  const dist = Math.max(0, track.scrollWidth - viewport.clientWidth)
++  el.style.setProperty('--dist', `${Math.round(dist)}px`)
++}
++
++const { remeasure } = useScrollScene(sceneEl, { type: 'pin', measure })
++
++// Text length changes with the language and web fonts load late - keep the distance honest.
++let ro = null
++onMounted(() => {
++  if ('ResizeObserver' in window && trackEl.value) {
++    ro = new ResizeObserver(() => remeasure())
++    ro.observe(trackEl.value)
++  }
++})
++onBeforeUnmount(() => ro?.disconnect())
++
+ const stepIcons = [
+   '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+   '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+   '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+   '<polyline points="20 6 9 17 4 12"/>',
+ ]
+-</script>
+\ No newline at end of file
++</script>
++
++<style scoped>
++/* Default layout (no JS / reduced motion / very short screens): vertical list, everything visible */
++.proc-scene {
++  padding: 144px 24px;
++}
++
++.proc-sticky {
++  max-width: 1080px;
++  margin: 0 auto;
++}
++
++.proc-head {
++  margin-bottom: 64px;
++}
++
++.proc-track {
++  display: flex;
++  flex-direction: column;
++  gap: 56px;
++}
++
++.proc-spacer,
++.proc-progress {
++  display: none;
++}
++
++.proc-num {
++  font-family: 'Bebas Neue', sans-serif;
++  font-size: 80px;
++  line-height: 1;
++  letter-spacing: 0.02em;
++  margin-bottom: 16px;
++  color: transparent;
++  -webkit-text-stroke: 2px rgba(164, 224, 75, 0.2);
++}
++
++.proc-card--cta {
++  padding-top: 8px;
++}
++
++/* ── Pinned mode (class added by useScrollScene) ───────────────────────── */
++.proc-scene.is-pinned {
++  padding: 0;
++  height: calc(100vh + var(--dist, 0px));
++  height: calc(100svh + var(--dist, 0px));
++}
++
++.proc-scene.is-pinned .proc-sticky {
++  position: sticky;
++  top: 0;
++  height: 100vh;
++  height: 100svh;
++  max-width: none;
++  margin: 0;
++  display: flex;
++  flex-direction: column;
++  padding: 88px 0 36px;
++  overflow: hidden;
++}
++
++.proc-scene.is-pinned .proc-head {
++  flex: none;
++  width: 100%;
++  max-width: 1080px;
++  margin: 0 auto;
++  padding: 0 24px;
++}
++
++.proc-scene.is-pinned .proc-viewport {
++  flex: 1;
++  min-height: 0;
++  display: flex;
++  align-items: center;
++  overflow: hidden;
++}
++
++.proc-scene.is-pinned .proc-track {
++  flex-direction: row;
++  align-items: flex-start;
++  gap: 0;
++  will-change: transform;
++  /* progress (--p) × distance (--dist) = how far the track has slid left */
++  transform: translate3d(calc(var(--p, 0) * var(--dist, 0px) * -1), 0, 0);
++}
++
++/* Aligns the first card with the page's content column */
++.proc-scene.is-pinned .proc-spacer {
++  display: block;
++  flex: 0 0 auto;
++}
++.proc-scene.is-pinned .proc-spacer--lead {
++  width: max(24px, calc((100vw - 1080px) / 2 + 24px));
++}
++.proc-scene.is-pinned .proc-spacer--trail {
++  width: max(0px, calc((100vw - 1080px) / 2 - 16px));
++}
++
++.proc-scene.is-pinned .proc-card {
++  flex: 0 0 auto;
++  width: min(400px, 78vw);
++  margin-right: 40px;
++  padding-top: 20px;
++  border-top: 1px solid var(--border-strong);
++  /* each card lights up as the scroll reaches it (k = card index, last = number of steps) */
++  opacity: clamp(0.3, calc(0.3 + (var(--p, 0) * var(--last) - var(--k) + 1.5) * 0.7), 1);
++}
++
++.proc-scene.is-pinned .proc-card--cta {
++  border-top-color: var(--accent);
++}
++
++.proc-scene.is-pinned .proc-progress {
++  display: block;
++  flex: none;
++  position: relative;
++  width: min(1032px, calc(100% - 48px));
++  height: 2px;
++  margin: 28px auto 0;
++  background: var(--border-strong);
++}
++
++.proc-scene.is-pinned .proc-progress span {
++  display: block;
++  height: 100%;
++  background: var(--accent);
++  transform-origin: left center;
++  transform: scaleX(var(--p, 0));
++}
++
++@media (max-width: 640px) {
++  .proc-num { font-size: 64px; }
++  .proc-scene.is-pinned .proc-sticky { padding-top: 76px; }
++}
++</style>
+diff --git a/src/components/ScrollProgress.vue b/src/components/ScrollProgress.vue
+new file mode 100644
+index 0000000..4a133ce
+--- /dev/null
++++ b/src/components/ScrollProgress.vue
+@@ -0,0 +1,67 @@
++<template>
++  <div class="scroll-progress" aria-hidden="true">
++    <span ref="bar" class="scroll-progress__bar" />
++  </div>
++</template>
++
++<script setup>
++import { ref, onMounted, onBeforeUnmount } from 'vue'
++
++const bar = ref(null)
++let ticking = false
++let ro = null
++
++function update() {
++  ticking = false
++  if (!bar.value) return
++  const el = document.documentElement
++  const max = el.scrollHeight - el.clientHeight
++  const p = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0
++  bar.value.style.transform = `scaleX(${p})`
++}
++
++function schedule() {
++  if (ticking) return
++  ticking = true
++  requestAnimationFrame(update)
++}
++
++onMounted(() => {
++  update()
++  window.addEventListener('scroll', schedule, { passive: true })
++  window.addEventListener('resize', schedule)
++  // Page height changes on route changes, font load, language switch, pinned scenes measuring themselves.
++  if ('ResizeObserver' in window) {
++    ro = new ResizeObserver(schedule)
++    ro.observe(document.body)
++  }
++})
++
++onBeforeUnmount(() => {
++  window.removeEventListener('scroll', schedule)
++  window.removeEventListener('resize', schedule)
++  ro?.disconnect()
++})
++</script>
++
++<style scoped>
++.scroll-progress {
++  position: fixed;
++  top: 0;
++  left: 0;
++  right: 0;
++  height: 3px;
++  z-index: 60;
++  pointer-events: none;
++}
++
++.scroll-progress__bar {
++  display: block;
++  width: 100%;
++  height: 100%;
++  background: var(--accent);
++  transform: scaleX(0);
++  transform-origin: left center;
++  will-change: transform;
++}
++</style>
+diff --git a/src/components/TechSpecs.vue b/src/components/TechSpecs.vue
+index b18eab0..eb6838e 100644
+--- a/src/components/TechSpecs.vue
++++ b/src/components/TechSpecs.vue
+@@ -1,5 +1,5 @@
+ <template>
+-  <section id="industries" class="relative px-6 py-36" style="background: var(--surface);">
++  <section id="industries" class="relative px-6 py-36 overflow-x-clip" style="background: var(--surface);">
+ 
+     <div class="absolute top-0 left-0 right-0 h-px" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);" />
+ 
+@@ -18,8 +18,9 @@
+         <div
+           v-for="(industry, i) in industries"
+           :key="industry.title"
+-          class="industry-item fade-up"
+-          :style="`transition-delay: ${i * 0.1}s`"
++          class="industry-item"
++          :class="i % 2 === 0 ? 'slide-left' : 'slide-right'"
++          :style="`transition-delay: ${i * 0.06}s`"
+         >
+           <div class="industry-index">0{{ i + 1 }}</div>
+           <div class="industry-icon">
+diff --git a/src/composables/useFadeUp.js b/src/composables/useFadeUp.js
+index 3bb8e27..b381401 100644
+--- a/src/composables/useFadeUp.js
++++ b/src/composables/useFadeUp.js
+@@ -1,5 +1,9 @@
+ import { onMounted, onUnmounted } from 'vue'
+ 
++const REVEAL_SELECTOR = ['.fade-up', '.fade-in', '.slide-left', '.slide-right', '.zoom-in']
++  .map((c) => `${c}:not(.is-visible)`)
++  .join(', ')
++
+ export function useFadeUp() {
+   let observer = null
+ 
+@@ -16,7 +20,7 @@ export function useFadeUp() {
+       { rootMargin: '0px 0px -60px 0px', threshold: 0.08 }
+     )
+ 
+-    document.querySelectorAll('.fade-up:not(.is-visible), .fade-in:not(.is-visible)').forEach((el) => {
++    document.querySelectorAll(REVEAL_SELECTOR).forEach((el) => {
+       observer.observe(el)
+     })
+   })
+diff --git a/src/composables/useScrollScene.js b/src/composables/useScrollScene.js
+new file mode 100644
+index 0000000..d7c5342
+--- /dev/null
++++ b/src/composables/useScrollScene.js
+@@ -0,0 +1,120 @@
++import { onMounted, onBeforeUnmount } from 'vue'
++
++/**
++ * Scroll scenes
++ * -------------
++ * Writes a 0 → 1 progress value to a `--p` CSS variable on the scene element,
++ * so all the visual work stays in CSS (transform / opacity only).
++ *
++ *  type: 'pin'   – element is a TALL wrapper whose first child is `position: sticky`.
++ *                  p = how far you have scrolled through the pinned stretch.
++ *                  The class `is-pinned` is toggled on the wrapper, so the CSS can
++ *                  ship a normal, un-pinned layout as the default (no JS, reduced
++ *                  motion, very short screens) and only enhance it when pinning is on.
++ *  type: 'leave' – p = how far the element has scrolled out of view (0 at the top
++ *                  of the page, 1 once it has fully left). Used for the hero parallax.
++ *
++ *  measure(el)   – optional hook, called after `is-pinned` is applied and on resize,
++ *                  for scenes that need to size themselves (e.g. horizontal distance).
++ */
++
++const scenes = new Set()
++let ticking = false
++let listening = false
++
++function tick() {
++  ticking = false
++  scenes.forEach((s) => s.update())
++}
++
++function schedule() {
++  if (ticking) return
++  ticking = true
++  requestAnimationFrame(tick)
++}
++
++function onResize() {
++  scenes.forEach((s) => s.remeasure())
++  schedule()
++}
++
++function attach() {
++  if (listening) return
++  window.addEventListener('scroll', schedule, { passive: true })
++  window.addEventListener('resize', onResize)
++  listening = true
++}
++
++function detach() {
++  if (!listening || scenes.size) return
++  window.removeEventListener('scroll', schedule)
++  window.removeEventListener('resize', onResize)
++  listening = false
++}
++
++export function useScrollScene(elRef, { type = 'pin', measure } = {}) {
++  let scene = null
++  let cleanup = []
++
++  onMounted(() => {
++    const el = elRef.value
++    if (!el) return
++
++    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)')
++    const short = window.matchMedia('(max-height: 560px)')
++    const enabled = () => !reduced.matches && (type === 'leave' || !short.matches)
++
++    let last = -1
++
++    scene = {
++      remeasure() {
++        const on = enabled()
++        if (type === 'pin') el.classList.toggle('is-pinned', on)
++        if (on && measure) measure(el)
++        last = -1
++        this.update()
++      },
++      update() {
++        if (!enabled()) {
++          // Pin scenes rest on their finished state, leave scenes on their start state.
++          el.style.setProperty('--p', type === 'pin' ? '1' : '0')
++          return
++        }
++        const rect = el.getBoundingClientRect()
++        let p = 0
++        if (type === 'pin') {
++          const stick = el.firstElementChild
++          const range = stick ? el.offsetHeight - stick.offsetHeight : 0
++          p = range > 0 ? -rect.top / range : 0
++        } else {
++          p = -rect.top / Math.max(rect.height, 1)
++        }
++        p = Math.min(1, Math.max(0, p))
++        if (p === last) return
++        last = p
++        el.style.setProperty('--p', p.toFixed(4))
++      },
++    }
++
++    scenes.add(scene)
++    attach()
++    scene.remeasure()
++
++    const onChange = () => scene.remeasure()
++    reduced.addEventListener('change', onChange)
++    short.addEventListener('change', onChange)
++    cleanup = [
++      () => reduced.removeEventListener('change', onChange),
++      () => short.removeEventListener('change', onChange),
++    ]
++  })
++
++  onBeforeUnmount(() => {
++    cleanup.forEach((fn) => fn())
++    if (scene) scenes.delete(scene)
++    scene = null
++    detach()
++  })
++
++  return { remeasure: () => scene?.remeasure() }
++}
+diff --git a/src/style.css b/src/style.css
+index 6984ee3..6e2379b 100644
+--- a/src/style.css
++++ b/src/style.css
+@@ -125,6 +125,44 @@
+   opacity: 1;
+ }
+ 
++/* Directional / scale reveals (same observer as .fade-up) */
++.slide-left,
++.slide-right,
++.zoom-in {
++  opacity: 0;
++  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
++              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
++}
++
++.slide-left  { transform: translateX(-90px); }
++.slide-right { transform: translateX(90px); }
++.zoom-in     { transform: scale(0.9); }
++
++.slide-left.is-visible,
++.slide-right.is-visible,
++.zoom-in.is-visible {
++  opacity: 1;
++  transform: none;
++}
++
++@media (max-width: 640px) {
++  .slide-left  { transform: translateX(-36px); }
++  .slide-right { transform: translateX(36px); }
++}
++
++/* Reveal animations are decoration - never hide content from people who opt out of motion */
++@media (prefers-reduced-motion: reduce) {
++  .fade-up,
++  .fade-in,
++  .slide-left,
++  .slide-right,
++  .zoom-in {
++    opacity: 1;
++    transform: none;
++    transition: none;
++  }
++}
++
+ /* ─── Buttons ───────────────────────────────────────────── */
+ .btn-primary {
+   display: inline-flex;

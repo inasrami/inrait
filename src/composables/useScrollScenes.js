@@ -27,6 +27,8 @@ const targetRoots = new Map()
 
 function reveal(el) {
   if (!(el instanceof HTMLElement) || observed.has(el) || el.classList.contains('is-revealed')) return
+  // Pinned scenes drive their own animation - [data-no-reveal] keeps the automatic reveals off them.
+  if (el.closest('[data-no-reveal]')) return
 
   const isCard = el.matches(CARD_SELECTOR)
   const isTitle = el.matches(TITLE_SELECTOR)

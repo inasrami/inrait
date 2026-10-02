@@ -13,6 +13,9 @@
  *                      against a line at `anchor` of the viewport.   { anchor: .6 }
  *   'leave'            0 at the element's top edge, 1 once it has scrolled
  *                      completely past the top of the viewport.
+ *   'pin'              for a TALL wrapper whose first child is `position: sticky`
+ *                      (a pinned scene). 0 when the pin starts, 1 when it
+ *                      releases - i.e. progress through the pinned stretch only.
  *
  * Usage
  *   const el = ref(null)
@@ -35,6 +38,11 @@ function measure(item, vh) {
   let p
   if (mode === 'span')       p = (vh * anchor - r.top) / Math.max(r.height, 1)
   else if (mode === 'leave') p = -r.top / Math.max(r.height, 1)
+  else if (mode === 'pin') {
+    const stage = item.el.firstElementChild
+    const range = item.el.offsetHeight - (stage ? stage.offsetHeight : 0)
+    p = -r.top / Math.max(range, 1)
+  }
   else                       p = (vh * start - r.top) / Math.max(vh * (start - end), 1)
   return clamp01(p)
 }

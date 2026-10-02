@@ -1,0 +1,680 @@
+diff --git a/src/App.vue b/src/App.vue
+index adea437..2e5ce6b 100644
+--- a/src/App.vue
++++ b/src/App.vue
+@@ -1,6 +1,7 @@
+ <template>
+   <div style="background: var(--bg);">
+     <SiteLoader />
++    <ScrollProgress />
+     <AppNav />
+ 
+     <RouterView v-slot="{ Component }">
+@@ -21,6 +22,7 @@ import { RouterView, useRoute } from 'vue-router'
+ import { useLanguage } from './composables/useLanguage.js'
+ import SiteLoader     from './components/SiteLoader.vue'
+ import AppNav         from './components/AppNav.vue'
++import ScrollProgress from './components/ScrollProgress.vue'
+ import AppFooter      from './components/AppFooter.vue'
+ import CookieBanner   from './components/CookieBanner.vue'
+ import WhatsAppButton from './components/WhatsappButton.vue'
+diff --git a/src/components/PhilosophySection.vue b/src/components/PhilosophySection.vue
+index a830ec8..f609d87 100644
+--- a/src/components/PhilosophySection.vue
++++ b/src/components/PhilosophySection.vue
+@@ -1,53 +1,180 @@
+ <template>
+-  <section id="philosophy" class="relative px-6 py-40 overflow-hidden">
+-
+-    <div class="max-w-[1000px] mx-auto">
+-
+-      <h2
+-        class="font-semibold text-text-main"
+-        style="
+-          font-size: clamp(26px, 4.5vw, 56px);
+-          letter-spacing: -0.02em;
+-          line-height: 1.12;
+-          max-width: 900px;
+-        "
+-      >
+-        {{ t('philosophy.headline') }}<em style="font-style:italic; color: var(--accent);">{{ t('philosophy.headlineEm') }}</em>{{ t('philosophy.headlineSuffix') }}
+-      </h2>
+-
+-      <div class="my-16 divider" />
+-
+-      <div class="grid grid-cols-1 gap-8 mt-4 md:grid-cols-3">
+-        <div v-for="(pillar, i) in pillars" :key="pillar.title" class="fade-up" :style="`transition-delay: ${i * 0.12}s`">
+-          <div class="mb-4">
+-            <div class="inline-flex p-3 border rounded-xl" style="border-color: rgba(164,224,75,0.2); background: rgba(164,224,75,0.05);">
+-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+-                <g v-html="pillarIcons[i]" />
+-              </svg>
++  <section id="philosophy" class="relative">
++
++    <!-- Pinned stage: the headline stays on screen and lights up word by word as you scroll -->
++    <div ref="scene" class="phil-scene" data-no-reveal>
++      <div class="phil-stage">
++        <div class="phil-inner">
++          <h2 class="phil-headline" :style="{ '--span': span }">
++            <template v-for="(tk, k) in tokens" :key="k"><span
++                v-if="tk.word"
++                class="phil-word"
++                :class="{ 'phil-word--em': tk.em }"
++                :style="{ '--i': tk.i }"
++              >{{ tk.text }}</span><template v-else>{{ ' ' }}</template></template>
++          </h2>
++
++          <div class="phil-line" aria-hidden="true"><span /></div>
++        </div>
++      </div>
++    </div>
++
++    <!-- Pillars -->
++    <div class="phil-pillars px-6 pb-40">
++      <div class="max-w-[1000px] mx-auto">
++        <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
++          <div v-for="(pillar, i) in pillars" :key="pillar.title" class="fade-up" :style="`transition-delay: ${i * 0.12}s`">
++            <div class="mb-4">
++              <div class="inline-flex p-3 border rounded-xl" style="border-color: rgba(164,224,75,0.2); background: rgba(164,224,75,0.05);">
++                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
++                  <g v-html="pillarIcons[i]" />
++                </svg>
++              </div>
+             </div>
++            <h3 class="font-semibold text-[18px] mb-2 text-text-main">{{ pillar.title }}</h3>
++            <p class="text-text-muted text-[15px] leading-relaxed">{{ pillar.body }}</p>
+           </div>
+-          <h3 class="font-semibold text-[18px] mb-2 text-text-main">{{ pillar.title }}</h3>
+-          <p class="text-text-muted text-[15px] leading-relaxed">{{ pillar.body }}</p>
+         </div>
+       </div>
+-
+     </div>
++
+   </section>
+ </template>
+ 
+ <script setup>
+-import { computed } from 'vue'
++import { computed, ref } from 'vue'
+ import { useFadeUp } from '../composables/useFadeUp'
+ import { useLanguage } from '../composables/useLanguage.js'
++import { useScrollProgress } from '../composables/useScrollProgress.js'
+ 
+ useFadeUp()
+ const { t } = useLanguage()
+ 
++// --p (0 → 1) = progress through the pinned stretch
++const scene = ref(null)
++useScrollProgress(scene, { mode: 'pin', prop: '--p' })
++
+ const pillars = computed(() => t('philosophy.pillars'))
+ 
++// Split the headline (plain + accent + suffix parts) into words so each one can fade in on its own.
++const tokens = computed(() => {
++  const parts = [
++    { text: t('philosophy.headline'),       em: false },
++    { text: t('philosophy.headlineEm'),     em: true  },
++    { text: t('philosophy.headlineSuffix'), em: false },
++  ]
++  const out = []
++  let i = 0
++  for (const part of parts) {
++    for (const chunk of String(part.text || '').split(/(\s+)/)) {
++      if (!chunk) continue
++      if (/^\s+$/.test(chunk)) out.push({ word: false })
++      else out.push({ word: true, text: chunk, em: part.em, i: i++ })
++    }
++  }
++  return out
++})
++
++const wordCount = computed(() => tokens.value.filter((x) => x.word).length)
++
++// Words finish revealing at 80% of the pinned scroll, leaving a short hold before it releases.
++// 3 = how many words are mid-fade at once (soft edge).
++const span = computed(() => ((wordCount.value + 3) / 0.8).toFixed(3))
++
+ const pillarIcons = [
+   '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+   '<circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>',
+   '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+ ]
+-</script>
+\ No newline at end of file
++</script>
++
++<style scoped>
++/* Default layout (reduced motion / very short screens): a normal, fully readable section */
++.phil-stage {
++  padding: 160px 24px 0;
++}
++
++.phil-inner {
++  max-width: 1000px;
++  margin: 0 auto;
++}
++
++.phil-headline {
++  max-width: 900px;
++  font-size: clamp(26px, 4.5vw, 56px);
++  font-weight: 600;
++  letter-spacing: -0.02em;
++  line-height: 1.12;
++  color: var(--text);
++}
++
++.phil-word--em {
++  font-style: italic;
++  color: var(--accent);
++}
++
++.phil-line {
++  height: 1px;
++  margin-top: 64px;
++  background: var(--border-strong);
++}
++
++.phil-line span {
++  display: block;
++  height: 100%;
++  background: var(--accent);
++  transform-origin: left center;
++  transform: scaleX(0);
++}
++
++.phil-pillars {
++  padding-top: 80px;
++}
++
++/* ── Pinned mode ─────────────────────────────────────────────────────── */
++@media (prefers-reduced-motion: no-preference) and (min-height: 561px) {
++  .phil-scene {
++    height: calc(100vh * 2.4);
++    height: calc(100svh * 2.4);
++  }
++
++  .phil-stage {
++    position: sticky;
++    top: 0;
++    height: 100vh;
++    height: 100svh;
++    display: flex;
++    align-items: center;
++    padding: 72px 24px 0;
++  }
++
++  .phil-inner {
++    width: 100%;
++  }
++
++  .phil-headline {
++    max-width: 1000px;
++    font-size: clamp(30px, 5.6vw, 76px);
++    line-height: 1.08;
++  }
++
++  /* each word waits its turn (--i) and fades in over ~3 words as --p runs 0 → 1 */
++  .phil-word {
++    opacity: clamp(0.14, calc(0.14 + 0.86 * ((var(--p, 1) * var(--span) - var(--i)) / 3)), 1);
++  }
++
++  .phil-line span {
++    transform: scaleX(var(--p, 1));
++  }
++
++  .phil-pillars {
++    padding-top: 32px;
++  }
++}
++
++@media (prefers-reduced-motion: no-preference) and (min-height: 561px) and (min-width: 768px) {
++  .phil-pillars {
++    padding-top: 64px;
++  }
++}
++</style>
+diff --git a/src/components/ProcessSection.vue b/src/components/ProcessSection.vue
+index d098dad..14b1788 100644
+--- a/src/components/ProcessSection.vue
++++ b/src/components/ProcessSection.vue
+@@ -1,60 +1,87 @@
+ <template>
+-  <section id="process" class="relative px-6 py-36">
++  <section id="process" class="relative">
+ 
+-    <div class="max-w-[1080px] mx-auto process-layout">
++    <!-- On tall screens with motion allowed this becomes a pinned stage: the title stays put and
++         the steps slide in sideways as you scroll down. Otherwise it is the stacked layout
++         (heading pinned beside the steps) exactly as before. -->
++    <div ref="scene" class="process-scene px-6 py-36">
++      <div class="process-stage">
+ 
+-      <div class="process-intro">
+-        <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
+-          {{ t('process.title') }}
+-        </h2>
+-      </div>
+-
+-      <!-- Process steps scroll beside the pinned heading on wide screens. -->
+-      <div ref="processSteps" class="process-steps">
+-        <div class="process-line">
+-          <div class="process-line-fill" />
+-        </div>
++        <div class="max-w-[1080px] mx-auto process-layout">
+ 
+-        <div
+-          v-for="(step, i) in steps"
+-          :key="step.title"
+-          class="process-step relative pb-16 last:pb-0 fade-up"
+-          :style="`transition-delay: ${i * 0.12}s`"
+-        >
+-          <div
+-            class="font-display text-[80px] leading-none mb-4"
+-            style="color: transparent; -webkit-text-stroke: 2px rgba(164,224,75,0.2); letter-spacing: 0.02em;"
+-          >
+-            0{{ i + 1 }}
++          <div class="process-intro">
++            <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
++              {{ t('process.title') }}
++            </h2>
+           </div>
+ 
+-          <div class="flex items-start gap-4">
+-            <div class="p-3 rounded-xl shrink-0" style="background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.15); margin-top: 2px;">
+-              <svg v-html="stepIcons[i]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
++          <!-- Process steps scroll beside the pinned heading on wide screens. -->
++          <div ref="processSteps" class="process-steps">
++            <div class="process-line">
++              <div class="process-line-fill" />
+             </div>
+-            <div>
+-              <h3 class="font-semibold text-[20px] mb-2" style="letter-spacing: -0.01em;">{{ step.title }}</h3>
+-              <p class="text-text-muted text-[15px] leading-relaxed">{{ step.body }}</p>
++
++            <div ref="track" class="process-track" :style="{ '--last': steps.length }">
++              <div class="process-spacer process-spacer--lead" aria-hidden="true" />
++
++              <div
++                v-for="(step, i) in steps"
++                :key="step.title"
++                class="process-step relative pb-16"
++                :class="{ 'is-last': i === steps.length - 1 }"
++                :style="{ '--k': i }"
++              >
++                <div
++                  class="font-display text-[80px] leading-none mb-4"
++                  style="color: transparent; -webkit-text-stroke: 2px rgba(164,224,75,0.2); letter-spacing: 0.02em;"
++                >
++                  0{{ i + 1 }}
++                </div>
++
++                <div class="flex items-start gap-4">
++                  <div class="p-3 rounded-xl shrink-0" style="background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.15); margin-top: 2px;">
++                    <svg v-html="stepIcons[i]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
++                  </div>
++                  <div>
++                    <h3 class="font-semibold text-[20px] mb-2" style="letter-spacing: -0.01em;">{{ step.title }}</h3>
++                    <p class="text-text-muted text-[15px] leading-relaxed">{{ step.body }}</p>
++                  </div>
++                </div>
++              </div>
++
++              <!-- Final panel of the sideways scene (hidden in the stacked layout) -->
++              <div class="process-card-cta" :style="{ '--k': steps.length }">
++                <p class="process-card-cta__text">{{ t('process.cta') }}</p>
++                <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-[18px]">
++                  {{ t('process.ctaBtn') }}
++                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
++                </RouterLink>
++              </div>
++
++              <div class="process-spacer process-spacer--trail" aria-hidden="true" />
+             </div>
+           </div>
++
++          <!-- CTA after process (stacked layout) -->
++          <div class="process-cta mt-24 text-center fade-up">
++            <p class="text-text-muted text-[17px] mb-8">{{ t('process.cta') }}</p>
++            <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-[18px]">
++              {{ t('process.ctaBtn') }}
++              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
++            </RouterLink>
++          </div>
++
+         </div>
+-      </div>
+ 
+-      <!-- CTA after process -->
+-      <div class="process-cta mt-24 text-center fade-up">
+-        <p class="text-text-muted text-[17px] mb-8">{{ t('process.cta') }}</p>
+-        <RouterLink to="/contact" class="btn-primary text-[15px] px-10 py-[18px]">
+-          {{ t('process.ctaBtn') }}
+-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+-        </RouterLink>
+-      </div>
++        <div class="process-progress" aria-hidden="true"><span /></div>
+ 
++      </div>
+     </div>
+   </section>
+ </template>
+ 
+ <script setup>
+-import { computed, ref } from 'vue'
++import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+ import { RouterLink } from 'vue-router'
+ import { useFadeUp } from '../composables/useFadeUp'
+ import { useLanguage } from '../composables/useLanguage.js'
+@@ -62,11 +89,46 @@ import { useScrollProgress } from '../composables/useScrollProgress.js'
+ 
+ useFadeUp()
+ const { t } = useLanguage()
++
++const scene        = ref(null)
+ const processSteps = ref(null)
++const track        = ref(null)
++
++// Sideways scene: --p (0 → 1) = progress through the pinned stretch
++useScrollProgress(scene, { mode: 'pin', prop: '--p' })
++// Stacked layout: fills the vertical line beside the steps
+ useScrollProgress(processSteps, { mode: 'span', anchor: 0.55, prop: '--process-progress' })
+ 
+ const steps = computed(() => t('process.steps'))
+ 
++// How far the track has to travel sideways; also stretches the scene so there is room to scroll.
++function measure() {
++  const view = processSteps.value
++  const row  = track.value
++  if (!view || !row || !scene.value) return
++  const dist = Math.max(0, Math.round(row.scrollWidth - view.clientWidth))
++  scene.value.style.setProperty('--dist', `${dist}px`)
++}
++
++let ro = null
++let mq = null
++onMounted(() => {
++  measure()
++  if ('ResizeObserver' in window) {
++    ro = new ResizeObserver(measure)
++    ro.observe(processSteps.value)
++    ro.observe(track.value)
++  }
++  window.addEventListener('resize', measure)
++  mq = window.matchMedia('(prefers-reduced-motion: no-preference) and (min-height: 561px)')
++  mq.addEventListener('change', measure)
++})
++onBeforeUnmount(() => {
++  ro?.disconnect()
++  window.removeEventListener('resize', measure)
++  mq?.removeEventListener('change', measure)
++})
++
+ const stepIcons = [
+   '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+   '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+@@ -95,6 +157,15 @@ const stepIcons = [
+   padding-left: 24px;
+ }
+ 
++/* In the stacked layout the track is invisible to layout, so the steps stay grid items of .process-steps */
++.process-track {
++  display: contents;
++}
++
++.process-step.is-last {
++  padding-bottom: 0;
++}
++
+ .process-line {
+   position: absolute;
+   top: 0;
+@@ -116,6 +187,13 @@ const stepIcons = [
+   grid-column: 1 / -1;
+ }
+ 
++/* Only used by the sideways scene */
++.process-spacer,
++.process-card-cta,
++.process-progress {
++  display: none;
++}
++
+ @media (prefers-reduced-motion: reduce) {
+   .process-line-fill { transform: scaleY(1); }
+ }
+@@ -130,4 +208,120 @@ const stepIcons = [
+     position: static;
+   }
+ }
+-</style>
+\ No newline at end of file
++
++/* ── Sideways pinned scene ───────────────────────────────────────────── */
++@media (prefers-reduced-motion: no-preference) and (min-height: 561px) {
++  .process-scene {
++    padding: 0;
++    height: calc(100vh + var(--dist, 0px));
++    height: calc(100svh + var(--dist, 0px));
++  }
++
++  .process-stage {
++    position: sticky;
++    top: 0;
++    height: 100vh;
++    height: 100svh;
++    display: flex;
++    flex-direction: column;
++    padding: 88px 0 36px;
++    overflow: hidden;
++  }
++
++  .process-layout {
++    display: flex;
++    flex-direction: column;
++    align-items: stretch;
++    flex: 1;
++    min-height: 0;
++    width: 100%;
++    max-width: none;
++    margin: 0;
++    gap: 0;
++  }
++
++  .process-intro {
++    position: static;
++    flex: none;
++    width: 100%;
++    max-width: 1080px;
++    margin: 0 auto;
++    padding: 0 24px;
++  }
++
++  .process-steps {
++    display: flex;
++    align-items: center;
++    flex: 1;
++    min-height: 0;
++    padding-left: 0;
++    overflow: hidden;
++  }
++
++  .process-line,
++  .process-cta {
++    display: none;
++  }
++
++  .process-track {
++    display: flex;
++    align-items: flex-start;
++    will-change: transform;
++    /* progress (--p) × distance (--dist) = how far the track has slid left */
++    transform: translate3d(calc(var(--p, 0) * var(--dist, 0px) * -1), 0, 0);
++  }
++
++  /* Aligns the first panel with the page's content column */
++  .process-spacer {
++    display: block;
++    flex: 0 0 auto;
++  }
++  .process-spacer--lead  { width: max(24px, calc((100vw - 1080px) / 2 + 24px)); }
++  .process-spacer--trail { width: max(0px, calc((100vw - 1080px) / 2 - 16px)); }
++
++  .process-track .process-step,
++  .process-track .process-card-cta {
++    display: block;
++    flex: 0 0 auto;
++    width: min(400px, 78vw);
++    margin-right: 40px;
++    padding: 20px 0 0;
++    border-top: 1px solid var(--border-strong);
++    /* each panel lights up as the scroll reaches it (k = panel index, last = number of steps) */
++    opacity: clamp(0.3, calc(0.3 + (var(--p, 0) * var(--last) - var(--k) + 1.5) * 0.7), 1);
++  }
++
++  .process-track .process-card-cta {
++    border-top-color: var(--accent);
++  }
++
++  .process-card-cta__text {
++    margin-bottom: 32px;
++    font-size: clamp(22px, 2.6vw, 30px);
++    font-weight: 600;
++    letter-spacing: -0.02em;
++    line-height: 1.2;
++  }
++
++  .process-progress {
++    display: block;
++    flex: none;
++    width: min(1032px, calc(100% - 48px));
++    height: 2px;
++    margin: 28px auto 0;
++    background: var(--border-strong);
++  }
++
++  .process-progress span {
++    display: block;
++    height: 100%;
++    background: var(--accent);
++    transform-origin: left center;
++    transform: scaleX(var(--p, 0));
++  }
++}
++
++@media (prefers-reduced-motion: no-preference) and (min-height: 561px) and (max-width: 640px) {
++  .process-stage { padding-top: 76px; }
++}
++</style>
+diff --git a/src/components/ScrollProgress.vue b/src/components/ScrollProgress.vue
+new file mode 100644
+index 0000000..4a133ce
+--- /dev/null
++++ b/src/components/ScrollProgress.vue
+@@ -0,0 +1,67 @@
++<template>
++  <div class="scroll-progress" aria-hidden="true">
++    <span ref="bar" class="scroll-progress__bar" />
++  </div>
++</template>
++
++<script setup>
++import { ref, onMounted, onBeforeUnmount } from 'vue'
++
++const bar = ref(null)
++let ticking = false
++let ro = null
++
++function update() {
++  ticking = false
++  if (!bar.value) return
++  const el = document.documentElement
++  const max = el.scrollHeight - el.clientHeight
++  const p = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0
++  bar.value.style.transform = `scaleX(${p})`
++}
++
++function schedule() {
++  if (ticking) return
++  ticking = true
++  requestAnimationFrame(update)
++}
++
++onMounted(() => {
++  update()
++  window.addEventListener('scroll', schedule, { passive: true })
++  window.addEventListener('resize', schedule)
++  // Page height changes on route changes, font load, language switch, pinned scenes measuring themselves.
++  if ('ResizeObserver' in window) {
++    ro = new ResizeObserver(schedule)
++    ro.observe(document.body)
++  }
++})
++
++onBeforeUnmount(() => {
++  window.removeEventListener('scroll', schedule)
++  window.removeEventListener('resize', schedule)
++  ro?.disconnect()
++})
++</script>
++
++<style scoped>
++.scroll-progress {
++  position: fixed;
++  top: 0;
++  left: 0;
++  right: 0;
++  height: 3px;
++  z-index: 60;
++  pointer-events: none;
++}
++
++.scroll-progress__bar {
++  display: block;
++  width: 100%;
++  height: 100%;
++  background: var(--accent);
++  transform: scaleX(0);
++  transform-origin: left center;
++  will-change: transform;
++}
++</style>
+diff --git a/src/composables/useScrollProgress.js b/src/composables/useScrollProgress.js
+index fc154c8..4d40144 100644
+--- a/src/composables/useScrollProgress.js
++++ b/src/composables/useScrollProgress.js
+@@ -13,6 +13,9 @@
+  *                      against a line at `anchor` of the viewport.   { anchor: .6 }
+  *   'leave'            0 at the element's top edge, 1 once it has scrolled
+  *                      completely past the top of the viewport.
++ *   'pin'              for a TALL wrapper whose first child is `position: sticky`
++ *                      (a pinned scene). 0 when the pin starts, 1 when it
++ *                      releases - i.e. progress through the pinned stretch only.
+  *
+  * Usage
+  *   const el = ref(null)
+@@ -35,6 +38,11 @@ function measure(item, vh) {
+   let p
+   if (mode === 'span')       p = (vh * anchor - r.top) / Math.max(r.height, 1)
+   else if (mode === 'leave') p = -r.top / Math.max(r.height, 1)
++  else if (mode === 'pin') {
++    const stage = item.el.firstElementChild
++    const range = item.el.offsetHeight - (stage ? stage.offsetHeight : 0)
++    p = -r.top / Math.max(range, 1)
++  }
+   else                       p = (vh * start - r.top) / Math.max(vh * (start - end), 1)
+   return clamp01(p)
+ }
+diff --git a/src/composables/useScrollScenes.js b/src/composables/useScrollScenes.js
+index 0330196..30a4866 100644
+--- a/src/composables/useScrollScenes.js
++++ b/src/composables/useScrollScenes.js
+@@ -27,6 +27,8 @@ const targetRoots = new Map()
+ 
+ function reveal(el) {
+   if (!(el instanceof HTMLElement) || observed.has(el) || el.classList.contains('is-revealed')) return
++  // Pinned scenes drive their own animation - [data-no-reveal] keeps the automatic reveals off them.
++  if (el.closest('[data-no-reveal]')) return
+ 
+   const isCard = el.matches(CARD_SELECTOR)
+   const isTitle = el.matches(TITLE_SELECTOR)
