@@ -43,6 +43,7 @@
             <span class="status-dot" />
             <span style="font-size:12px; color:var(--accent);">Live</span>
           </span>
+          <RouterLink to="/admin/invoices" class="btn-ghost" style="text-decoration:none">Invoices</RouterLink>
           <button class="btn-ghost" @click="logout">Sign out</button>
         </div>
       </header>
@@ -218,10 +219,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useSeo } from '../composables/useSeo.js'
 import { auth, db } from '../firebase.js'
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { collection, addDoc, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore'
 
 useSeo({ title: 'Admin', noindex: true })
@@ -265,6 +267,18 @@ async function login() {
     loginLoading.value = false
   }
 }
+
+// Already signed in (e.g. coming back from the Invoice Studio)? Skip the login screen.
+let stopAuthWatch = null
+onMounted(() => {
+  stopAuthWatch = onAuthStateChanged(auth, (user) => {
+    if (!isLoggedIn.value && user && adminEmail && user.email?.toLowerCase() === adminEmail) {
+      isLoggedIn.value = true
+      loadPosts()
+    }
+  })
+})
+onBeforeUnmount(() => stopAuthWatch?.())
 
 async function logout() {
   await signOut(auth)

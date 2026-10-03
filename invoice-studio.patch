@@ -1,0 +1,1750 @@
+diff --git a/src/App.vue b/src/App.vue
+index 2e5ce6b..ab4b123 100644
+--- a/src/App.vue
++++ b/src/App.vue
+@@ -1,8 +1,8 @@
+ <template>
+   <div style="background: var(--bg);">
+     <SiteLoader />
+-    <ScrollProgress />
+-    <AppNav />
++    <ScrollProgress v-if="!isAdminRoute" />
++    <AppNav v-if="!isAdminRoute" />
+ 
+     <RouterView v-slot="{ Component }">
+       <Transition name="page" mode="out-in">
+@@ -10,14 +10,14 @@
+       </Transition>
+     </RouterView>
+ 
+-    <AppFooter />
+-    <CookieBanner />
+-    <WhatsAppButton />
++    <AppFooter v-if="!isAdminRoute" />
++    <CookieBanner v-if="!isAdminRoute" />
++    <WhatsAppButton v-if="!isAdminRoute" />
+   </div>
+ </template>
+ 
+ <script setup>
+-import { watch } from 'vue'
++import { computed, watch } from 'vue'
+ import { RouterView, useRoute } from 'vue-router'
+ import { useLanguage } from './composables/useLanguage.js'
+ import SiteLoader     from './components/SiteLoader.vue'
+@@ -29,6 +29,8 @@ import WhatsAppButton from './components/WhatsappButton.vue'
+ import { useScrollScenes } from './composables/useScrollScenes.js'
+ 
+ const route = useRoute()
++// Back-office pages are full screen - no public nav, footer, cookie banner or chat button
++const isAdminRoute = computed(() => route.path === '/admin' || route.path.startsWith('/admin/'))
+ const { setLang } = useLanguage()
+ 
+ useScrollScenes()
+diff --git a/src/composables/useAdminSession.js b/src/composables/useAdminSession.js
+new file mode 100644
+index 0000000..47f3854
+--- /dev/null
++++ b/src/composables/useAdminSession.js
+@@ -0,0 +1,66 @@
++import { ref, onMounted, onBeforeUnmount } from 'vue'
++import { auth } from '../firebase.js'
++import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
++
++/**
++ * Admin sign-in shared by the admin pages.
++ * Firebase keeps the session between pages, so signing in once is enough. Only the
++ * account whose email equals VITE_ADMIN_EMAIL counts as logged in - any other
++ * account is signed out straight away.
++ */
++const adminEmail = (import.meta.env.VITE_ADMIN_EMAIL || '').trim().toLowerCase()
++
++export function useAdminSession() {
++  const isLoggedIn = ref(false)
++  const ready      = ref(false)   // false until Firebase has reported the stored session
++  const email      = ref('')
++  const password   = ref('')
++  const loading    = ref(false)
++  const error      = ref('')
++
++  let unsubscribe = null
++
++  onMounted(() => {
++    unsubscribe = onAuthStateChanged(auth, (user) => {
++      isLoggedIn.value = Boolean(user && adminEmail && user.email?.toLowerCase() === adminEmail)
++      ready.value = true
++    })
++  })
++  onBeforeUnmount(() => unsubscribe?.())
++
++  async function login() {
++    error.value = ''
++    loading.value = true
++    try {
++      const credentials = await signInWithEmailAndPassword(auth, email.value, password.value)
++      if (!adminEmail) {
++        await signOut(auth)
++        throw new Error('admin-not-configured')
++      }
++      if (credentials.user.email?.toLowerCase() !== adminEmail) {
++        await signOut(auth)
++        throw new Error('admin-email-mismatch')
++      }
++      password.value = ''
++    } catch (err) {
++      error.value = err.message === 'admin-not-configured'
++        ? 'Admin access is not configured. Add VITE_ADMIN_EMAIL and redeploy the site.'
++        : err.message === 'admin-email-mismatch'
++        ? 'This account email does not match the configured admin email.'
++        : /wrong-password|user-not-found|invalid-credential/.test(err.message)
++        ? 'Invalid email or password.'
++        : 'Login failed. Check your credentials.'
++    } finally {
++      loading.value = false
++    }
++  }
++
++  async function logout() {
++    await signOut(auth)
++    isLoggedIn.value = false
++    email.value = ''
++    password.value = ''
++  }
++
++  return { isLoggedIn, ready, email, password, loading, error, login, logout }
++}
+diff --git a/src/data/invoiceDocs.js b/src/data/invoiceDocs.js
+new file mode 100644
+index 0000000..688b828
+--- /dev/null
++++ b/src/data/invoiceDocs.js
+@@ -0,0 +1,649 @@
++/**
++ * Admin documents - pricing maths + print-ready HTML for the document pack.
++ *
++ * Pure module (no Vue, no DOM): everything is computed in integer cents so totals
++ * always add up exactly, and every user-supplied string is HTML-escaped.
++ *
++ *   calcQuote(...)            → lines, discount, VAT, total, deposit / balance split
++ *   buildDocumentsHtml(...)   → one self-contained HTML string (A4 pages) for 1..n documents
++ *
++ * NOTE: the legal wording (contract, VAT notes) is a starting template, not legal advice.
++ */
++
++import { getBundleDiscount } from './services.js'
++
++export const DOC_TYPES = ['offer', 'proforma', 'invoice', 'contract', 'acceptance']
++
++export const VAT_MODES = {
++  none:     { rate: 0,  label: 'No VAT (supplier not VAT-registered)' },
++  standard: { rate: 20, label: '20% VAT' },
++  reverse:  { rate: 0,  label: '0% - EU reverse charge' },
++}
++
++export const DEFAULT_VAT_NOTES = {
++  none: {
++    en: 'The supplier is not registered under the VAT Act.',
++    bg: 'Доставчикът не е регистриран по ЗДДС.',
++  },
++  standard: { en: '', bg: '' },
++  reverse: {
++    en: 'Reverse charge: VAT to be accounted for by the recipient (Art. 196, Directive 2006/112/EC).',
++    bg: 'Обратно начисляване: данъкът се начислява от получателя (чл. 196 от Директива 2006/112/ЕО).',
++  },
++}
++
++// ─── Money & small helpers ────────────────────────────────────────────────────
++
++export const toCents = (n) => Math.round((Number(n) || 0) * 100)
++
++export function formatMoney(cents, lang = 'en') {
++  return new Intl.NumberFormat(lang === 'bg' ? 'bg-BG' : 'en-GB', {
++    style: 'currency', currency: 'EUR', minimumFractionDigits: 2,
++  }).format((cents || 0) / 100)
++}
++
++const pad2 = (n) => String(n).padStart(2, '0')
++
++export function todayIso() {
++  const d = new Date()
++  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
++}
++
++export function addDaysIso(iso, days) {
++  const d = new Date(`${iso}T12:00:00`)
++  if (Number.isNaN(d.getTime())) return iso
++  d.setDate(d.getDate() + (Number(days) || 0))
++  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
++}
++
++export function formatDate(iso) {
++  const d = new Date(`${iso}T12:00:00`)
++  if (Number.isNaN(d.getTime())) return ''
++  return `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()}`
++}
++
++const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => (
++  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
++))
++const multiline = (v) => esc(v).replace(/\r?\n/g, '<br>')
++const dash = (v) => (String(v ?? '').trim() ? esc(v) : '&mdash;')
++
++/** Next number in a sequence, keeping zero padding: "0000000041" → "0000000042". */
++export function nextNumber(current) {
++  const m = /^(.*?)(\d+)(\D*)$/.exec(String(current ?? ''))  // increments the LAST run of digits
++  if (!m) return null
++  const next = String(Number(m[2]) + 1).padStart(m[2].length, '0')
++  return `${m[1]}${next}${m[3]}`
++}
++
++// ─── Pricing ──────────────────────────────────────────────────────────────────
++
++/**
++ * @param services      result of buildServices(...)
++ * @param serviceIds    selected service ids
++ * @param addonIds      selected add-on ids
++ * @param customItems   [{ label, qty, price }] - extra lines, never discounted
++ * @param discount      { mode: 'auto' | 'none' | 'custom', custom: number }
++ * @param vatMode       'none' | 'standard' | 'reverse'
++ * @param depositPercent 0..100
++ */
++export function calcQuote({
++  services = [], serviceIds = [], addonIds = [], customItems = [],
++  discount = { mode: 'auto', custom: 0 }, vatMode = 'none', depositPercent = 0,
++}) {
++  const lines = []
++  let discountBase = 0
++  let serviceCount = 0
++
++  for (const svc of services) {
++    if (!serviceIds.includes(svc.id)) continue
++    serviceCount += 1
++    const unit = toCents(svc.basePrice)
++    lines.push({
++      type: 'service', id: svc.id, label: svc.title, qty: 1, unit, total: unit,
++      deliverables: svc.deliverables || [], timeline: svc.timeline || '',
++    })
++    discountBase += unit
++
++    for (const addon of svc.addons || []) {
++      if (!addonIds.includes(addon.id)) continue
++      const price = toCents(addon.price)
++      lines.push({ type: 'addon', id: addon.id, label: addon.label, qty: 1, unit: price, total: price })
++      discountBase += price
++    }
++  }
++
++  let customTotal = 0
++  for (const item of customItems) {
++    const label = String(item?.label ?? '').trim()
++    const qty = Number(item?.qty) > 0 ? Number(item.qty) : 1
++    const unit = toCents(item?.price)
++    if (!label || unit <= 0) continue
++    const total = Math.round(qty * unit)
++    lines.push({ type: 'custom', label, qty, unit, total })
++    customTotal += total
++  }
++
++  let discountPercent = 0
++  let discountIsBundle = false
++  if (discount.mode === 'auto') {
++    discountPercent = getBundleDiscount(serviceCount)?.percent ?? 0
++    discountIsBundle = discountPercent > 0
++  } else if (discount.mode === 'custom') {
++    discountPercent = Math.min(100, Math.max(0, Number(discount.custom) || 0))
++  }
++
++  const discountCents = Math.round(discountBase * discountPercent / 100)
++  const subtotal = discountBase + customTotal
++  const net = subtotal - discountCents
++  const vatRate = (VAT_MODES[vatMode] || VAT_MODES.none).rate
++  const vat = Math.round(net * vatRate / 100)
++  const total = net + vat
++
++  // Deposit / balance split - the two always add up to the total, cent for cent
++  const depPct = Math.min(100, Math.max(0, Number(depositPercent) || 0))
++  const depNet = Math.round(net * depPct / 100)
++  const depVat = Math.round(depNet * vatRate / 100)
++  const deposit = { net: depNet, vat: depVat, total: depNet + depVat }
++  const balance = { net: net - depNet, vat: vat - depVat, total: total - deposit.total }
++
++  return {
++    lines, serviceCount, subtotal, discountPercent, discountIsBundle, discountCents,
++    net, vatRate, vat, total, depositPercent: depPct, deposit, balance,
++  }
++}
++
++// ─── Strings ──────────────────────────────────────────────────────────────────
++
++const L = {
++  en: {
++    titles: { offer: 'Quotation', proforma: 'Proforma invoice', invoice: 'Invoice', contract: 'Service agreement', acceptance: 'Acceptance certificate' },
++    supplier: 'Supplier', client: 'Client',
++    no: 'No.', issueDate: 'Issue date', validUntil: 'Valid until', dueDate: 'Payment due', taxEvent: 'Date of tax event',
++    eik: 'Company ID', vatNo: 'VAT no.', rep: 'Represented by', contact: 'Contact',
++    project: 'Project', description: 'Description', qty: 'Qty', unitPrice: 'Unit price', amount: 'Amount',
++    subtotal: 'Subtotal', netAmount: 'Net amount', total: 'Total',
++    bundle: (n, p) => `Bundle discount (${n} services, -${p}%)`,
++    discount: (p) => `Discount (-${p}%)`,
++    vat: (r) => `VAT ${r}%`,
++    vatPlain: 'VAT',
++    depositRow: (p) => `Deposit (${p}%)`,
++    balanceRow: (p) => `Balance (${p}%)`,
++    payableNow: 'Payable now', amountDue: 'Amount due',
++    paymentDetails: 'Payment details', bank: 'Bank', iban: 'IBAN', bic: 'BIC / SWIFT', reference: 'Payment reference',
++    timeline: 'Delivery timeline', notes: 'Notes',
++    advanceLine: (p, proj) => `Advance payment ${p}% - ${proj}`,
++    balanceLine: (p, proj) => `Remaining balance ${p}% - ${proj}`,
++    offerIntro: (proj) => `Thank you for your interest. Below is our proposal for the project "${proj}".`,
++    offerValid: 'This quotation is valid for 30 days from the issue date.',
++    offerTerms: (dep, depAmt, balAmt, days) => dep > 0
++      ? `Payment terms: a ${dep}% deposit (${depAmt}) is due before work starts; the remaining ${balAmt} is due within ${days} days of delivery.`
++      : `Payment terms: the full amount is due within ${days} days of the invoice date.`,
++    offerAccept: 'Accepted by the Client',
++    proformaNote: 'This proforma invoice is not a tax document. A tax invoice will be issued after payment.',
++    included: 'Included',
++    signFor: (who) => `For the ${who}`,
++    signName: 'Name', signDate: 'Date', signSignature: 'Signature',
++    page: 'Page',
++    // contract
++    contractIntro: (no, date, sup, cli) => `This agreement no. ${no} is made on ${date} between ${sup} ("the Supplier") and ${cli} ("the Client").`,
++    clauses: (c) => [
++      { t: '1. Subject', p: [
++        `The Supplier will provide the Client with the services listed in the Annex below (quotation no. ${c.offerNo}) for the project "${c.project}" (the "Services").`,
++      ] },
++      { t: '2. Scope and deliverables', p: [
++        'The scope of each service is described in the Annex. Anything not listed in the Annex is outside the scope and will be quoted separately before any work on it begins.',
++      ] },
++      { t: '3. Price and payment', p: [
++        `The total price is ${c.total}${c.vatText}.`,
++        c.deposit > 0
++          ? `A deposit of ${c.deposit}% (${c.depositAmt}) is due before work starts. The remaining ${c.balanceAmt} is due within ${c.days} days of delivery and the invoice date.`
++          : `The full price is due within ${c.days} days of the invoice date.`,
++        'Late payments bear statutory interest. The Supplier may pause work while an invoice is overdue.',
++      ] },
++      { t: '4. Timeline', p: [
++        c.timeline
++          ? `The Services will be delivered within ${c.timeline}, counted from receipt of the deposit and all materials the Client must provide.`
++          : 'The delivery timeline is agreed in writing and counted from receipt of the deposit and all materials the Client must provide.',
++        'Delays caused by late feedback, content or access from the Client move the timeline accordingly.',
++      ] },
++      { t: '5. Client responsibilities', p: [
++        'The Client will provide texts, images, brand assets, accounts and access that the work requires, and will give feedback promptly. The Client confirms they hold the rights to everything they supply.',
++      ] },
++      { t: '6. Revisions', p: [
++        'Reasonable revisions within the agreed scope are included. Changes that go beyond the scope are quoted and agreed in writing before they start.',
++      ] },
++      { t: '7. Intellectual property', p: [
++        'Upon full payment, the rights to the deliverables created specifically for the Client pass to the Client. The Supplier keeps all rights to its pre-existing code, tools and frameworks, and third-party components remain under their own licences. The Supplier may show the finished work in its portfolio unless the Client objects in writing.',
++      ] },
++      { t: '8. Confidentiality', p: [
++        'Each party keeps the other party\'s non-public business information confidential and uses it only for this agreement. This continues after the agreement ends.',
++      ] },
++      { t: '9. Support after delivery', p: [
++        'The Supplier will fix defects in the delivered work reported within 30 days after acceptance, free of charge. Later work, new features and third-party service issues (hosting, payment providers and similar) are charged separately.',
++      ] },
++      { t: '10. Liability', p: [
++        'The Supplier\'s total liability under this agreement is limited to the amounts paid by the Client. Neither party is liable for indirect or consequential losses.',
++      ] },
++      { t: '11. Termination', p: [
++        'Either party may terminate by written notice. The Client pays for work completed up to the termination date; a deposit covers work already started and is not refunded for that work.',
++      ] },
++      { t: '12. Governing law', p: [
++        'This agreement is governed by the law of the Republic of Bulgaria. The parties will try to settle disputes amicably first; otherwise the competent court in Sofia decides.',
++      ] },
++      { t: '13. Final provisions', p: [
++        'Changes must be made in writing. The agreement may be signed in counterparts or electronically, and each signed copy is equally valid.',
++      ] },
++    ],
++    annex: 'Annex - services and prices',
++    // acceptance
++    acceptIntro: (proj, date) => `The Supplier delivered the services below for the project "${proj}". The Client reviewed them on ${date}.`,
++    acceptDelivered: 'Delivered',
++    acceptStatement: 'The Client confirms receipt and accepts the delivered work with no objections, except for the remarks below (if any).',
++    acceptRemarks: 'Remarks',
++    acceptWarranty: 'The 30-day post-delivery support period under the service agreement starts from the date of this certificate.',
++  },
++
++  bg: {
++    titles: { offer: 'Оферта', proforma: 'Проформа фактура', invoice: 'Фактура', contract: 'Договор за услуги', acceptance: 'Приемо-предавателен протокол' },
++    supplier: 'Доставчик', client: 'Клиент',
++    no: '№', issueDate: 'Дата на издаване', validUntil: 'Валидна до', dueDate: 'Падеж', taxEvent: 'Дата на данъчно събитие',
++    eik: 'ЕИК', vatNo: 'ИН по ЗДДС', rep: 'МОЛ', contact: 'Лице за контакт',
++    project: 'Проект', description: 'Описание', qty: 'Кол.', unitPrice: 'Ед. цена', amount: 'Сума',
++    subtotal: 'Междинна сума', netAmount: 'Данъчна основа', total: 'Общо',
++    bundle: (n, p) => `Отстъпка за пакет (${n} услуги, -${p}%)`,
++    discount: (p) => `Отстъпка (-${p}%)`,
++    vat: (r) => `ДДС ${r}%`,
++    vatPlain: 'ДДС',
++    depositRow: (p) => `Аванс (${p}%)`,
++    balanceRow: (p) => `Остатък (${p}%)`,
++    payableNow: 'Дължимо сега', amountDue: 'Сума за плащане',
++    paymentDetails: 'Данни за плащане', bank: 'Банка', iban: 'IBAN', bic: 'BIC / SWIFT', reference: 'Основание за плащане',
++    timeline: 'Срок за изпълнение', notes: 'Забележки',
++    advanceLine: (p, proj) => `Авансово плащане ${p}% - ${proj}`,
++    balanceLine: (p, proj) => `Остатък за плащане ${p}% - ${proj}`,
++    offerIntro: (proj) => `Благодарим за проявения интерес. По-долу е нашето предложение за проект „${proj}“.`,
++    offerValid: 'Офертата е валидна 30 дни от датата на издаване.',
++    offerTerms: (dep, depAmt, balAmt, days) => dep > 0
++      ? `Условия за плащане: аванс от ${dep}% (${depAmt}) преди започване на работата; остатъкът от ${balAmt} се дължи в срок от ${days} дни след предаването.`
++      : `Условия за плащане: пълната сума се дължи в срок от ${days} дни от датата на фактурата.`,
++    offerAccept: 'Приета от Клиента',
++    proformaNote: 'Проформа фактурата не е данъчен документ. Данъчна фактура ще бъде издадена след плащането.',
++    included: 'Включено',
++    signFor: (who) => `За ${who}`,
++    signName: 'Име', signDate: 'Дата', signSignature: 'Подпис',
++    page: 'Стр.',
++    contractIntro: (no, date, sup, cli) => `Този договор № ${no} се сключва на ${date} между ${sup} („Изпълнителят“) и ${cli} („Възложителят“).`,
++    clauses: (c) => [
++      { t: '1. Предмет', p: [
++        `Изпълнителят предоставя на Възложителя услугите, описани в Приложението по-долу (оферта № ${c.offerNo}), за проект „${c.project}“ („Услугите“).`,
++      ] },
++      { t: '2. Обхват и резултати', p: [
++        'Обхватът на всяка услуга е описан в Приложението. Всичко, което не е посочено в него, е извън обхвата и се остойностява отделно, преди да започне работа по него.',
++      ] },
++      { t: '3. Цена и плащане', p: [
++        `Общата цена е ${c.total}${c.vatText}.`,
++        c.deposit > 0
++          ? `Аванс от ${c.deposit}% (${c.depositAmt}) се дължи преди започване на работата. Остатъкът от ${c.balanceAmt} се дължи в срок от ${c.days} дни след предаването и датата на фактурата.`
++          : `Пълната цена се дължи в срок от ${c.days} дни от датата на фактурата.`,
++        'При забава се дължи законната лихва. Изпълнителят може да спре работата, докато има просрочена фактура.',
++      ] },
++      { t: '4. Срок', p: [
++        c.timeline
++          ? `Услугите се предават в срок от ${c.timeline}, считано от получаването на аванса и на всички материали, които Възложителят трябва да предостави.`
++          : 'Срокът за изпълнение се уговаря писмено и тече от получаването на аванса и на всички материали, които Възложителят трябва да предостави.',
++        'Забавяне на обратна връзка, съдържание или достъп от страна на Възложителя удължава срока съответно.',
++      ] },
++      { t: '5. Задължения на Възложителя', p: [
++        'Възложителят предоставя текстове, изображения, брандови материали, акаунти и достъпи, необходими за работата, и дава обратна връзка своевременно. Възложителят потвърждава, че притежава правата върху всичко, което предоставя.',
++      ] },
++      { t: '6. Корекции', p: [
++        'Разумни корекции в рамките на уговорения обхват са включени. Промени извън обхвата се остойностяват и се уговарят писмено, преди да започнат.',
++      ] },
++      { t: '7. Интелектуална собственост', p: [
++        'С пълното плащане правата върху резултатите, създадени специално за Възложителя, преминават към него. Изпълнителят запазва всички права върху предварително съществуващия си код, инструменти и рамки, а компонентите на трети страни остават под собствените си лицензи. Изпълнителят може да показва готовата работа в портфолиото си, освен ако Възложителят не възрази писмено.',
++      ] },
++      { t: '8. Поверителност', p: [
++        'Всяка страна запазва в тайна непубличната бизнес информация на другата страна и я използва само за целите на този договор. Задължението продължава и след прекратяването му.',
++      ] },
++      { t: '9. Поддръжка след предаване', p: [
++        'Изпълнителят отстранява безплатно дефектите в предадената работа, съобщени в рамките на 30 дни след приемането. Последваща работа, нови функционалности и проблеми с услуги на трети страни (хостинг, платежни доставчици и други) се заплащат отделно.',
++      ] },
++      { t: '10. Отговорност', p: [
++        'Общата отговорност на Изпълнителя по този договор е ограничена до сумите, платени от Възложителя. Никоя от страните не отговаря за непреки или последващи вреди.',
++      ] },
++      { t: '11. Прекратяване', p: [
++        'Всяка страна може да прекрати договора с писмено уведомление. Възложителят заплаща извършената до прекратяването работа; авансът покрива вече започната работа и не се възстановява за нея.',
++      ] },
++      { t: '12. Приложимо право', p: [
++        'Договорът се урежда от правото на Република България. Страните ще се опитат първо да решат споровете по взаимно съгласие; в противен случай спорът се решава от компетентния съд в гр. София.',
++      ] },
++      { t: '13. Заключителни разпоредби', p: [
++        'Промени се правят в писмена форма. Договорът може да бъде подписан в няколко екземпляра или електронно и всеки подписан екземпляр има еднаква сила.',
++      ] },
++    ],
++    annex: 'Приложение - услуги и цени',
++    acceptIntro: (proj, date) => `Изпълнителят предаде услугите по-долу по проект „${proj}“. Възложителят ги прегледа на ${date}.`,
++    acceptDelivered: 'Предадено',
++    acceptStatement: 'Възложителят потвърждава получаването и приема предадената работа без възражения, освен посочените по-долу забележки (ако има такива).',
++    acceptRemarks: 'Забележки',
++    acceptWarranty: 'Срокът за поддръжка от 30 дни след предаването по договора за услуги започва да тече от датата на този протокол.',
++  },
++}
++
++// ─── HTML building blocks ─────────────────────────────────────────────────────
++
++const CSS = `
++:root { --ink:#111; --muted:#666; --line:#e4e4e4; --soft:#f6f7f4; --accent:#A4E04B; --green:#4c7d0a; }
++* { box-sizing: border-box; }
++html, body { margin:0; padding:0; }
++body { font: 11.5px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background:#e9e9e9; }
++.page { width:210mm; min-height:297mm; margin:14px auto; padding:14mm 16mm; background:#fff; box-shadow:0 2px 18px rgba(0,0,0,.14); }
++.head { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; padding-bottom:11px; border-bottom:3px solid var(--accent); margin-bottom:14px; }
++.brand { font-weight:800; font-size:24px; letter-spacing:.08em; line-height:1; }
++.brand b { color: var(--green); font-weight:800; }
++.brand-sub { margin-top:6px; color:var(--muted); font-size:10.5px; }
++.doc-meta { text-align:right; }
++.doc-title { font-size:22px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; line-height:1.1; }
++.doc-no { margin-top:4px; font-size:13px; font-weight:600; }
++.meta-table { margin-top:8px; margin-left:auto; border-collapse:collapse; }
++.meta-table td { padding:1px 0 1px 14px; font-size:11px; }
++.meta-table td:first-child { color:var(--muted); }
++.parties { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
++.party { background:var(--soft); border-radius:6px; padding:9px 12px; }
++.party h4 { margin:0 0 6px; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
++.party .nm { font-weight:700; font-size:13px; margin-bottom:2px; }
++.party .ln { font-size:10.5px; color:#333; }
++.party .ln span { color:var(--muted); }
++.project { margin:0 0 9px; font-size:12px; }
++.project span { color:var(--muted); }
++.lead { margin:0 0 9px; }
++table.items { width:100%; border-collapse:collapse; margin-bottom:6px; }
++table.items th { text-align:left; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:6px 8px; border-bottom:1.5px solid var(--ink); }
++table.items td { padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
++table.items tr { break-inside:avoid; }
++table.items .n { text-align:right; white-space:nowrap; }
++table.items .svc { font-weight:600; }
++table.items .add { padding-left:22px; color:#333; }
++table.items .add::before { content:"+ "; color:var(--green); font-weight:700; }
++.deliv { margin:3px 0 0; padding-left:16px; color:var(--muted); font-size:10px; font-weight:400; }
++.totals { width:62%; margin:8px 0 12px auto; border-collapse:collapse; break-inside:avoid; }
++.totals td { padding:4px 8px; font-size:11.5px; }
++.totals td:last-child { text-align:right; white-space:nowrap; }
++.totals tr.sep td { border-top:1px solid var(--line); }
++.totals tr.grand td { border-top:2px solid var(--ink); font-weight:800; font-size:13.5px; padding-top:7px; }
++.totals tr.due td { background:var(--accent); font-weight:800; font-size:13.5px; }
++.box { background:var(--soft); border-radius:6px; padding:9px 12px; margin-bottom:9px; break-inside:avoid; }
++.box h4 { margin:0 0 6px; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
++.box p { margin:0 0 3px; }
++.kv { display:grid; grid-template-columns:120px 1fr; gap:2px 10px; font-size:11.5px; }
++.kv span { color:var(--muted); }
++.note { color:var(--muted); font-size:11px; margin:6px 0; }
++.clause { margin-bottom:7px; break-inside:avoid; }
++.clause h5 { margin:0 0 2px; font-size:12px; }
++.clause p { margin:0 0 3px; text-align:justify; }
++.sigs { display:grid; grid-template-columns:1fr 1fr; gap:36px; margin-top:22px; break-inside:avoid; }
++.sig .who { font-weight:700; margin-bottom:26px; }
++.sig .line { border-top:1px solid var(--ink); padding-top:4px; font-size:10.5px; color:var(--muted); }
++.sig .nm { font-size:11.5px; margin-top:8px; }
++.remarks { height:52px; border:1px solid var(--line); border-radius:6px; margin-bottom:10px; }
++.foot { margin-top:14px; padding-top:8px; break-inside:avoid; break-before:avoid; border-top:1px solid var(--line); color:var(--muted); font-size:10px; display:flex; justify-content:space-between; gap:16px; }
++@page { size: A4; margin: 13mm 14mm 15mm; }
++@media print {
++  body { background:#fff; }
++  .page { width:auto; min-height:0; margin:0; padding:0; box-shadow:none; break-after:page; }
++  .page:last-child { break-after:auto; }
++  * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
++}
++`
++
++function partyBlock(title, p, str, { isClient = false } = {}) {
++  const addr = [p.address, [p.city, p.country].filter(Boolean).join(', ')].filter((x) => String(x || '').trim())
++  const rows = []
++  if (isClient && p.contact) rows.push(`<div class="ln"><span>${esc(str.contact)}:</span> ${esc(p.contact)}</div>`)
++  if (addr.length) rows.push(`<div class="ln">${addr.map(multiline).join('<br>')}</div>`)
++  if (p.eik) rows.push(`<div class="ln"><span>${esc(str.eik)}:</span> ${esc(p.eik)}</div>`)
++  if (p.vat) rows.push(`<div class="ln"><span>${esc(str.vatNo)}:</span> ${esc(p.vat)}</div>`)
++  if (!isClient && p.representative) rows.push(`<div class="ln"><span>${esc(str.rep)}:</span> ${esc(p.representative)}</div>`)
++  if (p.email) rows.push(`<div class="ln">${esc(p.email)}</div>`)
++  if (p.phone) rows.push(`<div class="ln">${esc(p.phone)}</div>`)
++  return `<div class="party"><h4>${esc(title)}</h4><div class="nm">${dash(p.name)}</div>${rows.join('')}</div>`
++}
++
++function header(type, ctx, { extraMeta = [] } = {}) {
++  const { str, issuer, meta, nos } = ctx
++  const rows = [[str.issueDate, formatDate(meta.issueDate)], ...extraMeta]
++    .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')
++  return `
++  <div class="head">
++    <div>
++      <div class="brand">IN<b>R</b>AIT</div>
++      <div class="brand-sub">${esc(issuer.website || '')}</div>
++    </div>
++    <div class="doc-meta">
++      <div class="doc-title">${esc(str.titles[type])}</div>
++      <div class="doc-no">${esc(str.no)} ${esc(nos[type])}</div>
++      <table class="meta-table">${rows}</table>
++    </div>
++  </div>`
++}
++
++function parties(ctx) {
++  const { str, issuer, client } = ctx
++  return `<div class="parties">${partyBlock(str.supplier, issuer, str)}${partyBlock(str.client, client, str, { isClient: true })}</div>`
++}
++
++function projectLine(ctx) {
++  const { str, meta } = ctx
++  return meta.project ? `<p class="project"><span>${esc(str.project)}:</span> <b>${esc(meta.project)}</b></p>` : ''
++}
++
++function itemsTable(lines, ctx, { deliverables = false } = {}) {
++  const { str, lang } = ctx
++  const body = lines.map((ln) => {
++    const label = ln.type === 'addon'
++      ? `<td class="add">${esc(ln.label)}</td>`
++      : `<td class="${ln.type === 'service' ? 'svc' : ''}">${esc(ln.label)}${
++        deliverables && ln.deliverables?.length
++          ? `<ul class="deliv">${ln.deliverables.map((d) => `<li>${esc(d)}</li>`).join('')}</ul>` : ''}</td>`
++    return `<tr>${label}<td class="n">${esc(ln.qty)}</td><td class="n">${formatMoney(ln.unit, lang)}</td><td class="n">${formatMoney(ln.total, lang)}</td></tr>`
++  }).join('')
++  return `<table class="items"><thead><tr><th>${esc(str.description)}</th><th class="n">${esc(str.qty)}</th><th class="n">${esc(str.unitPrice)}</th><th class="n">${esc(str.amount)}</th></tr></thead><tbody>${body}</tbody></table>`
++}
++
++/** Totals rows for the full quote (or for one partial amount: { net, vat, total }). */
++function totalsTable(ctx, { part = null, extraRows = '', dueLabel = null, dueCents = null } = {}) {
++  const { str, lang, quote: q } = ctx
++  const m = (c) => formatMoney(c, lang)
++  const rows = []
++  const net = part ? part.net : q.net
++  const vat = part ? part.vat : q.vat
++  const total = part ? part.total : q.total
++
++  if (!part) {
++    if (q.discountCents > 0 || q.subtotal !== q.net) {
++      rows.push(`<tr><td>${esc(str.subtotal)}</td><td>${m(q.subtotal)}</td></tr>`)
++    }
++    if (q.discountCents > 0) {
++      const lbl = q.discountIsBundle ? str.bundle(q.serviceCount, q.discountPercent) : str.discount(q.discountPercent)
++      rows.push(`<tr><td>${esc(lbl)}</td><td>-${m(q.discountCents)}</td></tr>`)
++    }
++  }
++  rows.push(`<tr class="${rows.length ? 'sep' : ''}"><td>${esc(str.netAmount)}</td><td>${m(net)}</td></tr>`)
++  rows.push(`<tr><td>${esc(q.vatRate > 0 ? str.vat(q.vatRate) : str.vatPlain)}</td><td>${q.vatRate > 0 ? m(vat) : '&mdash;'}</td></tr>`)
++  rows.push(`<tr class="grand"><td>${esc(str.total)}</td><td>${m(total)}</td></tr>`)
++  if (dueLabel) rows.push(`<tr class="due"><td>${esc(dueLabel)}</td><td>${m(dueCents)}</td></tr>`)
++  return `<table class="totals">${rows.join('')}${extraRows}</table>`
++}
++
++function paymentBox(ctx, { reference }) {
++  const { str, issuer } = ctx
++  const rows = [
++    [str.bank, issuer.bank], [str.iban, issuer.iban], [str.bic, issuer.bic], [str.reference, reference],
++  ].filter(([, v]) => String(v || '').trim())
++  if (!rows.length) return ''
++  return `<div class="box"><h4>${esc(str.paymentDetails)}</h4><div class="kv">${rows.map(([k, v]) => `<span>${esc(k)}</span><b>${esc(v)}</b>`).join('')}</div></div>`
++}
++
++function footer(ctx) {
++  const { issuer } = ctx
++  const left = [issuer.name, issuer.email, issuer.phone].filter(Boolean).map(esc).join(' &middot; ')
++  return `<div class="foot"><span>${left}</span><span>${esc(issuer.website || '')}</span></div>`
++}
++
++function notesBlock(ctx, text, title) {
++  if (!String(text || '').trim()) return ''
++  return `<div class="box"><h4>${esc(title)}</h4><p>${multiline(text)}</p></div>`
++}
++
++function signatures(ctx, { supplierLabel, clientLabel }) {
++  const { str, issuer, client } = ctx
++  return `<div class="sigs">
++    <div class="sig"><div class="who">${esc(supplierLabel)}</div><div class="line">${esc(str.signSignature)}</div><div class="nm">${esc(str.signName)}: ${dash(issuer.representative || issuer.name)}</div><div class="nm">${esc(str.signDate)}: ____________</div></div>
++    <div class="sig"><div class="who">${esc(clientLabel)}</div><div class="line">${esc(str.signSignature)}</div><div class="nm">${esc(str.signName)}: ${dash(client.contact || client.name)}</div><div class="nm">${esc(str.signDate)}: ____________</div></div>
++  </div>`
++}
++
++// ─── The five documents ───────────────────────────────────────────────────────
++
++function offerPage(ctx) {
++  const { str, lang, quote: q, meta, nos } = ctx
++  const m = (c) => formatMoney(c, lang)
++  const terms = str.offerTerms(q.depositPercent, m(q.deposit.total), m(q.balance.total), meta.dueDays)
++  const rows = q.depositPercent > 0 && q.depositPercent < 100
++    ? `<tr class="sep"><td>${esc(str.depositRow(q.depositPercent))}</td><td>${m(q.deposit.total)}</td></tr><tr><td>${esc(str.balanceRow(100 - q.depositPercent))}</td><td>${m(q.balance.total)}</td></tr>`
++    : ''
++  return `<section class="page">
++    ${header('offer', ctx, { extraMeta: [[str.validUntil, formatDate(meta.validUntil)]] })}
++    ${parties(ctx)}
++    ${projectLine(ctx)}
++    <p class="lead">${esc(str.offerIntro(meta.project || '—'))}</p>
++    ${itemsTable(q.lines, ctx, { deliverables: true })}
++    ${totalsTable(ctx, { extraRows: rows })}
++    ${meta.timeline ? `<div class="box"><h4>${esc(str.timeline)}</h4><p>${esc(meta.timeline)}</p></div>` : ''}
++    <div class="box"><p>${esc(terms)}</p><p>${esc(str.offerValid)}</p></div>
++    ${notesBlock(ctx, meta.notes, str.notes)}
++    ${signatures(ctx, { supplierLabel: str.signFor(str.supplier), clientLabel: str.offerAccept })}
++    ${footer(ctx)}
++  </section>`
++}
++
++function invoiceLikePage(type, ctx) {
++  const { str, lang, quote: q, meta, nos } = ctx
++  const isProforma = type === 'proforma'
++  const m = (c) => formatMoney(c, lang)
++  const mode = isProforma ? 'full' : meta.invoiceFor
++  const proj = meta.project || '—'
++
++  let lines = q.lines
++  let table
++  let part = null
++  if (!isProforma && mode === 'deposit' && q.depositPercent > 0) {
++    part = q.deposit
++    lines = [{ type: 'custom', label: str.advanceLine(q.depositPercent, proj), qty: 1, unit: q.deposit.net, total: q.deposit.net }]
++  } else if (!isProforma && mode === 'balance' && q.depositPercent > 0) {
++    part = q.balance
++    lines = [{ type: 'custom', label: str.balanceLine(100 - q.depositPercent, proj), qty: 1, unit: q.balance.net, total: q.balance.net }]
++  }
++  table = itemsTable(lines, ctx)
++
++  let totals
++  if (isProforma) {
++    const payNow = q.depositPercent > 0 && q.depositPercent < 100
++    totals = totalsTable(ctx, payNow
++      ? { dueLabel: `${str.payableNow} - ${str.depositRow(q.depositPercent)}`, dueCents: q.deposit.total }
++      : { dueLabel: str.payableNow, dueCents: q.total })
++  } else {
++    totals = totalsTable(ctx, { part, dueLabel: str.amountDue, dueCents: part ? part.total : q.total })
++  }
++
++  const extraMeta = isProforma
++    ? [[str.dueDate, formatDate(meta.dueDate)]]
++    : [[str.taxEvent, formatDate(meta.issueDate)], [str.dueDate, formatDate(meta.dueDate)]]
++
++  return `<section class="page">
++    ${header(type, ctx, { extraMeta })}
++    ${parties(ctx)}
++    ${projectLine(ctx)}
++    ${table}
++    ${totals}
++    ${paymentBox(ctx, { reference: nos[type] })}
++    ${isProforma ? `<p class="note">${esc(str.proformaNote)}</p>` : ''}
++    ${!isProforma && String(meta.vatNote || '').trim() ? `<p class="note">${multiline(meta.vatNote)}</p>` : ''}
++    ${notesBlock(ctx, meta.notes, str.notes)}
++    ${footer(ctx)}
++  </section>`
++}
++
++function contractPage(ctx) {
++  const { str, lang, quote: q, meta, nos, issuer, client } = ctx
++  const m = (c) => formatMoney(c, lang)
++  const vatText = q.vatRate > 0
++    ? (lang === 'bg' ? ` (без ДДС ${m(q.net)}, ДДС ${q.vatRate}% ${m(q.vat)})` : ` (net ${m(q.net)} + VAT ${q.vatRate}% ${m(q.vat)})`)
++    : (lang === 'bg' ? ' (без начислен ДДС)' : ' (no VAT charged)')
++  const sup = `${issuer.name || '—'}${issuer.eik ? `, ${str.eik} ${issuer.eik}` : ''}`
++  const cli = `${client.name || '—'}${client.eik ? `, ${str.eik} ${client.eik}` : ''}`
++  const clauses = str.clauses({
++    offerNo: nos.offer, project: meta.project || '—', total: m(q.total), vatText,
++    deposit: q.depositPercent, depositAmt: m(q.deposit.total), balanceAmt: m(q.balance.total),
++    days: meta.dueDays, timeline: meta.timeline,
++  })
++  return `<section class="page">
++    ${header('contract', ctx)}
++    ${parties(ctx)}
++    <p class="lead">${esc(str.contractIntro(nos.contract, formatDate(meta.issueDate), sup, cli))}</p>
++    ${clauses.map((c) => `<div class="clause"><h5>${esc(c.t)}</h5>${c.p.map((x) => `<p>${esc(x)}</p>`).join('')}</div>`).join('')}
++    ${signatures(ctx, { supplierLabel: str.signFor(lang === 'bg' ? 'Изпълнителя' : str.supplier), clientLabel: str.signFor(lang === 'bg' ? 'Възложителя' : str.client) })}
++  </section>
++  <section class="page">
++    ${header('contract', ctx)}
++    <h3 style="margin:0 0 10px">${esc(str.annex)}</h3>
++    ${projectLine(ctx)}
++    ${itemsTable(q.lines, ctx, { deliverables: true })}
++    ${totalsTable(ctx)}
++    ${meta.timeline ? `<div class="box"><h4>${esc(str.timeline)}</h4><p>${esc(meta.timeline)}</p></div>` : ''}
++    ${footer(ctx)}
++  </section>`
++}
++
++function acceptancePage(ctx) {
++  const { str, quote: q, meta, nos } = ctx
++  const delivered = q.lines.map((ln) => `<tr><td class="${ln.type === 'addon' ? 'add' : ln.type === 'service' ? 'svc' : ''}">${esc(ln.label)}</td><td class="n">&#9744;</td></tr>`).join('')
++  return `<section class="page">
++    ${header('acceptance', ctx)}
++    ${parties(ctx)}
++    ${projectLine(ctx)}
++    <p class="lead">${esc(str.acceptIntro(meta.project || '—', formatDate(meta.issueDate)))}</p>
++    <table class="items"><thead><tr><th>${esc(str.description)}</th><th class="n">${esc(str.acceptDelivered)}</th></tr></thead><tbody>${delivered}</tbody></table>
++    <div class="box"><p>${esc(str.acceptStatement)}</p></div>
++    <div class="note">${esc(str.acceptRemarks)}:</div>
++    <div class="remarks"></div>
++    <p class="note">${esc(str.acceptWarranty)}</p>
++    ${signatures(ctx, { supplierLabel: str.signFor(ctx.lang === 'bg' ? 'Изпълнителя' : str.supplier), clientLabel: str.signFor(ctx.lang === 'bg' ? 'Възложителя' : str.client) })}
++    ${footer(ctx)}
++  </section>`
++}
++
++const BUILDERS = {
++  offer: offerPage,
++  proforma: (ctx) => invoiceLikePage('proforma', ctx),
++  invoice: (ctx) => invoiceLikePage('invoice', ctx),
++  contract: contractPage,
++  acceptance: acceptancePage,
++}
++
++/**
++ * @param docs     document types to include, in order (see DOC_TYPES)
++ * @param lang     'en' | 'bg'
++ * @param issuer   { name, eik, vat, address, city, country, email, phone, website, representative, bank, iban, bic }
++ * @param client   { name, contact, eik, vat, address, city, country, email, phone }
++ * @param meta     { project, issueDate, dueDate, validUntil, dueDays, timeline, notes, vatNote, invoiceFor, title }
++ * @param nos      { offer, proforma, invoice, contract, acceptance } - document numbers
++ * @param quote    result of calcQuote()
++ */
++export function buildDocumentsHtml({ docs, lang = 'en', issuer, client, meta, nos, quote }) {
++  const str = L[lang] || L.en
++  const ctx = { str, lang, issuer, client, meta, nos, quote }
++  const pages = docs.filter((d) => BUILDERS[d]).map((d) => BUILDERS[d](ctx)).join('\n')
++  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><title>${esc(meta.title || 'Documents')}</title><style>${CSS}</style></head><body>${pages}</body></html>`
++}
+diff --git a/src/data/services.js b/src/data/services.js
+index 5b7e868..88fc75b 100644
+--- a/src/data/services.js
++++ b/src/data/services.js
+@@ -70,41 +70,49 @@ const ICONS = {
+ const SERVICE_KEYS = ['onepager', 'website' , 'ai', 'ecommerce', 'automation', 'booking', 'identity', 'marketing']
+ // ─── Composable ───────────────────────────────────────────────────────────────
+ 
++/**
++ * Builds the service list for any locale.
++ * `translate` is a dot-path getter, e.g. (path) => resolve(locales.bg, path).
++ * Pure function - the admin tools use it to produce documents in a language
++ * that differs from the language the site is currently shown in.
++ */
++export function buildServices(translate) {
++  return SERVICE_KEYS.map((key) => {
++    // translate() returns the locale object at servicesData[key], or the path string
++    // itself when the key is missing from the active locale.
++    const raw  = translate(`servicesData.${key}`)
++    const data = typeof raw === 'object' && raw !== null ? raw : null
++
++    if (!data) {
++      console.warn(`[services] Missing locale entry: servicesData.${key}`)
++      return null
++    }
++
++    return {
++      id:           key,
++      hero:         HERO_FLAGS[key],
++      icon:         ICONS[key],
++      basePrice:    BASE_PRICES[key],
++      title:        data.title,
++      tag:          data.tag,
++      body:         data.body,
++      bestFor:      data.bestFor,
++      timeline:     data.timeline,
++      deliverables: data.deliverables,
++      // Merge locale label with static id and price
++      addons: (data.addons ?? []).map((addon, i) => ({
++        id:    ADDON_IDS[key]?.[i],
++        label: addon.label,
++        price: ADDON_PRICES[key]?.[i],
++      })).filter(a => a.id),
++    }
++  }).filter(Boolean)
++}
++
+ export function useServices() {
+   const { t } = useLanguage()
+ 
+-  const SERVICES = computed(() =>
+-    SERVICE_KEYS.map((key) => {
+-      // t() returns the locale object at servicesData[key], or the path string
+-      // itself when the key is missing from the active locale.
+-      const raw  = t(`servicesData.${key}`)
+-      const data = typeof raw === 'object' && raw !== null ? raw : null
+-
+-      if (!data) {
+-        console.warn(`[services] Missing locale entry: servicesData.${key}`)
+-        return null
+-      }
+-
+-      return {
+-        id:           key,
+-        hero:         HERO_FLAGS[key],
+-        icon:         ICONS[key],
+-        basePrice:    BASE_PRICES[key],
+-        title:        data.title,
+-        tag:          data.tag,
+-        body:         data.body,
+-        bestFor:      data.bestFor,
+-        timeline:     data.timeline,
+-        deliverables: data.deliverables,
+-        // Merge locale label with static id and price
+-        addons: (data.addons ?? []).map((addon, i) => ({
+-          id:    ADDON_IDS[key]?.[i],
+-          label: addon.label,
+-          price: ADDON_PRICES[key]?.[i],
+-        })).filter(a => a.id),
+-      }
+-    }).filter(Boolean)
+-  )
++  const SERVICES = computed(() => buildServices(t))
+ 
+   return { SERVICES }
+ }
+diff --git a/src/pages/Admin.vue b/src/pages/Admin.vue
+index d38bb1f..1cc0ccd 100644
+--- a/src/pages/Admin.vue
++++ b/src/pages/Admin.vue
+@@ -43,6 +43,7 @@
+             <span class="status-dot" />
+             <span style="font-size:12px; color:var(--accent);">Live</span>
+           </span>
++          <RouterLink to="/admin/invoices" class="btn-ghost" style="text-decoration:none">Invoices</RouterLink>
+           <button class="btn-ghost" @click="logout">Sign out</button>
+         </div>
+       </header>
+@@ -218,10 +219,11 @@
+ </template>
+ 
+ <script setup>
+-import { ref, computed } from 'vue'
++import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
++import { RouterLink } from 'vue-router'
+ import { useSeo } from '../composables/useSeo.js'
+ import { auth, db } from '../firebase.js'
+-import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
++import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+ import { collection, addDoc, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore'
+ 
+ useSeo({ title: 'Admin', noindex: true })
+@@ -266,6 +268,18 @@ async function login() {
+   }
+ }
+ 
++// Already signed in (e.g. coming back from the Invoice Studio)? Skip the login screen.
++let stopAuthWatch = null
++onMounted(() => {
++  stopAuthWatch = onAuthStateChanged(auth, (user) => {
++    if (!isLoggedIn.value && user && adminEmail && user.email?.toLowerCase() === adminEmail) {
++      isLoggedIn.value = true
++      loadPosts()
++    }
++  })
++})
++onBeforeUnmount(() => stopAuthWatch?.())
++
+ async function logout() {
+   await signOut(auth)
+   isLoggedIn.value = false
+diff --git a/src/pages/AdminInvoices.vue b/src/pages/AdminInvoices.vue
+new file mode 100644
+index 0000000..3892581
+--- /dev/null
++++ b/src/pages/AdminInvoices.vue
+@@ -0,0 +1,819 @@
++<template>
++  <div class="inv-shell">
++
++    <!-- Checking the stored session -->
++    <div v-if="!ready" class="boot"><span class="spinner" /></div>
++
++    <!-- Login -->
++    <div v-else-if="!isLoggedIn" class="login-screen">
++      <div class="login-card">
++        <div class="login-logo">IN<span style="color:var(--accent)">R</span>AIT</div>
++        <div class="login-subtitle">Invoice Studio</div>
++
++        <label class="field">
++          <span class="field-label">Email</span>
++          <input v-model="email" type="email" placeholder="admin@inrait.com" class="input" @keyup.enter="login" />
++        </label>
++        <label class="field">
++          <span class="field-label">Password</span>
++          <input v-model="password" type="password" placeholder="••••••••" class="input" @keyup.enter="login" />
++        </label>
++
++        <p v-if="loginError" class="login-error">{{ loginError }}</p>
++
++        <button class="btn-accent w-full" type="button" :disabled="loginLoading" @click="login">
++          <span v-if="loginLoading" class="spinner spinner--dark" />
++          <span v-else>Sign in</span>
++        </button>
++      </div>
++    </div>
++
++    <!-- Studio -->
++    <template v-else>
++      <header class="topbar">
++        <div class="topbar-left">
++          <span class="topbar-logo">IN<span style="color:var(--accent)">R</span>AIT</span>
++          <span class="topbar-divider" />
++          <span class="topbar-title">Invoice Studio</span>
++        </div>
++        <div class="topbar-right">
++          <RouterLink to="/admin" class="btn-ghost">Blog editor</RouterLink>
++          <button class="btn-ghost" type="button" @click="logout">Sign out</button>
++        </div>
++      </header>
++
++      <div class="inv-body">
++
++        <!-- ───────── LEFT: form ───────── -->
++        <div class="inv-form">
++
++          <!-- 1 · Services -->
++          <section class="card">
++            <div class="card-head">
++              <div>
++                <div class="card-kicker">Step 1</div>
++                <h2 class="card-title">Services &amp; add-ons</h2>
++              </div>
++              <div class="seg" role="group" aria-label="Document language">
++                <button type="button" class="seg-btn" :class="{ on: meta.lang === 'en' }" @click="meta.lang = 'en'">EN</button>
++                <button type="button" class="seg-btn" :class="{ on: meta.lang === 'bg' }" @click="meta.lang = 'bg'">BG</button>
++              </div>
++            </div>
++            <p class="hint">Same services and prices as the public Services page. Names follow the document language.</p>
++
++            <div class="svc-list">
++              <div v-for="svc in services" :key="svc.id" class="svc" :class="{ 'svc--on': isSelected(svc.id) }">
++                <button type="button" class="svc-head" :aria-pressed="isSelected(svc.id)" @click="toggleService(svc.id)">
++                  <span class="svc-icon" :class="{ 'svc-icon--on': isSelected(svc.id) }">
++                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" :stroke="isSelected(svc.id) ? '#000' : 'var(--accent)'" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><g v-html="svc.icon" /></svg>
++                  </span>
++                  <span class="svc-main">
++                    <span class="svc-name">{{ svc.title }} <em class="svc-tag">{{ svc.tag }}</em></span>
++                    <span class="svc-sub">{{ svc.timeline }}</span>
++                  </span>
++                  <span class="svc-price">{{ money(toCents(svc.basePrice)) }}</span>
++                  <span class="check" :class="{ 'check--on': isSelected(svc.id) }">
++                    <svg v-if="isSelected(svc.id)" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
++                  </span>
++                </button>
++
++                <div class="addons">
++                  <button
++                    v-for="addon in svc.addons"
++                    :key="addon.id"
++                    type="button"
++                    class="chip"
++                    :class="{ 'chip--on': isAddonSelected(addon.id) }"
++                    :aria-pressed="isAddonSelected(addon.id)"
++                    @click="toggleAddon(addon.id, svc.id)"
++                  >
++                    <span>{{ addon.label }}</span>
++                    <b>+{{ money(toCents(addon.price)) }}</b>
++                  </button>
++                </div>
++              </div>
++            </div>
++
++            <div class="extras">
++              <div class="card-kicker">Extra items (not discounted)</div>
++              <div v-for="(item, i) in customItems" :key="i" class="extra-row">
++                <input v-model="item.label" class="input" placeholder="Description" aria-label="Extra item description" />
++                <input v-model.number="item.qty" class="input input--sm" type="number" min="1" step="1" placeholder="Qty" aria-label="Quantity" />
++                <input v-model.number="item.price" class="input input--md" type="number" min="0" step="0.01" placeholder="Unit price €" aria-label="Unit price" />
++                <button type="button" class="icon-btn" aria-label="Remove item" @click="customItems.splice(i, 1)">&times;</button>
++              </div>
++              <button type="button" class="btn-ghost" @click="customItems.push({ label: '', qty: 1, price: null })">+ Add extra item</button>
++            </div>
++          </section>
++
++          <!-- 2 · Client -->
++          <section class="card">
++            <div class="card-head">
++              <div>
++                <div class="card-kicker">Step 2</div>
++                <h2 class="card-title">Client</h2>
++              </div>
++              <div class="seg" role="group" aria-label="Client type">
++                <button type="button" class="seg-btn" :class="{ on: client.type === 'company' }" @click="client.type = 'company'">Company</button>
++                <button type="button" class="seg-btn" :class="{ on: client.type === 'person' }" @click="client.type = 'person'">Individual</button>
++              </div>
++            </div>
++
++            <div class="grid2">
++              <label class="field span2">
++                <span class="field-label">{{ client.type === 'company' ? 'Company name' : 'Full name' }} <i class="req">*</i></span>
++                <input v-model="client.name" class="input" autocomplete="off" />
++              </label>
++              <label v-if="client.type === 'company'" class="field">
++                <span class="field-label">Contact person</span>
++                <input v-model="client.contact" class="input" autocomplete="off" />
++              </label>
++              <label v-if="client.type === 'company'" class="field">
++                <span class="field-label">Company ID (EIK)</span>
++                <input v-model="client.eik" class="input" autocomplete="off" />
++              </label>
++              <label v-if="client.type === 'company'" class="field span2">
++                <span class="field-label">VAT number</span>
++                <input v-model="client.vat" class="input" placeholder="BG…" autocomplete="off" />
++              </label>
++              <label class="field span2">
++                <span class="field-label">Address</span>
++                <textarea v-model="client.address" class="input" rows="2" autocomplete="off" />
++              </label>
++              <label class="field">
++                <span class="field-label">City</span>
++                <input v-model="client.city" class="input" autocomplete="off" />
++              </label>
++              <label class="field">
++                <span class="field-label">Country</span>
++                <input v-model="client.country" class="input" autocomplete="off" />
++              </label>
++              <label class="field">
++                <span class="field-label">Email</span>
++                <input v-model="client.email" type="email" class="input" autocomplete="off" />
++              </label>
++              <label class="field">
++                <span class="field-label">Phone</span>
++                <input v-model="client.phone" class="input" autocomplete="off" />
++              </label>
++            </div>
++          </section>
++
++          <!-- 3 · Project & payment -->
++          <section class="card">
++            <div class="card-head">
++              <div>
++                <div class="card-kicker">Step 3</div>
++                <h2 class="card-title">Project &amp; payment</h2>
++              </div>
++            </div>
++
++            <div class="grid2">
++              <label class="field span2">
++                <span class="field-label">Project name</span>
++                <input v-model="meta.project" class="input" placeholder="e.g. Website for Barber Unity" />
++              </label>
++              <label class="field">
++                <span class="field-label">Issue date</span>
++                <input v-model="meta.issueDate" type="date" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">Payment due in (days)</span>
++                <input v-model.number="meta.dueDays" type="number" min="0" max="120" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">Deposit %</span>
++                <input v-model.number="meta.depositPercent" type="number" min="0" max="100" class="input" @change="clampDeposit" />
++              </label>
++              <label class="field">
++                <span class="field-label">Invoice covers</span>
++                <select v-model="meta.invoiceFor" class="input">
++                  <option value="full">Full amount</option>
++                  <option value="deposit" :disabled="!(meta.depositPercent > 0)">Deposit only</option>
++                  <option value="balance" :disabled="!(meta.depositPercent > 0)">Remaining balance</option>
++                </select>
++              </label>
++              <label class="field">
++                <span class="field-label">VAT</span>
++                <select v-model="meta.vatMode" class="input">
++                  <option v-for="(m, key) in VAT_MODES" :key="key" :value="key">{{ m.label }}</option>
++                </select>
++              </label>
++              <label class="field">
++                <span class="field-label">Discount</span>
++                <select v-model="meta.discountMode" class="input">
++                  <option value="auto">Automatic bundle (2 services −10%, 3+ −15%)</option>
++                  <option value="none">No discount</option>
++                  <option value="custom">Custom %</option>
++                </select>
++              </label>
++              <label v-if="meta.discountMode === 'custom'" class="field">
++                <span class="field-label">Custom discount %</span>
++                <input v-model.number="meta.discountCustom" type="number" min="0" max="100" class="input" />
++              </label>
++              <label class="field span2">
++                <span class="field-label">
++                  Legal note on invoice
++                  <button v-if="vatNoteTouched" type="button" class="link" @click="resetVatNote">reset</button>
++                </span>
++                <textarea v-model="meta.vatNote" class="input" rows="2" @input="vatNoteTouched = true" />
++              </label>
++              <label class="field span2">
++                <span class="field-label">
++                  Delivery timeline
++                  <button v-if="timelineTouched" type="button" class="link" @click="resetTimeline">reset</button>
++                </span>
++                <input v-model="meta.timeline" class="input" @input="timelineTouched = true" />
++              </label>
++              <label class="field span2">
++                <span class="field-label">Notes (shown on quotation, proforma and invoice)</span>
++                <textarea v-model="meta.notes" class="input" rows="2" />
++              </label>
++            </div>
++            <p class="hint">Prices are treated as excluding VAT. Check VAT wording and invoice requirements with your accountant.</p>
++          </section>
++
++          <!-- 4 · Documents -->
++          <section class="card">
++            <div class="card-head">
++              <div>
++                <div class="card-kicker">Step 4</div>
++                <h2 class="card-title">Documents</h2>
++              </div>
++            </div>
++
++            <div class="docs-pick">
++              <label v-for="d in DOC_TYPES" :key="d" class="doc-check" :class="{ on: meta.docs[d] }">
++                <input v-model="meta.docs[d]" type="checkbox" />
++                <span class="check" :class="{ 'check--on': meta.docs[d] }">
++                  <svg v-if="meta.docs[d]" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
++                </span>
++                <span class="doc-name">{{ DOC_LABELS[d] }}</span>
++                <span class="doc-no">{{ nos[d] || '—' }}</span>
++              </label>
++            </div>
++
++            <label class="field">
++              <span class="field-label">Invoice number <i class="req">*</i></span>
++              <input v-model="meta.invoiceNo" class="input" inputmode="numeric" autocomplete="off" />
++              <span class="field-help">Next free number is suggested automatically. Other documents get matching references.</span>
++            </label>
++          </section>
++
++          <!-- Issuer -->
++          <details class="card issuer" :open="issuerOpen" @toggle="issuerOpen = $event.target.open">
++            <summary>
++              <span class="card-kicker">Your company</span>
++              <span class="card-title">Supplier details <small>saved in this browser only</small></span>
++            </summary>
++            <div class="grid2">
++              <label class="field span2">
++                <span class="field-label">Legal name <i class="req">*</i></span>
++                <input v-model="issuer.name" class="input" autocomplete="off" />
++              </label>
++              <label class="field">
++                <span class="field-label">Company ID (EIK)</span>
++                <input v-model="issuer.eik" class="input" autocomplete="off" />
++              </label>
++              <label class="field">
++                <span class="field-label">VAT number</span>
++                <input v-model="issuer.vat" class="input" autocomplete="off" />
++              </label>
++              <label class="field span2">
++                <span class="field-label">Address</span>
++                <textarea v-model="issuer.address" class="input" rows="2" />
++              </label>
++              <label class="field">
++                <span class="field-label">City</span>
++                <input v-model="issuer.city" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">Country</span>
++                <input v-model="issuer.country" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">Represented by (МОЛ)</span>
++                <input v-model="issuer.representative" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">Website</span>
++                <input v-model="issuer.website" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">Email</span>
++                <input v-model="issuer.email" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">Phone</span>
++                <input v-model="issuer.phone" class="input" />
++              </label>
++              <label class="field span2">
++                <span class="field-label">Bank</span>
++                <input v-model="issuer.bank" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">IBAN</span>
++                <input v-model="issuer.iban" class="input" />
++              </label>
++              <label class="field">
++                <span class="field-label">BIC / SWIFT</span>
++                <input v-model="issuer.bic" class="input" />
++              </label>
++            </div>
++          </details>
++        </div>
++
++        <!-- ───────── RIGHT: summary ───────── -->
++        <aside class="inv-summary">
++          <div class="card sum">
++            <div class="card-kicker">Summary</div>
++
++            <p v-if="!quote.lines.length" class="empty">Pick at least one service to see the price.</p>
++
++            <ul v-else class="sum-lines">
++              <li v-for="(ln, i) in quote.lines" :key="i" :class="`sum-line sum-line--${ln.type}`">
++                <span>{{ ln.type === 'addon' ? '+ ' : '' }}{{ ln.label }}<em v-if="ln.qty > 1"> × {{ ln.qty }}</em></span>
++                <b>{{ money(ln.total) }}</b>
++              </li>
++            </ul>
++
++            <dl v-if="quote.lines.length" class="sum-totals">
++              <div v-if="quote.discountCents > 0">
++                <dt>Discount −{{ quote.discountPercent }}%</dt><dd>−{{ money(quote.discountCents) }}</dd>
++              </div>
++              <div><dt>Net</dt><dd>{{ money(quote.net) }}</dd></div>
++              <div v-if="quote.vatRate > 0"><dt>VAT {{ quote.vatRate }}%</dt><dd>{{ money(quote.vat) }}</dd></div>
++              <div class="grand"><dt>Total</dt><dd>{{ money(quote.total) }}</dd></div>
++              <div v-if="quote.depositPercent > 0 && quote.depositPercent < 100" class="split">
++                <dt>Deposit {{ quote.depositPercent }}%</dt><dd>{{ money(quote.deposit.total) }}</dd>
++              </div>
++              <div v-if="quote.depositPercent > 0 && quote.depositPercent < 100" class="split">
++                <dt>Balance</dt><dd>{{ money(quote.balance.total) }}</dd>
++              </div>
++            </dl>
++
++            <ul v-if="missing.length" class="missing">
++              <li v-for="m in missing" :key="m">{{ m }}</li>
++            </ul>
++
++            <button class="btn-accent btn-big" type="button" :disabled="missing.length > 0" @click="generate">
++              Create documents ({{ includedDocs.length }})
++            </button>
++            <button class="btn-ghost reset" type="button" @click="resetForm">Clear form for a new client</button>
++          </div>
++        </aside>
++      </div>
++    </template>
++
++    <!-- ───────── Document viewer ───────── -->
++    <Transition name="fade">
++      <div v-if="viewerOpen" class="viewer" role="dialog" aria-modal="true" aria-label="Generated documents">
++        <div class="viewer-bar">
++          <div class="tabs" role="tablist">
++            <button
++              v-for="d in includedDocs"
++              :key="d"
++              type="button"
++              role="tab"
++              class="tab"
++              :class="{ on: activeDoc === d }"
++              :aria-selected="activeDoc === d"
++              @click="activeDoc = d"
++            >{{ DOC_LABELS[d] }}</button>
++          </div>
++          <div class="viewer-actions">
++            <button class="btn-ghost" type="button" @click="printCurrent">Print / Save PDF</button>
++            <button v-if="includedDocs.length > 1" class="btn-accent btn-sm" type="button" @click="printAll">
++              Print all ({{ includedDocs.length }}) as one PDF
++            </button>
++            <button class="icon-btn" type="button" aria-label="Close" @click="viewerOpen = false">&times;</button>
++          </div>
++        </div>
++        <iframe class="viewer-frame" :srcdoc="previewHtml" sandbox="allow-same-origin" title="Document preview" />
++        <p class="viewer-tip">In the print dialog choose “Save as PDF” as the destination.</p>
++      </div>
++    </Transition>
++
++  </div>
++</template>
++
++<script setup>
++import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue'
++import { RouterLink } from 'vue-router'
++import { useSeo } from '../composables/useSeo.js'
++import { useAdminSession } from '../composables/useAdminSession.js'
++import { buildServices } from '../data/services.js'
++import enLocale from '../locales/en.js'
++import bgLocale from '../locales/bg.js'
++import {
++  DOC_TYPES, VAT_MODES, DEFAULT_VAT_NOTES,
++  calcQuote, buildDocumentsHtml, toCents, formatMoney,
++  todayIso, addDaysIso, nextNumber,
++} from '../data/invoiceDocs.js'
++
++useSeo({ title: 'Invoice Studio', noindex: true })
++
++const {
++  isLoggedIn, ready, email, password,
++  loading: loginLoading, error: loginError, login, logout,
++} = useAdminSession()
++
++const DOC_LABELS = {
++  offer: 'Quotation', proforma: 'Proforma invoice', invoice: 'Invoice',
++  contract: 'Service agreement', acceptance: 'Acceptance certificate',
++}
++
++// ── Saved in this browser ─────────────────────────────────────────────────────
++const KEY_ISSUER = 'inrait_admin_issuer'
++const KEY_PREFS  = 'inrait_admin_prefs'
++const KEY_NEXTNO = 'inrait_admin_next_no'
++const DEFAULT_FIRST_NO = '0000000001'
++
++function load(key, fallback) {
++  try { return { ...fallback, ...JSON.parse(localStorage.getItem(key) || '{}') } } catch { return { ...fallback } }
++}
++function save(key, value) {
++  try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* private mode / quota - not critical */ }
++}
++const storedNextNo = () => { try { return localStorage.getItem(KEY_NEXTNO) || DEFAULT_FIRST_NO } catch { return DEFAULT_FIRST_NO } }
++
++const issuer = reactive(load(KEY_ISSUER, {
++  name: '', eik: '', vat: '', address: '', city: 'Sofia', country: 'Bulgaria',
++  email: '', phone: '', website: 'inrait.com', representative: '', bank: '', iban: '', bic: '',
++}))
++// Starts open only when nothing is saved yet - and stays under the user's control while typing
++const issuerOpen = ref(!issuer.name)
++const prefs = load(KEY_PREFS, { lang: 'en', dueDays: 7, depositPercent: 50, vatMode: 'none', discountMode: 'auto' })
++
++// ── Form state ────────────────────────────────────────────────────────────────
++const blankClient = () => ({ type: 'company', name: '', contact: '', eik: '', vat: '', address: '', city: '', country: 'Bulgaria', email: '', phone: '' })
++const client = reactive(blankClient())
++
++const meta = reactive({
++  lang: prefs.lang,
++  project: '',
++  invoiceNo: storedNextNo(),
++  issueDate: todayIso(),
++  dueDays: prefs.dueDays,
++  depositPercent: prefs.depositPercent,
++  vatMode: prefs.vatMode,
++  vatNote: '',
++  discountMode: prefs.discountMode,
++  discountCustom: 10,
++  invoiceFor: 'full',
++  timeline: '',
++  notes: '',
++  docs: { offer: true, proforma: true, invoice: true, contract: true, acceptance: false },
++})
++
++const selectedServices = ref([])
++const selectedAddons   = ref([])
++const customItems      = ref([])
++
++watch(issuer, () => save(KEY_ISSUER, { ...issuer }), { deep: true })
++watch(
++  () => [meta.lang, meta.dueDays, meta.depositPercent, meta.vatMode, meta.discountMode],
++  () => save(KEY_PREFS, {
++    lang: meta.lang, dueDays: meta.dueDays, depositPercent: meta.depositPercent,
++    vatMode: meta.vatMode, discountMode: meta.discountMode,
++  }),
++)
++
++// ── Services (same data as the public page, in the document language) ────────
++const translatorFor = (locale) => (path) =>
++  path.split('.').reduce((acc, key) => acc?.[key], locale) ?? path
++
++const services = computed(() => buildServices(translatorFor(meta.lang === 'bg' ? bgLocale : enLocale)))
++
++const isSelected      = (id) => selectedServices.value.includes(id)
++const isAddonSelected = (id) => selectedAddons.value.includes(id)
++const money = (cents) => formatMoney(cents, 'en')
++
++function toggleService(id) {
++  if (isSelected(id)) {
++    selectedServices.value = selectedServices.value.filter((s) => s !== id)
++    // deselecting a service also drops its add-ons (same as the Services page)
++    const addonIds = services.value.find((s) => s.id === id)?.addons.map((a) => a.id) ?? []
++    selectedAddons.value = selectedAddons.value.filter((a) => !addonIds.includes(a))
++  } else {
++    selectedServices.value = [...selectedServices.value, id]
++  }
++}
++
++function toggleAddon(addonId, serviceId) {
++  if (!isSelected(serviceId)) selectedServices.value = [...selectedServices.value, serviceId]
++  selectedAddons.value = isAddonSelected(addonId)
++    ? selectedAddons.value.filter((a) => a !== addonId)
++    : [...selectedAddons.value, addonId]
++}
++
++// ── Pricing ───────────────────────────────────────────────────────────────────
++const quote = computed(() => calcQuote({
++  services: services.value,
++  serviceIds: selectedServices.value,
++  addonIds: selectedAddons.value,
++  customItems: customItems.value,
++  discount: { mode: meta.discountMode, custom: meta.discountCustom },
++  vatMode: meta.vatMode,
++  depositPercent: meta.depositPercent,
++}))
++
++function clampDeposit() {
++  const n = Number(meta.depositPercent)
++  meta.depositPercent = Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n))) : 0
++  if (!(meta.depositPercent > 0) && meta.invoiceFor !== 'full') meta.invoiceFor = 'full'
++}
++watch(() => meta.depositPercent, (v) => {
++  if (!(v > 0) && meta.invoiceFor !== 'full') meta.invoiceFor = 'full'
++})
++
++// Legal note + timeline follow the selection until you edit them yourself
++const vatNoteTouched = ref(false)
++const timelineTouched = ref(false)
++
++function defaultTimeline() {
++  const picked = services.value.filter((s) => isSelected(s.id))
++  if (picked.length === 0) return ''
++  if (picked.length === 1) return picked[0].timeline
++  return picked.map((s) => `${s.title}: ${s.timeline}`).join('; ')
++}
++function resetVatNote()  { vatNoteTouched.value = false;  meta.vatNote  = DEFAULT_VAT_NOTES[meta.vatMode][meta.lang] }
++function resetTimeline() { timelineTouched.value = false; meta.timeline = defaultTimeline() }
++
++watch(() => [meta.vatMode, meta.lang], () => { if (!vatNoteTouched.value) meta.vatNote = DEFAULT_VAT_NOTES[meta.vatMode][meta.lang] }, { immediate: true })
++watch(() => [selectedServices.value.slice(), meta.lang], () => { if (!timelineTouched.value) meta.timeline = defaultTimeline() }, { deep: true })
++
++// ── Document numbers & dates ──────────────────────────────────────────────────
++const nos = computed(() => {
++  const base = String(meta.invoiceNo || '').replace(/\D/g, '') || String(meta.invoiceNo || '')
++  return {
++    offer: base ? `OF-${base}` : '',
++    proforma: base ? `PF-${base}` : '',
++    invoice: meta.invoiceNo || '',
++    contract: base ? `CT-${base}` : '',
++    acceptance: base ? `AP-${base}` : '',
++  }
++})
++
++const dueDate   = computed(() => addDaysIso(meta.issueDate, meta.dueDays))
++const validUntil = computed(() => addDaysIso(meta.issueDate, 30))
++
++const includedDocs = computed(() => DOC_TYPES.filter((d) => meta.docs[d]))
++
++const missing = computed(() => {
++  const out = []
++  if (!quote.value.lines.length) out.push('Select a service or add an extra item')
++  if (!client.name.trim()) out.push('Enter the client name')
++  if (!issuer.name.trim()) out.push('Fill in your company details (bottom of the form)')
++  if (!includedDocs.value.length) out.push('Choose at least one document')
++  if (meta.docs.invoice && !String(meta.invoiceNo).trim()) out.push('Enter an invoice number')
++  return out
++})
++
++// ── Generate / preview / print ───────────────────────────────────────────────
++const viewerOpen = ref(false)
++const activeDoc  = ref('offer')
++
++function buildHtml(docs, title) {
++  return buildDocumentsHtml({
++    docs,
++    lang: meta.lang,
++    issuer: { ...issuer },
++    client: { ...client },
++    meta: {
++      project: meta.project.trim(), issueDate: meta.issueDate, dueDate: dueDate.value, validUntil: validUntil.value,
++      dueDays: meta.dueDays, timeline: meta.timeline.trim(), notes: meta.notes, vatNote: meta.vatNote,
++      invoiceFor: meta.invoiceFor, title,
++    },
++    nos: nos.value,
++    quote: quote.value,
++  })
++}
++
++const safeName = (s) => String(s || '').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '')
++const fileTitle = (docs) => [
++  docs.length === 1 ? nos.value[docs[0]] : nos.value.invoice || nos.value.offer,
++  safeName(client.name),
++].filter(Boolean).join('_') || 'document'
++
++const previewHtml = computed(() => (viewerOpen.value ? buildHtml([activeDoc.value], fileTitle([activeDoc.value])) : ''))
++
++function generate() {
++  if (missing.value.length) return
++  // Use up the suggested invoice number so the next client gets the following one
++  if (meta.docs.invoice && meta.invoiceNo === storedNextNo()) {
++    const next = nextNumber(meta.invoiceNo)
++    if (next) { try { localStorage.setItem(KEY_NEXTNO, next) } catch { /* ignore */ } }
++  }
++  if (!includedDocs.value.includes(activeDoc.value)) activeDoc.value = includedDocs.value[0]
++  viewerOpen.value = true
++}
++
++function printDocs(docs) {
++  const title = fileTitle(docs)
++  const frame = document.createElement('iframe')
++  frame.setAttribute('aria-hidden', 'true')
++  frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;'
++  let cleaned = false
++  const prevTitle = document.title
++  const cleanup = () => {
++    if (cleaned) return
++    cleaned = true
++    document.title = prevTitle
++    setTimeout(() => frame.remove(), 300)
++  }
++  frame.onload = () => {
++    const win = frame.contentWindow
++    document.title = title            // browsers suggest this as the PDF file name
++    win.addEventListener('afterprint', cleanup, { once: true })
++    win.focus()
++    win.print()
++    setTimeout(cleanup, 60000)        // safety net for browsers without afterprint
++  }
++  frame.srcdoc = buildHtml(docs, title)
++  document.body.appendChild(frame)
++}
++
++const printCurrent = () => printDocs([activeDoc.value])
++const printAll     = () => printDocs(includedDocs.value)
++
++function resetForm() {
++  Object.assign(client, blankClient())
++  selectedServices.value = []
++  selectedAddons.value = []
++  customItems.value = []
++  Object.assign(meta, { project: '', notes: '', invoiceFor: 'full', issueDate: todayIso(), invoiceNo: storedNextNo(), discountCustom: 10 })
++  vatNoteTouched.value = false
++  timelineTouched.value = false
++  meta.vatNote = DEFAULT_VAT_NOTES[meta.vatMode][meta.lang]
++  meta.timeline = ''
++}
++
++function onKey(e) { if (e.key === 'Escape') viewerOpen.value = false }
++onMounted(() => window.addEventListener('keydown', onKey))
++onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
++</script>
++
++<style scoped>
++.inv-shell {
++  --accent:  #A4E04B;
++  --bg:      #080808;
++  --surface: #111111;
++  --surface2:#181818;
++  --border:  rgba(255,255,255,0.07);
++  --border2: rgba(255,255,255,0.12);
++  --text:    #F5F5F7;
++  --muted:   #888;
++  --dim:     #555;
++  font-family: 'DM Sans', system-ui, sans-serif;
++  background: var(--bg);
++  color: var(--text);
++  min-height: 100vh;
++}
++
++/* ── Login / boot ───────────────────────────────────────── */
++.boot { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
++.login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
++.login-card { width: 100%; max-width: 400px; background: var(--surface); border: 1px solid var(--border2); border-radius: 24px; padding: 48px 40px; display: flex; flex-direction: column; gap: 18px; }
++.login-logo { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.06em; text-align: center; }
++.login-subtitle { text-align: center; font-size: 12px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-top: -12px; }
++.login-error { font-size: 13px; color: #ff6060; padding: 10px 14px; background: rgba(255,60,60,0.07); border: 1px solid rgba(255,60,60,0.2); border-radius: 8px; }
++.w-full { width: 100%; }
++
++/* ── Topbar ─────────────────────────────────────────────── */
++.topbar { height: 54px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: rgba(8,8,8,0.82); backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 40; }
++.topbar-left, .topbar-right { display: flex; align-items: center; gap: 12px; }
++.topbar-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.06em; }
++.topbar-divider { width: 1px; height: 16px; background: var(--border2); }
++.topbar-title { font-size: 13px; color: var(--muted); font-weight: 500; }
++
++/* ── Layout ─────────────────────────────────────────────── */
++.inv-body { max-width: 1240px; margin: 0 auto; padding: 28px 24px 96px; display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; align-items: start; }
++.inv-form { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
++.inv-summary { position: sticky; top: 78px; }
++
++.card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; }
++.card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
++.card-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
++.card-title { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
++.card-title small { font-size: 11px; font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: 8px; }
++.hint { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 0 0 16px; }
++
++/* ── Fields ─────────────────────────────────────────────── */
++.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
++.span2 { grid-column: 1 / -1; }
++.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
++.field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); display: flex; align-items: center; gap: 8px; }
++.field-help { font-size: 11px; color: var(--dim); }
++.req { color: var(--accent); font-style: normal; }
++.input { width: 100%; box-sizing: border-box; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 14px; color: var(--text); font: 14px 'DM Sans', sans-serif; outline: none; transition: border-color .2s ease; resize: vertical; }
++.input:focus { border-color: rgba(164,224,75,0.5); }
++select.input { appearance: none; cursor: pointer; background-image: linear-gradient(45deg, transparent 50%, #888 50%), linear-gradient(135deg, #888 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
++.link { background: none; border: none; color: var(--accent); font-size: 11px; text-transform: none; letter-spacing: 0; cursor: pointer; padding: 0; }
++
++/* ── Buttons ────────────────────────────────────────────── */
++.btn-accent { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: var(--accent); color: #000; font-weight: 700; font-size: 13px; border-radius: 100px; border: none; cursor: pointer; transition: transform .2s ease, opacity .2s ease; font-family: inherit; }
++.btn-accent:hover:not(:disabled) { transform: translateY(-1px); }
++.btn-accent:disabled { opacity: .35; cursor: not-allowed; }
++.btn-accent.btn-big { width: 100%; padding: 16px 24px; font-size: 14px; margin-top: 18px; }
++.btn-accent.btn-sm { padding: 8px 16px; font-size: 12px; }
++.btn-ghost { white-space: nowrap; display: inline-flex; align-items: center; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--border2); border-radius: 100px; padding: 7px 14px; cursor: pointer; text-decoration: none; transition: color .2s ease, border-color .2s ease; font-family: inherit; }
++.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
++.icon-btn { background: transparent; border: 1px solid var(--border2); color: var(--muted); width: 34px; height: 34px; border-radius: 50%; font-size: 18px; line-height: 1; cursor: pointer; flex-shrink: 0; }
++.icon-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
++.reset { width: 100%; justify-content: center; margin-top: 10px; }
++
++.seg { display: inline-flex; background: var(--surface2); border: 1px solid var(--border2); border-radius: 100px; padding: 3px; flex-shrink: 0; }
++.seg-btn { border: none; background: transparent; color: var(--muted); font: 600 11px 'DM Sans', sans-serif; letter-spacing: .06em; padding: 6px 14px; border-radius: 100px; cursor: pointer; }
++.seg-btn.on { background: var(--accent); color: #000; }
++
++/* ── Services ───────────────────────────────────────────── */
++.svc-list { display: flex; flex-direction: column; gap: 10px; }
++.svc { border: 1px solid var(--border2); border-radius: 14px; background: var(--surface2); transition: border-color .2s ease; }
++.svc--on { border-color: rgba(164,224,75,0.45); }
++.svc-head { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: none; border: none; color: inherit; text-align: left; cursor: pointer; font-family: inherit; }
++.svc-icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: rgba(164,224,75,0.07); border: 1px solid rgba(164,224,75,0.15); flex-shrink: 0; }
++.svc-icon--on { background: var(--accent); border-color: var(--accent); }
++.svc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
++.svc-name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
++.svc-tag { font-style: normal; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); background: rgba(164,224,75,0.08); border-radius: 100px; padding: 2px 8px; margin-left: 6px; }
++.svc-sub { font-size: 12px; color: var(--muted); }
++.svc-price { font-weight: 700; font-size: 14px; white-space: nowrap; }
++.check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2); display: grid; place-items: center; flex-shrink: 0; }
++.check--on { background: var(--accent); border-color: var(--accent); }
++.addons { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px 68px; }
++.chip { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--border2); color: var(--muted); border-radius: 100px; padding: 6px 12px; font: 12px 'DM Sans', sans-serif; cursor: pointer; transition: all .2s ease; text-align: left; }
++.chip b { font-weight: 700; color: var(--text); white-space: nowrap; }
++.chip:hover { border-color: rgba(255,255,255,0.3); }
++.chip--on { border-color: var(--accent); color: var(--text); background: rgba(164,224,75,0.1); }
++.chip--on b { color: var(--accent); }
++
++.extras { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
++.extra-row { display: flex; gap: 8px; width: 100%; align-items: center; }
++.input--sm { width: 72px; flex: none; }
++.input--md { width: 130px; flex: none; }
++
++/* ── Documents picker ───────────────────────────────────── */
++.docs-pick { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
++.doc-check { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid var(--border2); border-radius: 12px; background: var(--surface2); cursor: pointer; transition: border-color .2s ease; }
++.doc-check.on { border-color: rgba(164,224,75,0.45); }
++.doc-check input { position: absolute; opacity: 0; pointer-events: none; }
++.doc-name { flex: 1; font-size: 14px; font-weight: 500; }
++.doc-no { font: 11px ui-monospace, monospace; color: var(--muted); }
++
++/* ── Issuer (collapsible) ───────────────────────────────── */
++.issuer summary { cursor: pointer; list-style: none; display: flex; flex-direction: column; gap: 2px; margin-bottom: 0; }
++.issuer summary::-webkit-details-marker { display: none; }
++.issuer[open] summary { margin-bottom: 18px; }
++
++/* ── Summary ────────────────────────────────────────────── */
++.sum .card-kicker { margin-bottom: 12px; }
++.empty { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
++.sum-lines { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 38vh; overflow-y: auto; }
++.sum-line { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
++.sum-line b { white-space: nowrap; font-weight: 600; }
++.sum-line--addon { color: var(--muted); padding-left: 12px; font-size: 12px; }
++.sum-line em { font-style: normal; color: var(--muted); }
++.sum-totals { margin: 0; padding-top: 14px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 7px; }
++.sum-totals div { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
++.sum-totals dt, .sum-totals dd { margin: 0; }
++.sum-totals dd { color: var(--text); font-weight: 600; }
++.sum-totals .grand { color: var(--text); font-size: 18px; font-weight: 700; padding-top: 10px; margin-top: 4px; border-top: 1px solid var(--border2); }
++.sum-totals .grand dd { color: var(--accent); }
++.sum-totals .split { font-size: 12px; }
++.missing { list-style: disc; margin: 16px 0 0; padding: 12px 14px 12px 28px; background: rgba(255,170,60,0.07); border: 1px solid rgba(255,170,60,0.22); border-radius: 10px; font-size: 12px; color: #ffb454; display: flex; flex-direction: column; gap: 4px; }
++
++/* ── Viewer ─────────────────────────────────────────────── */
++.viewer { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.92); display: flex; flex-direction: column; }
++.viewer-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 20px; border-bottom: 1px solid var(--border2); background: var(--surface); flex-wrap: wrap; }
++.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
++.tab { background: transparent; border: 1px solid var(--border2); color: var(--muted); font: 600 12px 'DM Sans', sans-serif; padding: 7px 14px; border-radius: 100px; cursor: pointer; }
++.tab.on { background: var(--accent); border-color: var(--accent); color: #000; }
++.viewer-actions { display: flex; gap: 10px; align-items: center; }
++.viewer-frame { flex: 1; width: 100%; border: 0; background: #e9e9e9; min-height: 0; }
++.viewer-tip { margin: 0; padding: 8px 20px; font-size: 11px; color: var(--muted); background: var(--surface); border-top: 1px solid var(--border); text-align: center; }
++
++/* ── Misc ───────────────────────────────────────────────── */
++.spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); border-top-color: var(--accent); animation: spin .7s linear infinite; display: inline-block; }
++.spinner--dark { border-color: rgba(0,0,0,0.15); border-top-color: #000; }
++@keyframes spin { to { transform: rotate(360deg); } }
++.fade-enter-active, .fade-leave-active { transition: opacity .25s ease; }
++.fade-enter-from, .fade-leave-to { opacity: 0; }
++
++@media (max-width: 1020px) {
++  .inv-body { grid-template-columns: 1fr; padding: 20px 16px 72px; }
++  .inv-summary { position: static; }
++  .sum-lines { max-height: none; }
++}
++@media (max-width: 640px) {
++  .topbar { padding: 0 14px; }
++  .topbar-title, .topbar-divider { display: none; }
++  .topbar-right { gap: 8px; }
++  .grid2 { grid-template-columns: 1fr; }
++  .addons { padding-left: 16px; }
++  .card { padding: 18px; }
++  .extra-row { flex-wrap: wrap; }
++  .input--sm, .input--md { width: calc(50% - 4px); flex: 1; }
++  .viewer-actions { width: 100%; justify-content: space-between; }
++}
++</style>
+diff --git a/src/router/index.js b/src/router/index.js
+index 86294d8..20b20aa 100644
+--- a/src/router/index.js
++++ b/src/router/index.js
+@@ -10,6 +10,7 @@ const Blog = () => import('../pages/Blog.vue')
+ const BlogPost = () => import('../pages/BlogPost.vue')
+ const NotFound = () => import('../pages/NotFound.vue')
+ const Admin = () => import('../pages/Admin.vue')
++const AdminInvoices = () => import('../pages/AdminInvoices.vue')
+ 
+ const routes = [
+   { path: "/", alias: ["/bg", "/bg/"], component: Home, name: "home" },
+@@ -26,6 +27,11 @@ const routes = [
+     name: "Admin",
+     component: Admin,
+   },
++  {
++    path: "/admin/invoices",
++    name: "AdminInvoices",
++    component: AdminInvoices,
++  },
+ ];
+ 
+ const router = createRouter({

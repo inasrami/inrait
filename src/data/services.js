@@ -70,41 +70,49 @@ const ICONS = {
 const SERVICE_KEYS = ['onepager', 'website' , 'ai', 'ecommerce', 'automation', 'booking', 'identity', 'marketing']
 // ─── Composable ───────────────────────────────────────────────────────────────
 
+/**
+ * Builds the service list for any locale.
+ * `translate` is a dot-path getter, e.g. (path) => resolve(locales.bg, path).
+ * Pure function - the admin tools use it to produce documents in a language
+ * that differs from the language the site is currently shown in.
+ */
+export function buildServices(translate) {
+  return SERVICE_KEYS.map((key) => {
+    // translate() returns the locale object at servicesData[key], or the path string
+    // itself when the key is missing from the active locale.
+    const raw  = translate(`servicesData.${key}`)
+    const data = typeof raw === 'object' && raw !== null ? raw : null
+
+    if (!data) {
+      console.warn(`[services] Missing locale entry: servicesData.${key}`)
+      return null
+    }
+
+    return {
+      id:           key,
+      hero:         HERO_FLAGS[key],
+      icon:         ICONS[key],
+      basePrice:    BASE_PRICES[key],
+      title:        data.title,
+      tag:          data.tag,
+      body:         data.body,
+      bestFor:      data.bestFor,
+      timeline:     data.timeline,
+      deliverables: data.deliverables,
+      // Merge locale label with static id and price
+      addons: (data.addons ?? []).map((addon, i) => ({
+        id:    ADDON_IDS[key]?.[i],
+        label: addon.label,
+        price: ADDON_PRICES[key]?.[i],
+      })).filter(a => a.id),
+    }
+  }).filter(Boolean)
+}
+
 export function useServices() {
   const { t } = useLanguage()
 
-  const SERVICES = computed(() =>
-    SERVICE_KEYS.map((key) => {
-      // t() returns the locale object at servicesData[key], or the path string
-      // itself when the key is missing from the active locale.
-      const raw  = t(`servicesData.${key}`)
-      const data = typeof raw === 'object' && raw !== null ? raw : null
-
-      if (!data) {
-        console.warn(`[services] Missing locale entry: servicesData.${key}`)
-        return null
-      }
-
-      return {
-        id:           key,
-        hero:         HERO_FLAGS[key],
-        icon:         ICONS[key],
-        basePrice:    BASE_PRICES[key],
-        title:        data.title,
-        tag:          data.tag,
-        body:         data.body,
-        bestFor:      data.bestFor,
-        timeline:     data.timeline,
-        deliverables: data.deliverables,
-        // Merge locale label with static id and price
-        addons: (data.addons ?? []).map((addon, i) => ({
-          id:    ADDON_IDS[key]?.[i],
-          label: addon.label,
-          price: ADDON_PRICES[key]?.[i],
-        })).filter(a => a.id),
-      }
-    }).filter(Boolean)
-  )
+  const SERVICES = computed(() => buildServices(t))
 
   return { SERVICES }
 }

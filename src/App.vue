@@ -1,8 +1,8 @@
 <template>
   <div style="background: var(--bg);">
     <SiteLoader />
-    <ScrollProgress />
-    <AppNav />
+    <ScrollProgress v-if="!isAdminRoute" />
+    <AppNav v-if="!isAdminRoute" />
 
     <RouterView v-slot="{ Component }">
       <Transition name="page" mode="out-in">
@@ -10,14 +10,14 @@
       </Transition>
     </RouterView>
 
-    <AppFooter />
-    <CookieBanner />
-    <WhatsAppButton />
+    <AppFooter v-if="!isAdminRoute" />
+    <CookieBanner v-if="!isAdminRoute" />
+    <WhatsAppButton v-if="!isAdminRoute" />
   </div>
 </template>
 
 <script setup>
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import { useLanguage } from './composables/useLanguage.js'
 import SiteLoader     from './components/SiteLoader.vue'
@@ -29,6 +29,8 @@ import WhatsAppButton from './components/WhatsappButton.vue'
 import { useScrollScenes } from './composables/useScrollScenes.js'
 
 const route = useRoute()
+// Back-office pages are full screen - no public nav, footer, cookie banner or chat button
+const isAdminRoute = computed(() => route.path === '/admin' || route.path.startsWith('/admin/'))
 const { setLang } = useLanguage()
 
 useScrollScenes()

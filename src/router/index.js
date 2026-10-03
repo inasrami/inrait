@@ -10,6 +10,7 @@ const Blog = () => import('../pages/Blog.vue')
 const BlogPost = () => import('../pages/BlogPost.vue')
 const NotFound = () => import('../pages/NotFound.vue')
 const Admin = () => import('../pages/Admin.vue')
+const AdminInvoices = () => import('../pages/AdminInvoices.vue')
 
 const routes = [
   { path: "/", alias: ["/bg", "/bg/"], component: Home, name: "home" },
@@ -25,6 +26,11 @@ const routes = [
     path: "/admin",
     name: "Admin",
     component: Admin,
+  },
+  {
+    path: "/admin/invoices",
+    name: "AdminInvoices",
+    component: AdminInvoices,
   },
 ];
 
