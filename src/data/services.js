@@ -42,6 +42,7 @@ const BASE_PRICES = {
   identity:    449.99,
   marketing:   399.99,
   ai:          1299.99,
+  social:      150,
 }
 
 const HERO_FLAGS = {
@@ -53,6 +54,12 @@ const HERO_FLAGS = {
   identity:    false,
   marketing:   true,
   ai:          true,
+  social:      false,
+}
+
+// Services billed on a recurring basis instead of a one-off project price
+export const PRICE_UNITS = {
+  social: 'month',
 }
 
 const ICONS = {
@@ -63,11 +70,12 @@ const ICONS = {
   automation:  '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 11l7-4M8.5 13l7 4"/>',
   identity:    '<path d="M4 17.5V20h2.5L19 7.5 16.5 5 4 17.5zM15 6.5l2.5 2.5M12 21h9"/>',
   marketing:   '<path d="M4 11v2a2 2 0 002 2h2l3 5h2l-2-5 10-3V8L11 5 8 10H6a2 2 0 00-2 1zM21 8v8"/>',
+  social:      '<path d="M21 12a8 8 0 01-11.5 7.2L4 20.5l1.4-4.6A8 8 0 1121 12z"/><path d="M9 11h6M9 14h3"/>',
   ai: '<rect x="4" y="4" width="16" height="16" rx="3"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 1.5v2.5M15 1.5v2.5M9 20v2.5M15 20v2.5M1.5 9H4M1.5 15H4M20 9h2.5M20 15h2.5"/>',
 }
 
 
-const SERVICE_KEYS = ['onepager', 'website' , 'ai', 'ecommerce', 'automation', 'booking', 'identity', 'marketing']
+const SERVICE_KEYS = ['onepager', 'website', 'social', 'ai', 'ecommerce', 'automation', 'booking', 'identity', 'marketing']
 // ─── Composable ───────────────────────────────────────────────────────────────
 
 /**
@@ -93,6 +101,7 @@ export function buildServices(translate) {
       hero:         HERO_FLAGS[key],
       icon:         ICONS[key],
       basePrice:    BASE_PRICES[key],
+      priceUnit:    PRICE_UNITS[key] ?? null,
       title:        data.title,
       tag:          data.tag,
       body:         data.body,

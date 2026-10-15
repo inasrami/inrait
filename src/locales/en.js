@@ -64,6 +64,15 @@ export default {
         { label: 'Premium animations (GSAP)',             price: 300 },
       ],
     },
+    social: {
+      title: 'Social Media Manager',
+      tag:   'Monthly',
+      body:  'We run your social media every month: planning, posting, and keeping your channels active so you can focus on the business.',
+      bestFor: 'Small businesses that want a steady social presence without hiring in-house.',
+      timeline: 'Monthly',
+      deliverables: ['Monthly content planning', 'Posting and scheduling on your channels', 'Community replies and monthly summary'],
+      addons: [],
+    },
     onepager: {
       title: 'One-Page Website',
       tag:   'Quick Start',
@@ -186,7 +195,7 @@ export default {
   services: {
     label:          'What We Build',
     title:          'SERVICES',
-    viewAll:        'View all 8 services',
+    viewAll:        'View all 9 services',
     from:           'Starting from',
     details:        'Details',
     alsoOffer:      'We also offer',
@@ -408,6 +417,7 @@ export default {
     bannerMax:        'Maximum bundle discount unlocked.',
     bannerNext:       'Add one more service to unlock 15% off.',
     basePrice:        'Estimate from',
+    perMonth:         '/ month',
     bestFor:          'Best for',
     included:         'What is included',
     timeline:         'Typical timeline',

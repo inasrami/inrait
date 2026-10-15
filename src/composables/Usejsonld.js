@@ -162,6 +162,7 @@ export function serviceListSchema(services) {
             '@type': 'UnitPriceSpecification',
             price: svc.basePrice,
             priceCurrency: 'EUR',
+            ...(svc.priceUnit === 'month' ? { unitText: 'MON' } : {}),
             description: 'Starting price - final cost agreed after consultation',
           },
         },

@@ -108,7 +108,7 @@
               </button>
             </div>
 
-            <div class="addon-preview">
+            <div v-if="service.addons.length" class="addon-preview">
               <div class="comparison-label">{{ t('servicesPage.addons') }}</div>
               <div class="addon-grid">
                 <button
@@ -149,7 +149,7 @@
               <div>
                 <div class="price-label-sm">{{ t('servicesPage.basePrice') }}</div>
                 <div class="font-display text-[32px] leading-none" style="letter-spacing:0.02em; color:var(--accent);">
-                  €{{ service.basePrice.toLocaleString() }}
+                  €{{ service.basePrice.toLocaleString() }}<span v-if="service.priceUnit === 'month'" class="price-unit">{{ t('servicesPage.perMonth') }}</span>
                 </div>
               </div>
               <div class="price-actions">
@@ -309,6 +309,7 @@ const hasSelection = computed(() =>
 
 <style scoped>
 .services-page { min-height: 100vh; }
+.price-unit { margin-left: 6px; font-family: inherit; font-size: 13px; letter-spacing: 0; color: var(--text-dim, rgba(255,255,255,0.5)); }
 .services-hero { border-bottom: 1px solid var(--border); }
 .services-kicker { margin-bottom: 14px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
 

@@ -30,7 +30,7 @@
           </h3>
           
           <div class="text-[12px] text-text-dim mb-6 flex-1">
-            {{ t('services.from') }} <span class="font-medium text-white">€{{ service.basePrice.toLocaleString() }}</span>
+            {{ t('services.from') }} <span class="font-medium text-white">€{{ service.basePrice.toLocaleString() }}</span><span v-if="service.priceUnit === 'month'"> {{ t('servicesPage.perMonth') }}</span>
           </div>
 
           <RouterLink :to="`/services#${service.id}`" class="details-btn">
