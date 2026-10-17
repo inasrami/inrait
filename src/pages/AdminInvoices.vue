@@ -21,7 +21,7 @@
 
         <p v-if="loginError" class="login-error">{{ loginError }}</p>
 
-        <button class="btn-accent w-full" type="button" :disabled="loginLoading" @click="login">
+        <button class="w-full btn-accent" type="button" :disabled="loginLoading" @click="login">
           <span v-if="loginLoading" class="spinner spinner--dark" />
           <span v-else>Sign in</span>
         </button>
@@ -492,16 +492,14 @@ const money = (cents) => formatMoney(cents, 'en')
 function toggleService(id) {
   if (isSelected(id)) {
     selectedServices.value = selectedServices.value.filter((s) => s !== id)
-    // deselecting a service also drops its add-ons (same as the Services page)
-    const addonIds = services.value.find((s) => s.id === id)?.addons.map((a) => a.id) ?? []
-    selectedAddons.value = selectedAddons.value.filter((a) => !addonIds.includes(a))
+    // Removed the filter that deleted selectedAddons when deselecting the service
   } else {
     selectedServices.value = [...selectedServices.value, id]
   }
 }
 
-function toggleAddon(addonId, serviceId) {
-  if (!isSelected(serviceId)) selectedServices.value = [...selectedServices.value, serviceId]
+function toggleAddon(addonId) {
+  // Removed: if (!isSelected(serviceId)) selectedServices.value = [...selectedServices.value, serviceId]
   selectedAddons.value = isAddonSelected(addonId)
     ? selectedAddons.value.filter((a) => a !== addonId)
     : [...selectedAddons.value, addonId]

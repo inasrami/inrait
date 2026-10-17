@@ -96,19 +96,30 @@ export function calcQuote({
   let serviceCount = 0
 
   for (const svc of services) {
-    if (!serviceIds.includes(svc.id)) continue
-    serviceCount += 1
-    const unit = toCents(svc.basePrice)
-    lines.push({
-      type: 'service', id: svc.id, label: svc.title, qty: 1, unit, total: unit,
-      deliverables: svc.deliverables || [], timeline: svc.timeline || '',
-    })
-    discountBase += unit
+    const servicePicked = serviceIds.includes(svc.id)
+
+    if (servicePicked) {
+      serviceCount += 1
+      const unit = toCents(svc.basePrice)
+      lines.push({
+        type: 'service', id: svc.id, label: svc.title, qty: 1, unit, total: unit,
+        deliverables: svc.deliverables || [], timeline: svc.timeline || '',
+      })
+      discountBase += unit
+    }
 
     for (const addon of svc.addons || []) {
       if (!addonIds.includes(addon.id)) continue
       const price = toCents(addon.price)
-      lines.push({ type: 'addon', id: addon.id, label: addon.label, qty: 1, unit: price, total: price })
+      lines.push({
+        type: 'addon',
+        id: addon.id,
+        // If parent service isn't selected, optionally prefix with service title for clarity on the invoice:
+        label: servicePicked ? addon.label : `${svc.title} —${addon.label}`,
+        qty: 1,
+        unit: price,
+        total: price,
+      })
       discountBase += price
     }
   }
