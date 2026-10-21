@@ -15,7 +15,12 @@
 
     <!-- Hero -->
     <div class="max-w-[1080px] mx-auto mb-16">
-      <div class="mb-6 chip">{{ project.tag }}</div>
+      <div class="flex items-center gap-3 mb-6">
+  <div class="chip">{{ project.tag }}</div>
+  <span v-if="project.isNew" class="badge-new">
+    <span class="badge-dot"></span>{{ t('projects.newBadge') }}
+  </span>
+</div>
 
       <h1
         class="mb-6 font-display"

@@ -257,6 +257,7 @@ export default {
     metaCategory:'Категория',
     metaStack:   'Технологии',
     metaLive:    'Живият сайт',
+    newBadge: 'Нов проект',
     filter: {
       all:        'Всички',
       web:        'Уеб',

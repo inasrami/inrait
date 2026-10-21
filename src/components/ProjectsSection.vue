@@ -50,13 +50,13 @@
       <div class="carousel-spacer" />
 
       <RouterLink
-        v-for="(project, i) in filteredProjects"
-        :key="`${activeFilter}-${project.id}`"
-        :to="`/work/${project.slug}`"
-        class="carousel-card"
-        :class="{ 'is-dragging': dragging, 'card-refilter': hasFiltered }"
-        @click.prevent="handleClick(project)"
-      >
+  v-for="(project, i) in filteredProjects"
+  :key="`${activeFilter}-${project.id}`"
+  :to="`/work/${project.slug}`"
+  class="carousel-card"
+  :class="{ 'is-dragging': dragging, 'card-refilter': hasFiltered, 'is-new': project.isNew }"
+  @click.prevent="handleClick(project)"
+>
         <!-- Image -->
         <div class="carousel-img-wrap">
           <img v-if="project.image" :src="project.image" :alt="project.title" draggable="false" />
@@ -65,6 +65,9 @@
           </div>
           <div class="carousel-overlay" />
           <span class="carousel-index">{{ String(i + 1).padStart(2, '0') }}</span>
+          <span v-if="project.isNew" class="badge-new badge-new--card">
+  <span class="badge-dot"></span>{{ t('projects.newBadge') }}
+</span>
         </div>
 
         <!-- Info below image -->
@@ -240,7 +243,8 @@ onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveInd
 }
 .filter-tab:hover { color: var(--text); border-color: var(--border-strong); }
 .filter-tab--active { color: #000; background: var(--accent); border-color: var(--accent); }
-
+.carousel-card.is-new { border-color: var(--accent); }
+.carousel-card.is-new .carousel-img-wrap { box-shadow: 0 0 0 1px rgba(164,224,75,0.35), 0 20px 60px rgba(164,224,75,0.10); }
 .carousel-track {
   display: flex; gap: 20px; overflow-x: auto; overflow-y: visible; margin-left: auto; margin-right: auto; max-width: 1080px;
   scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;

@@ -257,6 +257,7 @@ export default {
     metaCategory:'Category',
     metaStack:   'Stack',
     metaLive:    'Live site',
+    newBadge: 'New project',
     filter: {
       all:        'All',
       web:        'Web',
