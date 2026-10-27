@@ -1,21 +1,47 @@
 # INRAIT
 
-> INRAIT is a digital agency based in Sofia providing web application development, UI/UX design, and workflow automation services.
+> INRAIT is a boutique web engineering studio in Sofia, Bulgaria. It builds websites, online stores, booking systems and workflow/AI automation for hotels, restaurants and other service businesses in Bulgaria and the EU. Work is done directly with the founder, clients own all code and assets, and pricing starts from published estimates with a free discovery call.
 
-## About Us
-We build scalable web applications, design intuitive user interfaces, and automate business processes to help clients streamline their digital operations.
+The site is available in English (https://inrait.com) and Bulgarian (https://inrait.com/bg). Every page below exists in both languages; add /bg in front of the path for Bulgarian.
 
-## Core Services
-- **Web Application Development:** Full-stack frontend and backend development utilizing Vue.js, JavaScript/TypeScript, and Tailwind CSS.
-- **Workflow Automation:** Custom business logic and automation pipelines built with n8n, webhooks, and third-party API integrations.
-- **UI/UX & Branding:** Interface design, vector graphics, logos, and product mockups.
-- **Hosting & Infrastructure:** Secure deployment pipelines using Docker, Dokploy, and Traefik.
+## Services and pricing
+Starting prices are indicative estimates in EUR; final pricing is agreed after a free consultation.
 
-## Key Links
-- [Our Services](https://inrait.com/services)
-- [Portfolio & Case Studies](https://inrait.com/portfolio)
-- [Client Booking/Onboarding](https://inrait.com/contact)
+- [All services and add-ons](https://inrait.com/services): interactive list of all nine services with typical timelines and add-on prices
+- One-Page Website: from €350, 3-7 days
+- Business Website: from €699.99, 2-4 weeks (CMS, blog, multilingual, SEO and schema add-ons)
+- Custom Booking System for hospitality: from €1,199.99, 4-6 weeks (payments, SMS/email confirmations, Google Calendar sync)
+- E-commerce Store: from €1,999.99, 5-8 weeks (integrated with Speedy, Econt, Stripe, PayPal)
+- AI Automation: from €1,299.99, 3-6 weeks (chatbots, voice agents, document data extraction)
+- Workflow Automation (n8n): from €599.99, 2-4 weeks (CRM, invoicing and lead follow-up automations)
+- Visual Identity & Design: from €449.99, 2-3 weeks
+- Social Media Manager: from €150 per month
+- Digital Marketing Retainer: from €399 per month
 
-## Contact Information
-- Website: https://inrait.com
-- General Inquiries: hello@inrait.com
+## Local integrations
+- [Bulgarian integrations](https://inrait.com/integrations): couriers (Econt, Speedy), payments and banks (Borica, Epay, Fibank, Postbank), accounting (Microinvest) and marketplaces (Pazaruvaj.com)
+
+## Selected work
+- [The Meridian](https://inrait.com/work/meridian): scroll-driven marketing site for a building development, with a construction timelapse and interactive floor plan
+- [Barbers Unity](https://inrait.com/work/barbers-unity): full-stack booking platform for barber businesses
+- [Hotel Prestige](https://inrait.com/work/hotel-prestige): full-stack hospitality website and booking
+- [Aurum](https://inrait.com/work/aurum): luxury brand experience
+- [EuroGuard](https://inrait.com/work/euroguard): verification tool
+- [DNA of Design](https://inrait.com/work/dna-of-design): computer-vision project
+- [ShiftEase](https://inrait.com/work/shiftease): productivity tool
+
+## Articles
+- [Why hotels lose bookings to third-party platforms](https://inrait.com/blog/why-hotels-lose-bookings): commission costs and the case for a direct booking system
+- [n8n automations for small business](https://inrait.com/blog/n8n-automations-small-business): practical workflow automations
+- [Web design in Sofia: what to expect](https://inrait.com/blog/web-design-sofia-what-to-expect): process, timelines and costs
+- [Blog index](https://inrait.com/blog)
+
+## Contact
+- [Contact and free estimate](https://inrait.com/contact)
+- Email: inrait.web@gmail.com
+- Phone: +359 876 566 094
+- Location: Sofia, Bulgaria
+
+## Optional
+- [Privacy policy](https://inrait.com/privacy)
+- [Sitemap](https://inrait.com/sitemap.xml)
