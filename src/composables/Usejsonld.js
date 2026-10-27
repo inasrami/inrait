@@ -15,31 +15,21 @@
  *   serviceListSchema(services)
  */
 
-import { onMounted, onUnmounted } from 'vue'
+import { useHead } from '@unhead/vue'
 
 const SITE_URL  = 'https://inrait.com'
 const SITE_NAME = 'INRAIT'
 
+// Runs on the server too, so the JSON-LD is in the prerendered HTML that
+// crawlers and AI agents read. "<" is escaped so data can never close the tag.
 export function useJsonLd(schema) {
-  let el = null
-
-  onMounted(() => {
-    const schemas = Array.isArray(schema) ? schema : [schema]
-    schemas.forEach((s, i) => {
-      const script = document.createElement('script')
-      script.type = 'application/ld+json'
-      script.id   = `jsonld-${i}-${Date.now()}`
-      script.textContent = JSON.stringify(s)
-      document.head.appendChild(script)
-      if (i === 0) el = script   // track first for cleanup reference
-    })
-  })
-
-  onUnmounted(() => {
-    // Remove all ld+json scripts added by this instance
-    document.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
-      if (s.id && s.id.startsWith('jsonld-')) s.remove()
-    })
+  const schemas = Array.isArray(schema) ? schema : [schema]
+  useHead({
+    script: schemas.map((s, i) => ({
+      key: `jsonld-${s['@type'] || 'schema'}-${s['@id'] || i}`,
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(s).replace(/</g, '\\u003c'),
+    })),
   })
 }
 

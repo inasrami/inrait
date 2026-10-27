@@ -4,42 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary SEO -->
-    <title>INRAIT · Websites, Booking Systems & Automation in Sofia</title>
-    <meta
-      name="description"
-      content="Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU. Get a free estimate."
-    />
+    <!--
+      Title, description, Open Graph, Twitter, canonical, hreflang and JSON-LD are
+      NOT set here. Each page sets its own through useSeo()/useJsonLd(), and the
+      prerender step writes them into that page's static HTML.
+    -->
     <meta name="author" content="INRAIT Web Engineering" />
-    <meta name="robots" content="index, follow" />
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="INRAIT · Websites, Booking Systems & Automation in Sofia" />
-    <meta
-      property="og:description"
-      content="Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU."
-    />
-    <meta
-      property="og:image"
-      content="https://inrait.com/images/og-cover.jpg"
-    />
-    <meta property="og:url" content="https://inrait.com" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="INRAIT" />
-    <meta property="og:locale" content="en_GB" />
-    <meta property="og:locale:alternate" content="bg_BG" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="INRAIT · Websites, Booking Systems & Automation in Sofia" />
-    <meta
-      name="twitter:description"
-      content="Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU."
-    />
-    <meta
-      name="twitter:image"
-      content="https://inrait.com/images/og-cover.jpg"
-    />
 
     <!-- Theme & icons -->
     <meta name="theme-color" content="#000000" />
@@ -48,30 +18,25 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <!-- Meta Pixel Code -->
     <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '1445752864116324'); fbq('track', 'PageView');</script>
     <!-- End Meta Pixel Code -->
-  </head>
-  <!-- Google tag (gtag.js) -->
-  <script
-    async
-    src="https://www.googletagmanager.com/gtag/js?id=G-R1LXQHHGSQ"
-  ></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
 
-    gtag("config", "G-R1LXQHHGSQ");
-  </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R1LXQHHGSQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-R1LXQHHGSQ");
+    </script>
+  </head>
   <body>
-      <body>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1445752864116324&ev=PageView&noscript=1"/></noscript>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1445752864116324&ev=PageView&noscript=1" alt="" /></noscript>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

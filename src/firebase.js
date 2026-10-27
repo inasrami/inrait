@@ -11,7 +11,11 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const app = initializeApp(firebaseConfig)
+// Firebase only runs in the browser. During the prerender build there is no
+// window (and usually no env vars), so db/auth stay null there; every consumer
+// reads them inside onMounted().
+const inBrowser = typeof window !== 'undefined'
+const app = inBrowser ? initializeApp(firebaseConfig) : null
 
-export const db   = getFirestore(app)
-export const auth = getAuth(app)
+export const db   = app ? getFirestore(app) : null
+export const auth = app ? getAuth(app)      : null

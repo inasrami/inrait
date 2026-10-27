@@ -5,10 +5,17 @@ import bg from '../locales/bg.js'
 const STORAGE_KEY = 'inrait_lang'
 const locales = { en, bg }
 
+const isBrowser = typeof window !== 'undefined'
+
+function readSaved() {
+  if (!isBrowser) return null
+  try { return localStorage.getItem(STORAGE_KEY) } catch { return null }
+}
+
 function detectLang() {
-  const saved = localStorage.getItem(STORAGE_KEY)
+  const saved = readSaved()
   if (saved && locales[saved]) return saved
-  const browser = navigator.language?.toLowerCase()
+  const browser = isBrowser ? navigator.language?.toLowerCase() : ''
   if (browser?.startsWith('bg')) return 'bg'
   return 'en'
 }
@@ -30,7 +37,8 @@ export function useLanguage() {
   function setLang(l) {
     if (!locales[l]) return
     lang.value = l
-    localStorage.setItem(STORAGE_KEY, l)
+    if (!isBrowser) return // prerender: <html lang> is set through useHead in App.vue
+    try { localStorage.setItem(STORAGE_KEY, l) } catch { /* storage blocked */ }
     document.documentElement.lang = l
   }
 

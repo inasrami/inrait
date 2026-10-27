@@ -1,4 +1,3 @@
-import { createRouter, createWebHistory } from "vue-router";
 
 const Home = () => import('../pages/Home.vue')
 const ProjectPage = () => import('../pages/ProjectPage.vue')
@@ -12,7 +11,7 @@ const NotFound = () => import('../pages/NotFound.vue')
 const Admin = () => import('../pages/Admin.vue')
 const AdminInvoices = () => import('../pages/AdminInvoices.vue')
 
-const routes = [
+export const routes = [
   { path: "/", alias: ["/bg", "/bg/"], component: Home, name: "home" },
   { path: "/work/:slug", alias: "/bg/work/:slug", component: ProjectPage, name: "project" },
   { path: "/contact", alias: "/bg/contact", component: Contact, name: "contact" },
@@ -34,19 +33,18 @@ const routes = [
   },
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (to.hash) return { el: to.hash, behavior: "smooth" };
-    if (from.matched.length === 0) return { top: 0 };
-    if (savedPosition) return savedPosition;
-    return { top: 0 };
-  },
-});
+export function scrollBehavior(to, from, savedPosition) {
+  if (to.hash) return { el: to.hash, behavior: "smooth" };
+  if (from.matched.length === 0) return { top: 0 };
+  if (savedPosition) return savedPosition;
+  return { top: 0 };
+}
 
-router.beforeEach((to) => {
-  const savedLanguage = localStorage.getItem('inrait_lang')
+// Client-only: sends returning Bulgarian visitors to the /bg version of the page.
+// Must never run during prerendering (no localStorage on the server).
+export function languageGuard(to) {
+  let savedLanguage = null
+  try { savedLanguage = localStorage.getItem('inrait_lang') } catch { /* storage blocked */ }
   const isAdmin = to.path === '/admin' || to.path.startsWith('/admin/')
   const isBulgarian = to.path === '/bg' || to.path.startsWith('/bg/')
 
@@ -56,6 +54,4 @@ router.beforeEach((to) => {
   }
 
   return true
-});
-
-export default router;
+}

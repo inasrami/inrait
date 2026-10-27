@@ -108,13 +108,16 @@ import { useRoute, RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
 import { useSeo } from '../composables/useSeo.js'
 import { db } from '../firebase.js'
+import { posts as staticPosts } from '../data/posts.js'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 
 const route = useRoute()
 const { t, currentLanguage } = useLanguage()
 
-const post      = ref(null)
-const isLoading = ref(true)
+// Start from the static copy (prerendered + instant); Firestore replaces it if it has the post.
+const findStatic = (slug) => staticPosts.find((p) => p.slug === slug) || null
+const post      = ref(findStatic(route.params.slug))
+const isLoading = ref(!post.value)
 
 function localise(p) {
   if (!p) return { title: '', content: '', excerpt: '' }
@@ -122,8 +125,10 @@ function localise(p) {
 }
 
 async function loadPost() {
-  isLoading.value = true
-  post.value = null
+  if (!post.value || post.value.slug !== route.params.slug) {
+    post.value = findStatic(route.params.slug)
+    isLoading.value = !post.value
+  }
 
   try {
     const q = query(collection(db, 'posts'), where('slug', '==', route.params.slug))
@@ -160,14 +165,14 @@ async function loadPost() {
 onMounted(loadPost)
 watch(() => route.params.slug, loadPost)
 
-watch([post, currentLanguage, () => route.params.slug], () => {
+useSeo(() => {
   const local = post.value ? localise(post.value) : null
-  useSeo({
+  return {
     title:       local?.title || t('blog.title'),
     description: local?.excerpt || (local?.content || '').slice(0, 160),
     canonical:   `/blog/${post.value?.slug || route.params.slug}`,
-  })
-}, { immediate: true })
+  }
+})
 
 const parsedContent = computed(() => {
   const raw = localise(post.value).content ?? ''

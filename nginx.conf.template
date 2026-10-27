@@ -42,9 +42,18 @@ server {
     proxy_set_header Content-Type application/json;
   }
 
+  # Prerendered pages: /services -> /services/index.html, /bg/blog -> /bg/blog/index.html
   location / {
-    try_files $uri $uri/ /index.html;
+    try_files $uri $uri/index.html =404;
   }
+
+  # Back-office pages are client-only (never prerendered, never indexed): serve the plain app shell
+  location ^~ /admin {
+    try_files /spa.html =404;
+  }
+
+  # Unknown URLs get a real 404 status with the branded page, not the home page with a 200
+  error_page 404 /404/index.html;
 
   location ~* \.(?:css|js|jpg|jpeg|png|gif|webp|svg|woff2?)$ {
     expires 7d;

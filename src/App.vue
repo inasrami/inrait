@@ -18,6 +18,7 @@
 
 <script setup>
 import { computed, watch } from 'vue'
+import { useHead } from '@unhead/vue'
 import { RouterView, useRoute } from 'vue-router'
 import { useLanguage } from './composables/useLanguage.js'
 import SiteLoader     from './components/SiteLoader.vue'
@@ -31,9 +32,11 @@ import { useScrollScenes } from './composables/useScrollScenes.js'
 const route = useRoute()
 // Back-office pages are full screen - no public nav, footer, cookie banner or chat button
 const isAdminRoute = computed(() => route.path === '/admin' || route.path.startsWith('/admin/'))
-const { setLang } = useLanguage()
+const { setLang, lang } = useLanguage()
 
 useScrollScenes()
+
+useHead({ htmlAttrs: { lang: computed(() => lang.value) } })
 
 watch(() => route.path, (path) => {
   setLang(path === '/bg' || path.startsWith('/bg/') ? 'bg' : 'en')

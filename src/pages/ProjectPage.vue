@@ -146,35 +146,23 @@ const project = computed(() => getProject(route.params.slug))
 
 useFadeUp()
 
-watch(project, (p) => {
-  if (!p) return
+// Set once during setup so the SEO tags and JSON-LD end up in the prerendered HTML.
+// App.vue keys the page by full path, so this component is re-created for each project.
+const current = project.value
+if (current) {
   useSeo({
-    title:       p.title,
-    description: p.description,
-    canonical:   `/work/${p.slug}`,
-    image:       p.image,
+    title:       current.title,
+    description: current.description,
+    canonical:   `/work/${current.slug}`,
+    image:       current.image,
   })
-}, { immediate: true })
-
-watch(project, (p) => {
-  if (!p) return
-  document.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
-    if (s.id && s.id.startsWith('jsonld-')) s.remove()
-  })
-  const schemas = [
+  useJsonLd([
     breadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'Work', url: '/#work' },
-      { name: p.title, url: `/work/${p.slug}` },
+      { name: current.title, url: `/work/${current.slug}` },
     ]),
-    projectSchema(p),
-  ]
-  schemas.forEach((schema, i) => {
-    const script = document.createElement('script')
-    script.type = 'application/ld+json'
-    script.id   = `jsonld-${i}-proj`
-    script.textContent = JSON.stringify(schema)
-    document.head.appendChild(script)
-  })
-}, { immediate: true })
+    projectSchema(current),
+  ])
+}
 </script>

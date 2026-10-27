@@ -101,6 +101,7 @@ import { useLanguage } from '../composables/useLanguage.js'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
 import { db } from '../firebase.js'
+import { posts as staticPosts } from '../data/posts.js'
 import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 
 const router = useRouter()
@@ -113,8 +114,9 @@ useSeo({
   canonical:   '/blog',
 })
 
-const posts     = ref([])
-const isLoading = ref(true)
+// Static posts render instantly (and into the prerendered HTML); Firestore replaces them once loaded.
+const posts     = ref(staticPosts.map((p) => ({ ...p, image: p.image || '/images/WhiteLogo.webp' })))
+const isLoading = ref(false)
 const loadError = ref(false)
 
 function localise(post) {
@@ -125,7 +127,7 @@ onMounted(async () => {
   try {
     const q = query(collection(db, 'posts'), orderBy('date', 'desc'))
     const snapshot = await getDocs(q)
-    posts.value = snapshot.docs.map(doc => {
+    const fresh = snapshot.docs.map(doc => {
       const data = doc.data()
       return {
         id:       doc.id,
@@ -146,11 +148,9 @@ onMounted(async () => {
         },
       }
     })
+    if (fresh.length) posts.value = fresh
   } catch (err) {
     console.error('Error fetching posts:', err)
-    loadError.value = true
-  } finally {
-    isLoading.value = false
   }
 })
 
