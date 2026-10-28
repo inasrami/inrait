@@ -196,11 +196,11 @@ import { useServices } from '../data/services.js'
 
 useFadeUp()
 const { t } = useLanguage()
-useSeo({
-  title:       'Contact',
-  description: 'Start a project with INRAIT. Get in touch for a free consultation - we respond within 24 hours.',
+useSeo(() => ({
+  title:       t('seo.contact.title'),
+  description: t('seo.contact.description'),
   canonical:   '/contact',
-})
+}))
 useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Contact', url: '/contact' }]))
 
 const loading   = ref(false)

@@ -59,7 +59,7 @@
 >
         <!-- Image -->
         <div class="carousel-img-wrap">
-          <img v-if="project.image" :src="project.image" :alt="project.title" draggable="false" />
+          <img v-if="project.image" :src="project.image" :alt="project.title" loading="lazy" decoding="async" draggable="false" />
           <div v-else class="flex items-center justify-center w-full h-full" style="background: var(--surface-3); color: var(--text-dim); font-size: 13px; letter-spacing: 2px; text-transform: uppercase;">
             {{ project.title }}
           </div>

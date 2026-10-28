@@ -235,11 +235,11 @@ useFadeUp()
 const { t } = useLanguage()
 const { SERVICES } = useServices()
 
-useSeo({
-  title:       'Services & Pricing',
-  description: 'Web engineering, booking systems, e-commerce, automation, design and photography - view all INRAIT services.',
+useSeo(() => ({
+  title:       t('seo.services.title'),
+  description: t('seo.services.description'),
   canonical:   '/services',
-})
+}))
 useJsonLd([
   breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }]),
   serviceListSchema(SERVICES.value),

@@ -108,11 +108,11 @@ const router = useRouter()
 const { t, currentLanguage } = useLanguage()
 useFadeUp()
 
-useSeo({
-  title:       'Blog',
-  description: 'Practical articles on web engineering, workflow automation, and digital strategy.',
+useSeo(() => ({
+  title:       t('seo.blog.title'),
+  description: t('seo.blog.description'),
   canonical:   '/blog',
-})
+}))
 
 // Static posts render instantly (and into the prerendered HTML); Firestore replaces them once loaded.
 const posts     = ref(staticPosts.map((p) => ({ ...p, image: p.image || '/images/WhiteLogo.webp' })))

@@ -38,30 +38,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
+import { getConsent, setConsent, loadTracking } from '../composables/useConsent.js'
 
 const { t } = useLanguage()
 
-const STORAGE_KEY = 'inrait_cookie_consent'
 const visible = ref(false)
+let showTimer = null
+
+// The footer's "Cookie settings" link fires this event to reopen the banner.
+const reopen = () => { visible.value = true }
 
 onMounted(() => {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (!stored) {
-    setTimeout(() => { visible.value = true }, 1200)
+  window.addEventListener('inrait:cookie-settings', reopen)
+  if (!getConsent()) {
+    showTimer = setTimeout(() => { visible.value = true }, 1200)
   }
 })
 
+onBeforeUnmount(() => {
+  clearTimeout(showTimer)
+  window.removeEventListener('inrait:cookie-settings', reopen)
+})
+
 function accept() {
-  localStorage.setItem(STORAGE_KEY, 'accepted')
+  setConsent('accepted')
+  loadTracking()
   visible.value = false
 }
 
 function decline() {
-  localStorage.setItem(STORAGE_KEY, 'declined')
+  const hadAccepted = getConsent() === 'accepted'
+  setConsent('declined')
   visible.value = false
+  // Scripts that are already running can't be unloaded, so reload without them.
+  if (hadAccepted) window.location.reload()
 }
 </script>
 

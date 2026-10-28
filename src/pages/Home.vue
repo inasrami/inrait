@@ -18,6 +18,7 @@
 <script setup>
 import SectionRail from '../components/SectionRail.vue'
 import { useSeo }          from '../composables/useSeo.js'
+import { useLanguage }     from '../composables/useLanguage.js'
 import { useJsonLd, localBusinessSchema, webSiteSchema, breadcrumbSchema } from '../composables/Usejsonld.js'
 import HeroSection         from '../components/HeroSection.vue'
 import PhilosophySection   from '../components/PhilosophySection.vue'
@@ -31,11 +32,13 @@ import ProcessSection      from '../components/ProcessSection.vue'
 import FaqSection          from '../components/Faqsection.vue'
 import CtaSection          from '../components/CtaSection.vue'
 
-useSeo({
-  title:       'Websites, Booking Systems & Automation in Sofia',
-  description: 'Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU. Get a free estimate.',
+const { t } = useLanguage()
+
+useSeo(() => ({
+  title:       t('seo.home.title'),
+  description: t('seo.home.description'),
   canonical:   '/',
-})
+}))
 
 useJsonLd([
   localBusinessSchema(),

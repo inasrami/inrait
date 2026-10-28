@@ -1,6 +1,6 @@
 <template>
   <section ref="heroSection" class="relative flex items-end w-full min-h-[min(900px,100svh)] overflow-hidden bg-bg-primary hero-section">
-    <img class="hero-project-image" src="/images/wall.jpg" alt="Abstract purple structural artwork" />
+    <img class="hero-project-image" src="/images/wall.webp" alt="Lime green curly braces forming a stylised code symbol" />
     <div class="hero-project-overlay" />
 
     <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 pb-12 md:pb-16">
@@ -75,7 +75,7 @@ function scrollToWork() {
   position: absolute;
   inset: -6px;
   z-index: 0;
-  background: url('/images/wall.jpg') center center / contain no-repeat;
+  background: url('/images/wall.webp') center center / contain no-repeat;
   background-attachment: fixed;
   filter: blur(6px) saturate(0.78) contrast(1.06);
   transform: scale(1.02);

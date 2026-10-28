@@ -107,6 +107,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
 import { useSeo } from '../composables/useSeo.js'
+import { useJsonLd, blogPostSchema, breadcrumbSchema } from '../composables/Usejsonld.js'
 import { db } from '../firebase.js'
 import { posts as staticPosts } from '../data/posts.js'
 import { collection, query, where, getDocs } from 'firebase/firestore'
@@ -172,6 +173,27 @@ useSeo(() => {
     description: local?.excerpt || (local?.content || '').slice(0, 160),
     canonical:   `/blog/${post.value?.slug || route.params.slug}`,
   }
+})
+
+useJsonLd(() => {
+  if (!post.value) return []
+  const local = localise(post.value)
+  const slug  = post.value.slug || route.params.slug
+  return [
+    breadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Blog', url: '/blog' },
+      { name: local.title, url: `/blog/${slug}` },
+    ]),
+    blogPostSchema({
+      title:         local.title,
+      description:   local.excerpt,
+      slug,
+      image:         post.value.image && post.value.image !== '/images/WhiteLogo.webp' ? post.value.image : undefined,
+      datePublished: post.value.date,
+      language:      currentLanguage.value,
+    }),
+  ]
 })
 
 const parsedContent = computed(() => {

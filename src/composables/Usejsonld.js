@@ -15,6 +15,7 @@
  *   serviceListSchema(services)
  */
 
+import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 
 const SITE_URL  = 'https://inrait.com'
@@ -22,15 +23,19 @@ const SITE_NAME = 'INRAIT'
 
 // Runs on the server too, so the JSON-LD is in the prerendered HTML that
 // crawlers and AI agents read. "<" is escaped so data can never close the tag.
-export function useJsonLd(schema) {
-  const schemas = Array.isArray(schema) ? schema : [schema]
-  useHead({
-    script: schemas.map((s, i) => ({
-      key: `jsonld-${s['@type'] || 'schema'}-${s['@id'] || i}`,
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify(s).replace(/</g, '\\u003c'),
-    })),
-  })
+export function useJsonLd(input) {
+  const read = typeof input === 'function' ? input : () => input
+  useHead(computed(() => {
+    const value   = read()
+    const schemas = (Array.isArray(value) ? value : [value]).filter(Boolean)
+    return {
+      script: schemas.map((s, i) => ({
+        key: `jsonld-${s['@type'] || 'schema'}-${s['@id'] || i}`,
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify(s).replace(/</g, '\\u003c'),
+      })),
+    }
+  }))
 }
 
 // ─── Pre-built schemas ────────────────────────────────────
@@ -158,5 +163,23 @@ export function serviceListSchema(services) {
         },
       },
     })),
+  }
+}
+
+export function blogPostSchema({ title, description, slug, image, datePublished, language = 'en' }) {
+  const url = `${SITE_URL}/blog/${slug}`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    headline: title,
+    description,
+    inLanguage: language,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    url,
+    ...(image ? { image: image.startsWith('http') ? image : `${SITE_URL}${image}` } : {}),
+    ...(datePublished ? { datePublished, dateModified: datePublished } : {}),
+    author:    { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL, logo: { '@type': 'ImageObject', url: `${SITE_URL}/images/WhiteLogo.webp` } },
   }
 }

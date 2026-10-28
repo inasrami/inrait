@@ -31,3 +31,6 @@ dist-ssr
 .env.*
 !.env.example
 .env.example
+
+# vite-ssg temp output
+.vite-ssg-temp

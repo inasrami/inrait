@@ -70,11 +70,11 @@ import { useLanguage } from '../composables/useLanguage.js'
 
 const { t } = useLanguage()
 
-useSeo({
-  title:       '404 - Page Not Found',
-  description: 'The page you are looking for does not exist. Return to the INRAIT homepage.',
+useSeo(() => ({
+  title:       t('seo.notFound.title'),
+  description: t('seo.notFound.description'),
   noindex:     true,
-})
+}))
 
 </script>
 

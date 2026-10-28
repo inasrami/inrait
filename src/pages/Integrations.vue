@@ -66,11 +66,11 @@ import { useLanguage } from '../composables/useLanguage.js'
 useFadeUp()
 const { t } = useLanguage()
 
-useSeo({
-  title:       'Integrations',
-  description: 'Every courier, payment gateway, ERP, marketing tool and sales channel INRAIT can connect your store or workflow to.',
+useSeo(() => ({
+  title:       t('seo.integrations.title'),
+  description: t('seo.integrations.description'),
   canonical:   '/integrations',
-})
+}))
 useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Integrations', url: '/integrations' }]))
 
 const CATEGORY_ORDER = ['all', 'delivery', 'payments', 'erp', 'marketing', 'distributors', 'chat', 'sales']

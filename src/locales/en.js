@@ -349,6 +349,7 @@ export default {
     navContact:  'Contact',
     copyright:  '© 2026 INRAIT Web Engineering · Sofia, Bulgaria. All rights reserved.',
     privacy:    'Privacy Policy',
+    cookieSettings: 'Cookie settings',
     engineered: 'Engineered with precision.',
   },
 
@@ -445,13 +446,13 @@ export default {
     contact:  'Contact us',
     sections: {
       who:          { heading: '1. Who We Are', body: 'INRAIT ("we", "us", "our") is a web engineering and digital studio based in Sofia, Bulgaria. We operate the website at inrait.com (the "Site"). For any privacy-related questions, contact us at inrait.web@gmail.com.' },
-      what:         { heading: '2. What Data We Collect', intro: 'We collect personal data only when you voluntarily provide it:', items: ['Contact form: your name, email address, project type, budget range, and message content.', 'Direct contact: any information you send us by email or phone.'], outro: 'We do not use tracking pixels, advertising networks, or third-party analytics tools. We do not collect data automatically beyond what your browser sends to any web server (e.g. IP address in server logs).' },
+      what:         { heading: '2. What Data We Collect', intro: 'We collect personal data only when you voluntarily provide it:', items: ['Contact form: your name, email address, project type, budget range, and message content.', 'Direct contact: any information you send us by email or phone.'], outro: 'Google Analytics (visit statistics) and the Meta Pixel (advertising measurement) only run if you click Accept in the cookie banner; they are not loaded before that, or if you decline. Apart from that, we do not collect data automatically beyond what your browser sends to any web server (e.g. IP address in server logs).' },
       how:          { heading: '3. How We Use Your Data', intro: 'The data you submit through our contact form is used exclusively to:', items: ['Respond to your project inquiry', 'Communicate with you about potential or ongoing work', 'Send project-related correspondence'], outro: 'We do not use your data for marketing, profiling, or automated decision-making. We do not sell or share your data with third parties for commercial purposes.' },
       legal:        { heading: '4. Legal Basis for Processing (GDPR)', intro: 'We process your personal data under the following legal bases as defined by the EU General Data Protection Regulation (GDPR):', items: ['Legitimate interests (Art. 6(1)(f)): responding to business inquiries you initiate.', 'Contractual necessity (Art. 6(1)(b)): fulfilling a service agreement if we enter into one.', 'Consent (Art. 6(1)(a)): where you have explicitly opted in (e.g. cookie consent).'] },
       retention:    { heading: '5. Data Retention', body: 'We retain inquiry data for up to 2 years after last contact, or for the duration of any active business relationship, whichever is longer. After this period, data is securely deleted. You may request deletion at any time (see Section 7).' },
       thirdParty:   { heading: '6. Third-Party Services', emailjs: 'Our contact form uses EmailJS to deliver your message to our inbox. EmailJS processes form submissions on their infrastructure. You can review their privacy policy at emailjs.com/legal/privacy-policy.', hosting: 'Our website is hosted on infrastructure that may log standard server access data (IP address, browser type, timestamp) for security and operational purposes. These logs are not used for profiling and are retained for a maximum of 30 days.' },
       rights:       { heading: '7. Your Rights Under GDPR', intro: 'As a data subject in the EU/EEA, you have the right to:', items: ['Access - request a copy of the personal data we hold about you', 'Rectification - request correction of inaccurate data', 'Erasure - request deletion of your data ("right to be forgotten")', 'Restriction - request that we limit how we process your data', 'Portability - receive your data in a structured, machine-readable format', 'Object - object to processing based on legitimate interests'], contact: 'To exercise any of these rights, email us at inrait.web@gmail.com. We will respond within 30 days.', complaint: 'You also have the right to lodge a complaint with the Bulgarian Commission for Personal Data Protection (CPDP): cpdp.bg.' },
-      cookies:      { heading: '8. Cookies', body: 'This website uses only essential cookies necessary for the site to function. We do not use advertising cookies, social media tracking cookies, or third-party analytics cookies without your consent. A cookie consent banner is presented on your first visit where applicable.' },
+      cookies:      { heading: '8. Cookies', body: 'Essential storage keeps the site working (for example, remembering your language and your cookie choice). If you click Accept in the cookie banner, we also load Google Analytics and the Meta Pixel, which set their own cookies. If you decline or do not answer, they are not loaded. You can change your choice at any time with Cookie settings in the footer.' },
       children:     { heading: "9. Children's Privacy", body: 'Our services are directed at businesses and adults. We do not knowingly collect personal data from individuals under the age of 16.' },
       changes:      { heading: '10. Changes to This Policy', body: 'We may update this Privacy Policy from time to time. When we do, we will update the "last updated" date at the top of this page. Continued use of the Site after changes constitutes acceptance of the updated policy.' },
       contactSection: { heading: '11. Contact', body: 'For any privacy questions or requests:' },
@@ -490,8 +491,18 @@ export default {
     articleNotFound:'Article not found.',
   },
 
+  seo: {
+    home:         { title: 'Websites, Booking Systems & Automation in Sofia', description: 'Custom websites, booking systems, stores and automation for hotels, restaurants and service businesses in Bulgaria and the EU. Get a free estimate.' },
+    services:     { title: 'Services & Pricing', description: 'Web engineering, booking systems, e-commerce, automation, design and photography - view all INRAIT services.' },
+    integrations: { title: 'Integrations', description: 'Every courier, payment gateway, ERP, marketing tool and sales channel INRAIT can connect your store or workflow to.' },
+    contact:      { title: 'Contact', description: 'Start a project with INRAIT. Get in touch for a free consultation - we respond within 24 hours.' },
+    privacy:      { title: 'Privacy Policy', description: 'INRAIT privacy policy - how we collect, use, and protect your personal data under GDPR and Bulgarian law.' },
+    blog:         { title: 'Blog', description: 'Practical articles on web engineering, workflow automation, and digital strategy.' },
+    notFound:     { title: '404 - Page Not Found', description: 'The page you are looking for does not exist. Return to the INRAIT homepage.' },
+  },
+
   cookie: {
-    text:    'We use essential cookies to keep the site running. No tracking, no advertising.',
+    text:    'We use essential cookies to run the site. With your consent we also use Google Analytics and the Meta Pixel to understand visits and measure our ads.',
     policy:  'Privacy Policy',
     accept:  'Accept',
     decline: 'Decline',

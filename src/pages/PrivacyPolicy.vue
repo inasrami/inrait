@@ -109,11 +109,11 @@ const { t } = useLanguage()
 
 const s = computed(() => t('privacy.sections'))
 
-useSeo({
-  title:       'Privacy Policy',
-  description: 'INRAIT privacy policy - how we collect, use, and protect your personal data under GDPR and Bulgarian law.',
+useSeo(() => ({
+  title:       t('seo.privacy.title'),
+  description: t('seo.privacy.description'),
   canonical:   '/privacy',
-})
+}))
 useJsonLd(breadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Privacy Policy', url: '/privacy' }]))
 </script>
 

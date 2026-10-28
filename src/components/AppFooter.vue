@@ -65,6 +65,8 @@
         <div class="flex items-center gap-4">
           <RouterLink to="/privacy" class="transition-colors duration-200 hover:text-text-muted">{{ t('footer.privacy') }}</RouterLink>
           <span>·</span>
+          <button type="button" class="transition-colors duration-200 hover:text-text-muted" style="cursor: pointer;" @click="openCookieSettings">{{ t('footer.cookieSettings') }}</button>
+          <span>·</span>
           <p>{{ t('footer.engineered') }}</p>
         </div>
       </div>
@@ -86,6 +88,8 @@ const projects = [
   { slug: 'dna-of-design',  title: 'DNA of Design'   },
   { slug: 'aurum',          title: 'Aurum'            },
 ]
+
+const openCookieSettings = () => window.dispatchEvent(new Event('inrait:cookie-settings'))
 </script>
 
 <style scoped>
