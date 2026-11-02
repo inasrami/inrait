@@ -21,54 +21,60 @@
           <div class="form-heading">
             <span class="form-kicker">01 / {{ t('contact.label') }}</span>
             <h2>{{ t('contact.message') }}</h2>
-            <p>{{ t('contact.sub') }}</p>
           </div>
 
-          <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
+          <form @submit.prevent="handleSubmit" @invalid.capture="handleInvalid" @input="errorMsg = ''" class="flex flex-col gap-6">
 
             <div class="form-trap" aria-hidden="true">
-              <label for="website">Website</label>
-              <input id="website" v-model="form.website" type="text" tabindex="-1" autocomplete="off" />
+              <label for="contact-trap">Website</label>
+              <input id="contact-trap" v-model="form.website" name="website" type="text" tabindex="-1" autocomplete="off" />
             </div>
 
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div class="form-group">
-                <label class="form-label">{{ t('contact.name') }}</label>
-                <input v-model="form.name" id="contact-name" name="name" type="text" class="form-input" :placeholder="t('contact.namePh')" autocomplete="name" required />
+                <label class="form-label" for="contact-name">{{ t('contact.name') }}</label>
+                <input v-model="form.name" id="contact-name" name="name" type="text" class="form-input" :placeholder="t('contact.namePh')" autocomplete="name" required :aria-invalid="Boolean(errorMsg)" />
               </div>
               <div class="form-group">
-                <label class="form-label">{{ t('contact.email') }}</label>
-                <input v-model="form.email" id="contact-email" name="email" type="email" class="form-input" :placeholder="t('contact.emailPh')" autocomplete="email" required />
+                <label class="form-label" for="contact-email">{{ t('contact.email') }}</label>
+                <input v-model="form.email" id="contact-email" name="email" type="email" class="form-input" :placeholder="t('contact.emailPh')" autocomplete="email" required :aria-invalid="Boolean(errorMsg)" />
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">{{ t('contact.type') }}</label>
+              <label class="form-label" for="project-type">{{ t('contact.type') }}</label>
               <select v-model="form.type" id="project-type" name="project_type" class="form-input">
                 <option value="">{{ t('contact.typePh') }}</option>
-                <option v-for="(opt, i) in t('contact.types')" :key="i" :value="opt">{{ opt }}</option>
+                <option v-for="service in SERVICES" :key="service.id" :value="service.id">{{ service.title }}</option>
+                <option value="unsure">{{ t('contact.typeUnsure') }}</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label">{{ t('contact.budget') }}</label>
+              <label class="form-label" for="project-budget">{{ t('contact.budget') }}</label>
               <select v-model="form.budget" id="project-budget" name="budget" class="form-input">
                 <option value="">{{ t('contact.budgetPh') }}</option>
                 <option v-for="(opt, i) in t('contact.budgets')" :key="i" :value="opt">{{ opt }}</option>
+                <option value="unsure">{{ t('contact.budgetUnsure') }}</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label class="form-label">{{ t('contact.message') }}</label>
-              <textarea v-model="form.message" id="project-message" name="message" class="form-input" rows="5"
+              <label class="form-label" for="project-message">{{ t('contact.message') }}</label>
+              <textarea v-model="form.message" id="project-message" name="message" class="form-input" rows="5" :aria-invalid="Boolean(errorMsg)"
                 :placeholder="t('contact.messagePh')"
                 required />
             </div>
 
-              <label class="consent-row">
-                <input v-model="form.consent" type="checkbox" required />
-                <span>{{ t('contact.consent') }} <RouterLink to="/privacy" class="text-accent underline-offset-2 hover:underline">{{ t('contact.privacyLink') }}</RouterLink>.</span>
-              </label>
+            <div class="form-group">
+              <label class="form-label" for="existing-website">{{ t('contact.website') }}</label>
+              <input v-model="form.existingWebsite" id="existing-website" name="existing_website" type="url" class="form-input" :placeholder="t('contact.websitePh')" autocomplete="url" />
+            </div>
+
+            <label class="consent-row">
+              <input v-model="form.consent" type="checkbox" required />
+              <span>{{ t('contact.consent') }} <RouterLink to="/privacy" class="text-accent underline-offset-2 hover:underline">{{ t('contact.privacyLink') }}</RouterLink>.</span>
+            </label>
 
             <!-- Error message -->
             <div v-if="errorMsg" class="flex items-center gap-3 p-4 rounded-xl" role="alert" aria-live="polite"
@@ -80,7 +86,7 @@
             </div>
 
             <button type="submit" class="form-submit btn-primary w-full justify-center py-5 text-[16px]"
-              :disabled="loading || submitted" style="cursor: pointer;">
+              :disabled="loading || submitted" :aria-busy="loading" style="cursor: pointer;">
               <Transition name="btn-state" mode="out-in">
                 <!-- Idle -->
                 <span v-if="!loading && !submitted" key="idle" class="btn-state">
@@ -103,11 +109,6 @@
                 </span>
               </Transition>
             </button>
-
-            <div class="form-footnote">
-              <span class="availability-dot" />
-              <span>{{ t('contact.availTitle') }} · {{ t('contact.availBody') }}</span>
-            </div>
 
             <button v-if="submitted" type="button" class="text-[13px] text-text-muted underline underline-offset-4" @click="resetForm">
               {{ t('contact.sendAnother') }}
@@ -170,12 +171,9 @@
           </div>
 
           <div class="p-6 rounded-2xl" style="background:rgba(164,224,75,0.05);border:1px solid rgba(164,224,75,0.2);">
-            <div class="flex items-center gap-3 mb-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-accent" style="box-shadow:0 0 10px var(--accent);" />
-              <span class="font-semibold text-[15px]" style="color:var(--accent);">{{ t('contact.availTitle') }}</span>
-            </div>
+            <div class="mb-3 font-semibold text-[15px]" style="color:var(--accent);">{{ t('contact.nextTitle') }}</div>
             <p class="text-text-muted text-[14px] leading-relaxed">
-              {{ t('contact.availBody') }}
+              {{ t('contact.nextBody') }}
             </p>
           </div>
 
@@ -207,20 +205,9 @@ const loading   = ref(false)
 const submitted = ref(false)
 const errorMsg  = ref('')
 
-const form = reactive({ name: '', email: '', type: '', budget: '', message: '', website: '', consent: false })
+const form = reactive({ name: '', email: '', type: '', budget: '', message: '', website: '', existingWebsite: '', consent: false })
 const route = useRoute()
 const { SERVICES } = useServices()
-
-const serviceTypeIndexes = {
-  website: 0,
-  onepager: 0,
-  booking: 1,
-  ecommerce: 2,
-  automation: 3,
-  ai: 4,
-  identity: 5,
-  marketing: 7,
-}
 
 function queryIds(value) {
   return (typeof value === 'string' ? value.split(',') : [])
@@ -239,8 +226,7 @@ function prefillFromEstimator() {
   if (!selectedServices.length && !selectedAddons.length) return
 
   if (selectedServices.length === 1) {
-    const typeIndex = serviceTypeIndexes[selectedServices[0].id]
-    form.type = typeIndex === undefined ? '' : t(`contact.types.${typeIndex}`)
+    form.type = selectedServices[0].id
   }
 
   const lines = [
@@ -289,13 +275,14 @@ async function handleSubmit() {
     await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
       from_name:    form.name,
       from_email:   form.email,
-      project_type: form.type   || 'Not specified',
-      budget:       form.budget || 'Not specified',
-        message:      form.message,
+      project_type: SERVICES.value.find(service => service.id === form.type)?.title || (form.type === 'unsure' ? t('contact.typeUnsure') : 'Not specified'),
+      budget:       form.budget === 'unsure' ? t('contact.budgetUnsure') : form.budget || 'Not specified',
+      existing_website: form.existingWebsite,
+      message:      form.message,
     })
 
     submitted.value = true
-    Object.assign(form, { name: '', email: '', type: '', budget: '', message: '', website: '', consent: false })
+    Object.assign(form, { name: '', email: '', type: '', budget: '', message: '', website: '', existingWebsite: '', consent: false })
 
   } catch (err) {
     console.error('EmailJS error:', err)
@@ -303,6 +290,16 @@ async function handleSubmit() {
   } finally {
     loading.value = false
   }
+}
+
+function handleInvalid(event) {
+  const field = event.target
+  if (!(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return
+  errorMsg.value = field.type === 'email' && field.validity.typeMismatch
+    ? t('contact.errorEmail')
+    : field.id === 'existing-website'
+      ? t('contact.errorWebsite')
+      : t('contact.errorFill')
 }
 
 function resetForm() {
@@ -351,6 +348,7 @@ function loadScript(src) {
 .consent-row { display: flex; align-items: flex-start; gap: 10px; color: var(--text-muted); font-size: 12px; line-height: 1.5; cursor: pointer; }
 .consent-row input { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
 .form-submit { min-height: 58px; border-radius: 8px; }
+.form-success { color: var(--accent); font-size: 13px; line-height: 1.5; }
 
 /* Submit button state swap: quick fade out, slightly longer fade in (100ms + 200ms) */
 .btn-state { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }

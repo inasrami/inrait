@@ -1,12 +1,12 @@
 <template>
-  <nav v-show="active > -1" class="rail" aria-label="Page sections">
+  <nav v-show="active > -1" class="rail" :aria-label="t('nav.sections')">
     <span class="rail__count">{{ pad(active + 1) }} / {{ pad(sections.length) }}</span>
     <button
       v-for="(s, i) in sections"
       :key="s.id"
       class="rail__dot"
       :class="{ 'is-active': i === active, 'is-past': i < active }"
-      :aria-label="s.id"
+      :aria-label="t(`nav.${s.id}`)"
       :aria-current="i === active ? 'true' : undefined"
       @click="go(s.id)"
     />
@@ -16,14 +16,18 @@
 <script setup>
 // A quiet "chapter" indicator on wide screens: shows where you are in the page and how much is left.
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useLanguage } from '../composables/useLanguage.js'
 
-const IDS = ['philosophy', 'services', 'work', 'about', 'industries', 'process']
+const { t } = useLanguage()
+const IDS = ['work', 'services', 'about', 'process']
 const sections = ref([])
 const active = ref(-1)
 let frame = 0
 
 const pad = (n) => String(n).padStart(2, '0')
-const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+const go = (id) => document.getElementById(id)?.scrollIntoView({
+  behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+})
 
 function update() {
   frame = 0

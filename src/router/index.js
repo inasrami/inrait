@@ -34,7 +34,12 @@ export const routes = [
 ];
 
 export function scrollBehavior(to, from, savedPosition) {
-  if (to.hash) return { el: to.hash, behavior: "smooth" };
+  if (to.hash) {
+    const behavior = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth'
+    return { el: to.hash, behavior }
+  }
   if (from.matched.length === 0) return { top: 0 };
   if (savedPosition) return savedPosition;
   return { top: 0 };

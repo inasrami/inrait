@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <Transition name="cookie">
-      <div v-if="visible" class="cookie-banner" role="dialog" aria-label="Cookie consent">
+      <div v-if="visible" ref="bannerElement" class="cookie-banner" role="dialog" :aria-label="t('cookie.dialog')">
         <div class="max-w-[1080px] mx-auto px-6 flex flex-wrap items-center justify-between gap-4">
 
           <div class="flex items-start flex-1 min-w-0 gap-3">
@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, nextTick, watch, onMounted, onBeforeUnmount } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
 import { getConsent, setConsent, loadTracking } from '../composables/useConsent.js'
@@ -46,7 +46,31 @@ import { getConsent, setConsent, loadTracking } from '../composables/useConsent.
 const { t } = useLanguage()
 
 const visible = ref(false)
+const bannerElement = ref(null)
 let showTimer = null
+let bannerResizeObserver = null
+
+function updateBannerHeight() {
+  const height = bannerElement.value?.getBoundingClientRect().height ?? 0
+  document.documentElement.style.setProperty('--cookie-banner-height', `${Math.ceil(height)}px`)
+}
+
+watch(visible, async (isVisible) => {
+  bannerResizeObserver?.disconnect()
+  bannerResizeObserver = null
+
+  if (!isVisible) {
+    document.documentElement.style.removeProperty('--cookie-banner-height')
+    return
+  }
+
+  await nextTick()
+  if (!bannerElement.value) return
+
+  updateBannerHeight()
+  bannerResizeObserver = new ResizeObserver(updateBannerHeight)
+  bannerResizeObserver.observe(bannerElement.value)
+}, { flush: 'post' })
 
 // The footer's "Cookie settings" link fires this event to reopen the banner.
 const reopen = () => { visible.value = true }
@@ -60,6 +84,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearTimeout(showTimer)
+  bannerResizeObserver?.disconnect()
+  document.documentElement.style.removeProperty('--cookie-banner-height')
   window.removeEventListener('inrait:cookie-settings', reopen)
 })
 
@@ -90,6 +116,21 @@ function decline() {
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--border-strong);
   padding: 16px 0;
+}
+
+@media (max-width: 560px) {
+  .cookie-banner > div {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cookie-banner > div > div:first-child {
+    flex: none;
+  }
+
+  .cookie-banner > div > div:last-child {
+    justify-content: flex-end;
+  }
 }
 
 .cookie-accept {

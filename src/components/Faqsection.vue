@@ -1,151 +1,72 @@
 <template>
-  <section class="relative px-6 py-36 overflow-hidden">
-
-    <div class="max-w-[780px] mx-auto">
-
-      <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)] mb-16"
-        style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
-        {{ t('faq.title') }}
-      </h2>
-
-      <div class="flex flex-col divide-y" style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-        <div
-          v-for="(item, i) in items"
-          :key="i"
-          class="faq-item fade-up"
-          :style="`transition-delay: ${i * 0.06}s`"
-        >
+  <section class="faq-section px-6">
+    <div class="faq-container">
+      <h2 class="font-display">{{ t('faq.title') }}</h2>
+      <div class="faq-list">
+        <div v-for="(item, i) in items" :key="i" class="faq-item">
           <button
             class="faq-trigger"
-            @click="toggle(i)"
             :aria-expanded="open === i"
-            style="cursor: pointer;"
+            :aria-controls="`faq-answer-${i}`"
+            @click="toggle(i)"
           >
-            <span class="faq-q">{{ item.q }}</span>
-            <span class="faq-icon" :class="{ 'faq-icon--open': open === i }">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </span>
+            <span>{{ item.q }}</span>
+            <svg
+              class="faq-icon"
+              :class="{ 'faq-icon--open': open === i }"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
           </button>
-
-          <Transition name="faq-body">
-            <div v-if="open === i" class="faq-answer">
-              <p>{{ item.a }}</p>
-            </div>
-          </Transition>
+          <div v-show="open === i" :id="`faq-answer-${i}`" class="faq-answer">
+            <p>{{ item.a }}</p>
+          </div>
         </div>
       </div>
-
-      <!-- CTA below -->
-      <div class="flex flex-wrap items-center justify-between gap-6 p-8 mt-14 fade-up rounded-2xl"
-        style="background: rgba(164,224,75,0.04); border: 1px solid rgba(164,224,75,0.18);">
-        <div>
-          <p class="font-semibold text-[17px] mb-1">{{ t('faq.ctaTitle') }}</p>
-          <p class="text-text-muted text-[14px]">{{ t('faq.ctaSub') }}</p>
-        </div>
-        <RouterLink to="/contact" class="btn-primary text-[14px] px-7 py-4 flex-shrink-0" style="cursor: pointer;">
-          {{ t('cta.start') }}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </RouterLink>
-      </div>
-
     </div>
   </section>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-import { RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
-import { useFadeUp } from '../composables/useFadeUp.js'
 
-useFadeUp()
 const { t } = useLanguage()
-
-const open  = ref(null)
+const open = ref(null)
 const items = computed(() => t('faq.items'))
 
-function toggle(i) {
-  open.value = open.value === i ? null : i
+function toggle(index) {
+  open.value = open.value === index ? null : index
 }
 </script>
 
 <style scoped>
-.faq-item { border-color: var(--border); }
-
-.faq-trigger {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 22px 0;
-  background: none;
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  transition: color 0.2s ease;
+.faq-section { padding-top: 52px; padding-bottom: 56px; }
+.faq-container { max-width: 780px; margin: 0 auto; }
+.faq-container > h2 { margin: 0 0 24px; font-size: clamp(36px, 6vw, 56px); font-weight: 400; letter-spacing: 0.02em; line-height: 1.05; }
+.faq-list { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.faq-item + .faq-item { border-top: 1px solid var(--border); }
+.faq-trigger { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 0; color: var(--text-primary); text-align: left; background: transparent; border: 0; cursor: pointer; }
+.faq-trigger > span { font-size: 15px; font-weight: 600; line-height: 1.4; }
+.faq-trigger:hover > span { color: var(--accent); }
+.faq-icon { flex: 0 0 auto; color: var(--text-muted); transition: transform 0.18s ease, color 0.18s ease; }
+.faq-icon--open { color: var(--accent); transform: rotate(180deg); }
+.faq-answer { padding: 0 32px 16px 0; }
+.faq-answer p { max-width: 640px; margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.55; }
+@media (max-width: 560px) {
+  .faq-section { padding-top: 40px; padding-bottom: 44px; }
+  .faq-trigger > span { font-size: 14px; }
 }
-
-.faq-trigger:hover .faq-q { color: var(--accent); }
-
-.faq-q {
-  font-size: clamp(15px, 2vw, 18px);
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.01em;
-  line-height: 1.4;
-  transition: color 0.2s ease;
-}
-
-.faq-icon {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--border-strong);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
-              background 0.2s ease,
-              border-color 0.2s ease,
-              color 0.2s ease;
-}
-
-.faq-icon--open {
-  transform: rotate(180deg);
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-}
-
-.faq-answer {
-  overflow: hidden;
-  padding-bottom: 22px;
-}
-
-.faq-answer p {
-  font-size: 15px;
-  color: var(--text-muted);
-  line-height: 1.8;
-  max-width: 640px;
-}
-
-.faq-body-enter-active,
-.faq-body-leave-active {
-  transition: max-height 0.38s cubic-bezier(0.16,1,0.3,1),
-              opacity 0.28s ease;
-  max-height: 400px;
-  overflow: hidden;
-}
-
-.faq-body-enter-from,
-.faq-body-leave-to {
-  max-height: 0;
-  opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+  .faq-icon { transition: none; }
 }
 </style>

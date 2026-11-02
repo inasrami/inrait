@@ -1,291 +1,235 @@
 <template>
-  <section ref="workSection" id="work" class="overflow-hidden py-36">
+  <section id="work" class="projects-section px-6">
+    <div class="projects-container">
+      <header class="projects-heading">
+        <p class="section-kicker">{{ t('projects.label') }}</p>
+        <h2 class="font-display">{{ t('projects.title') }}</h2>
+      </header>
 
-    <!-- Header -->
-    <div class="px-6 max-w-[1080px] mx-auto mb-10">
-      <div class="flex flex-wrap items-end justify-between gap-6 mb-8">
-        <div>
-          <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]" style="letter-spacing:0.02em; line-height:1;">
-            {{ t('projects.title') }}
-          </h2>
-        </div>
-        <div class="flex items-center gap-4 fade-up" style="transition-delay: 0.1s;">
-          <span class="text-text-dim text-[13px] flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            {{ t('projects.dragHint') }}
-          </span>
-          <button class="carousel-btn" @click="scroll(-1)" aria-label="Previous">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          </button>
-          <button class="carousel-btn" @click="scroll(1)" aria-label="Next">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Filter tabs -->
-      <div class="flex flex-wrap items-center gap-2 fade-up" style="transition-delay:0.15s;">
-        <button
-          v-for="f in filters"
-          :key="f.key"
-          class="filter-tab"
-          :class="{ 'filter-tab--active': activeFilter === f.key }"
-          @click="setFilter(f.key)"
-          style="cursor: pointer;"
-        >
-          {{ f.label }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Carousel track -->
-    <div
-      ref="trackEl"
-      class="carousel-track"
-      @mousedown="onDragStart"
-      @mousemove="onDragMove"
-      @mouseup="onDragEnd"
-      @mouseleave="onDragEnd"
-    >
-      <div class="carousel-spacer" />
-
-      <RouterLink
-  v-for="(project, i) in filteredProjects"
-  :key="`${activeFilter}-${project.id}`"
-  :to="`/work/${project.slug}`"
-  class="carousel-card"
-  :class="{ 'is-dragging': dragging, 'card-refilter': hasFiltered, 'is-new': project.isNew }"
-  @click.prevent="handleClick(project)"
->
-        <!-- Image -->
-        <div class="carousel-img-wrap">
-          <img v-if="project.image" :src="project.image" :alt="project.title" loading="lazy" decoding="async" draggable="false" />
-          <div v-else class="flex items-center justify-center w-full h-full" style="background: var(--surface-3); color: var(--text-dim); font-size: 13px; letter-spacing: 2px; text-transform: uppercase;">
-            {{ project.title }}
+      <div id="project-grid" class="project-grid">
+        <article v-for="project in visibleProjects" :key="project.id" class="project-card">
+          <div class="project-image">
+            <img
+              :src="project.image"
+              :alt="`${t('projects.previewAlt')}: ${project.title}`"
+              :width="project.imageWidth"
+              :height="project.imageHeight"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
-          <div class="carousel-overlay" />
-          <span class="carousel-index">{{ String(i + 1).padStart(2, '0') }}</span>
-          <span v-if="project.isNew" class="badge-new badge-new--card">
-  <span class="badge-dot"></span>{{ t('projects.newBadge') }}
-</span>
-        </div>
-
-        <!-- Info below image -->
-        <div class="carousel-info">
-          <div class="flex items-start justify-between gap-4 mb-2">
-            <h3 class="font-semibold" style="font-size: 22px; letter-spacing: -0.02em; line-height: 1.2;">
-              {{ project.title }}
-            </h3>
-            <span class="text-text-dim text-[12px] mt-1 shrink-0 font-mono">{{ project.year }}</span>
-          </div>
-          <p class="mb-5 text-text-muted" style="font-size: 14px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-            {{ project.description }}
-          </p>
-          <div class="flex items-center justify-between">
-            <div class="flex flex-wrap gap-1.5">
-              <span v-for="tech in project.stack.slice(0, 2)" :key="tech" class="chip" style="font-size: 10px; padding: 3px 8px;">{{ tech }}</span>
+          <div class="project-copy">
+            <h3>{{ project.title }}</h3>
+            <p>{{ localized(project).cardDescription }}</p>
+            <div class="project-actions">
+              <button type="button" class="project-details-button" @click="openDetails(project, $event)">
+                {{ t('projects.viewCase') }}
+              </button>
+              <a
+                v-if="project.liveUrl"
+                :href="project.liveUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="project-live-link"
+              >
+                {{ t('projects.viewSite') }}
+              </a>
             </div>
-            <span class="flex items-center gap-1 text-[12px] font-medium" :style="`color: ${project.color}`">
-              {{ t('services.caseStudy') }}
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </span>
+          </div>
+        </article>
+      </div>
+      <button
+        v-if="displayProjects.length > featuredProjectCount"
+        type="button"
+        class="show-projects-button"
+        :aria-expanded="showAllProjects"
+        aria-controls="project-grid"
+        @click="showAllProjects = !showAllProjects"
+      >
+        {{ t(showAllProjects ? 'projects.showFeatured' : 'projects.showAll') }}
+      </button>
+    </div>
+
+    <dialog
+      ref="dialogElement"
+      class="project-dialog"
+      :aria-labelledby="selectedProject ? `project-dialog-title-${selectedProject.id}` : undefined"
+      @click="handleDialogClick"
+      @keydown.esc.stop.prevent="closeDetails"
+      @cancel="closeDetails"
+      @close="handleDialogClose"
+    >
+      <template v-if="selectedProject">
+        <button
+          ref="closeButton"
+          type="button"
+          class="dialog-close"
+          :aria-label="t('projects.close')"
+          @click="closeDetails"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+        <div class="dialog-content">
+          <p class="section-kicker">{{ t('projects.modalTitle') }}</p>
+          <h2 :id="`project-dialog-title-${selectedProject.id}`">{{ selectedProject.title }}</h2>
+          <p class="dialog-overview">{{ localized(selectedProject).overview }}</p>
+          <ul class="dialog-features">
+            <li v-for="feature in localized(selectedProject).features?.slice(0, 3)" :key="feature">
+              {{ feature }}
+            </li>
+          </ul>
+          <div class="dialog-actions">
+            <a
+              v-if="selectedProject.liveUrl"
+              :href="selectedProject.liveUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary"
+              @click="closeDetails"
+            >
+              {{ t('projects.visitLive') }}
+            </a>
+            <a
+              v-else-if="selectedProject.sourceUrl"
+              :href="selectedProject.sourceUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary"
+              @click="closeDetails"
+            >
+              {{ t('projects.viewSource') }}
+            </a>
+            <RouterLink
+              :to="localizedPath(`/work/${selectedProject.slug}`)"
+              class="dialog-case-link"
+              @click="closeDetails"
+            >
+              {{ t('projects.caseStudy') }}
+            </RouterLink>
           </div>
         </div>
-      </RouterLink>
-
-      <div class="carousel-spacer" />
-    </div>
-
-    <!-- Dot indicators -->
-    <div class="flex justify-center gap-2 mt-10">
-      <button
-        v-for="(project, i) in filteredProjects"
-        :key="project.id"
-        class="dot-btn"
-        :class="{ active: activeIndex === i }"
-        @click="scrollToIndex(i)"
-        :aria-label="`${t('projects.viewCase')}: ${project.title}`"
-      />
-    </div>
-
+      </template>
+    </dialog>
   </section>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { computed, nextTick, onUnmounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import { projects } from '../data/Projects.js'
-import { useFadeUp } from '../composables/useFadeUp.js'
 import { useLanguage } from '../composables/useLanguage.js'
-import { useScrollProgress } from '../composables/useScrollProgress.js'
 
-useFadeUp()
-const { t } = useLanguage()
+const { t, lang, localizedPath } = useLanguage()
+const dialogElement = ref(null)
+const closeButton = ref(null)
+const selectedProject = ref(null)
+const showAllProjects = ref(false)
+const featuredProjectCount = 2
+let returnFocusElement = null
+let previousOverflow = ''
+let scrollLockActive = false
 
-const router      = useRouter()
-const trackEl     = ref(null)
-const workSection = ref(null)
+const displayProjects = computed(() => {
+  const featuredIds = ['barbers-unity', 'hotel-prestige']
+  return [
+    ...featuredIds.map(id => projects.find(project => project.id === id)).filter(Boolean),
+    ...projects.filter(project => !featuredIds.includes(project.id)),
+  ]
+})
+const visibleProjects = computed(() => (
+  showAllProjects.value ? displayProjects.value : displayProjects.value.slice(0, featuredProjectCount)
+))
 
-// --py (0 → 1) while the section crosses mid-screen: images drift slower than the page
-useScrollProgress(workSection, { mode: 'span', anchor: 0.5, prop: '--py' })
-const activeIndex = ref(0)
-const activeFilter = ref('all')
-const hasFiltered  = ref(false)   // true after the first filter click, so initial load doesn't replay the entrance
-
-const filters = computed(() => [
-  { key: 'all',        label: t('projects.filter.all')        },
-  { key: 'web',        label: t('projects.filter.web')        },
-  { key: 'design',     label: t('projects.filter.design')     },
-  { key: 'automation', label: t('projects.filter.automation') },
-])
-
-const filteredProjects = computed(() =>
-  activeFilter.value === 'all'
-    ? projects
-    : projects.filter(p => p.category === activeFilter.value)
-)
-
-function setFilter(key) {
-  if (key === activeFilter.value) return
-  hasFiltered.value = true
-  activeFilter.value = key
-  activeIndex.value = 0
-  if (trackEl.value) trackEl.value.scrollTo({ left: 0, behavior: 'smooth' })
+function localized(project) {
+  return project.localized?.[lang.value] ?? project
 }
 
-// Drag-to-scroll
-const dragging   = ref(false)
-let dragStartX   = 0
-let dragStartT   = 0
-let dragStartIdx = 0
-let lastDelta    = 0
-let scrollStartX = 0
-let didDrag      = false
-let snapTimer    = null
-
-const FLICK_VELOCITY = 0.11   // px per ms
-
-function onDragStart(e) {
-  clearTimeout(snapTimer)
-  dragging.value = true
-  didDrag        = false
-  lastDelta      = 0
-  dragStartX     = e.clientX
-  dragStartT     = performance.now()
-  scrollStartX   = trackEl.value.scrollLeft
-  dragStartIdx   = Math.round(scrollStartX / CARD_WIDTH)
-  trackEl.value.style.cursor = 'grabbing'
-  // Snap would fight the pointer while dragging; hand control back on release.
-  trackEl.value.style.scrollSnapType = 'none'
+async function openDetails(project, event) {
+  returnFocusElement = event.currentTarget
+  selectedProject.value = project
+  await nextTick()
+  if (!dialogElement.value?.open) {
+    if (!scrollLockActive) {
+      previousOverflow = document.documentElement.style.overflow
+      document.documentElement.style.overflow = 'hidden'
+      scrollLockActive = true
+    }
+    dialogElement.value?.showModal()
+  }
+  closeButton.value?.focus()
 }
 
-function onDragMove(e) {
-  if (!dragging.value) return
-  const delta = e.clientX - dragStartX
-  lastDelta = delta
-  if (Math.abs(delta) > 4) didDrag = true
-  trackEl.value.scrollLeft = scrollStartX - delta
-  updateActiveIndex()
+function closeDetails() {
+  if (dialogElement.value?.open) dialogElement.value.close()
+  restoreScrollLock()
 }
 
-function onDragEnd() {
-  if (!dragging.value) return
-  dragging.value = false
-  const el = trackEl.value
-  if (!el) return
-  el.style.cursor = 'grab'
-
-  if (!didDrag) { el.style.scrollSnapType = ''; return }
-
-  // Settle on the nearest card, or step one card on a quick flick.
-  const velocity = Math.abs(lastDelta) / Math.max(performance.now() - dragStartT, 1)
-  let target = Math.round(el.scrollLeft / CARD_WIDTH)
-  if (velocity > FLICK_VELOCITY) target = dragStartIdx + (lastDelta < 0 ? 1 : -1)
-  target = Math.max(0, Math.min(filteredProjects.value.length - 1, target))
-  scrollToIndex(target)
-
-  // Re-enable snapping once the smooth scroll has had time to finish.
-  snapTimer = setTimeout(() => { if (trackEl.value) trackEl.value.style.scrollSnapType = '' }, 500)
+function handleDialogClick(event) {
+  if (event.target === dialogElement.value) closeDetails()
 }
 
-function handleClick(project) {
-  if (!didDrag) router.push(`/work/${project.slug}`)
+function handleDialogClose() {
+  selectedProject.value = null
+  restoreScrollLock()
+  nextTick(() => returnFocusElement?.focus())
 }
 
-const CARD_WIDTH = 420 + 20
-
-function scroll(dir) {
-  const next = Math.max(0, Math.min(filteredProjects.value.length - 1, activeIndex.value + dir))
-  scrollToIndex(next)
+function restoreScrollLock() {
+  if (scrollLockActive) {
+    document.documentElement.style.overflow = previousOverflow
+    scrollLockActive = false
+  }
 }
 
-function scrollToIndex(i) {
-  if (!trackEl.value) return
-  trackEl.value.scrollTo({ left: i * CARD_WIDTH, behavior: 'smooth' })
-  activeIndex.value = i
-}
-
-function updateActiveIndex() {
-  if (!trackEl.value) return
-  const i = Math.round(trackEl.value.scrollLeft / CARD_WIDTH)
-  activeIndex.value = Math.max(0, Math.min(filteredProjects.value.length - 1, i))
-}
-
-onMounted(() => { trackEl.value?.addEventListener('scroll', updateActiveIndex, { passive: true }) })
-onUnmounted(() => { trackEl.value?.removeEventListener('scroll', updateActiveIndex) })
+onUnmounted(() => {
+  if (dialogElement.value?.open) dialogElement.value.close()
+  if (scrollLockActive) document.documentElement.style.overflow = previousOverflow
+})
 </script>
 
 <style scoped>
-.filter-tab {
-  padding: 7px 16px; border-radius: 100px; border: 1px solid var(--border);
-  font-size: 12px; font-weight: 500; color: var(--text-muted);
-  background: transparent; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; cursor: pointer;
-}
-.filter-tab:hover { color: var(--text); border-color: var(--border-strong); }
-.filter-tab--active { color: #000; background: var(--accent); border-color: var(--accent); }
-.carousel-card.is-new { border-color: var(--accent); }
-.carousel-card.is-new .carousel-img-wrap { box-shadow: 0 0 0 1px rgba(164,224,75,0.35), 0 20px 60px rgba(164,224,75,0.10); }
-.carousel-track {
-  display: flex; gap: 20px; overflow-x: auto; overflow-y: visible; margin-left: auto; margin-right: auto; max-width: 1080px;
-  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; cursor: grab; padding-bottom: 8px; user-select: none;
-}
-.carousel-track::-webkit-scrollbar { display: none; }
+.projects-section { padding-top: 48px; padding-bottom: 56px; }
+.projects-container { max-width: 960px; margin: 0 auto; }
+.projects-heading { margin-bottom: 24px; }
+.section-kicker { margin: 0 0 8px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.projects-heading h2 { font-size: clamp(34px, 5vw, 48px); font-weight: 400; letter-spacing: 0.02em; line-height: 1; }
+.project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
+.project-card { min-width: 0; }
+.project-image { overflow: hidden; aspect-ratio: 16 / 9; background: var(--surface-3); }
+.project-image img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.project-copy { padding-top: 14px; }
+.project-copy h3 { margin: 0; font-size: clamp(20px, 2.4vw, 26px); font-weight: 600; letter-spacing: -0.03em; }
+.project-copy p { margin: 4px 0 12px; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+.project-actions, .dialog-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+.project-details-button, .project-live-link, .dialog-case-link { color: var(--text-primary); font-size: 13px; font-weight: 600; text-underline-offset: 4px; }
+.project-details-button { padding: 0; color: var(--accent); background: transparent; border: 0; cursor: pointer; }
+.project-details-button:hover, .project-live-link:hover, .dialog-case-link:hover { text-decoration: underline; }
+.show-projects-button { display: block; margin: 28px auto 0; padding: 10px 0; color: var(--text-primary); background: none; border: 0; border-bottom: 1px solid var(--accent); cursor: pointer; font-size: 14px; font-weight: 600; }
+.show-projects-button:hover { color: var(--accent); }
+.show-projects-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
 
-/* Entrance for cards after a filter change (220ms, no stagger: tabs are clicked repeatedly) */
-.card-refilter { animation: refilterIn 220ms cubic-bezier(0.16, 1, 0.3, 1) backwards; }
-@keyframes refilterIn {
-  from { opacity: 0; transform: translateY(8px); }
+.project-dialog { position: fixed; inset: 0; width: min(520px, calc(100vw - 32px)); max-width: none; max-height: min(680px, calc(100dvh - 32px)); margin: auto; padding: 0; overflow: auto; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 16px; }
+.project-dialog::backdrop { background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(5px); }
+.dialog-content { padding: clamp(24px, 6vw, 40px); }
+.dialog-content h2 { margin: 0 40px 10px 0; font-size: clamp(26px, 6vw, 36px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.1; }
+.dialog-overview { margin: 0; color: var(--text-muted); font-size: 15px; line-height: 1.55; }
+.dialog-features { display: grid; gap: 9px; margin: 20px 0 24px; padding: 0; list-style: none; }
+.dialog-features li { position: relative; padding-left: 18px; color: var(--text-primary); font-size: 14px; line-height: 1.45; }
+.dialog-features li::before { position: absolute; left: 0; color: var(--accent); content: '•'; }
+.dialog-actions .btn-primary { display: inline-flex; min-height: 42px; align-items: center; padding: 0 16px; font-size: 13px; }
+.dialog-case-link { color: var(--text-muted); }
+.dialog-close { position: absolute; top: 16px; right: 16px; display: grid; width: 40px; height: 40px; place-items: center; color: var(--text-primary); background: var(--surface-2); border: 1px solid var(--border); border-radius: 50%; cursor: pointer; }
+.dialog-close:hover { color: var(--accent); border-color: var(--accent); }
+.dialog-close:focus-visible, .project-details-button:focus-visible, .project-live-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+@media (max-width: 640px) {
+  .projects-section { padding-top: 36px; padding-bottom: 48px; }
+  .project-grid { grid-template-columns: 1fr; gap: 32px; }
+  .project-image { aspect-ratio: 16 / 9; }
 }
 @media (prefers-reduced-motion: reduce) {
-  @keyframes refilterIn { from { opacity: 0; } }
+  .project-image img { transition: none; }
 }
-.carousel-spacer { flex-shrink: 0; width: calc((100vw - 1080px) / 2); min-width: 24px; }
-
-.carousel-card {
-  flex-shrink: 0; width: 420px; scroll-snap-align: start;
-  background: transparent; border-top: 2px solid var(--accent);
-  overflow: hidden; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease;
-  text-decoration: none; color: inherit;
-}
-.carousel-card:hover:not(.is-dragging) {
-  transform: translateY(-6px);
-  border-color: var(--text);
-}
-
-.carousel-img-wrap { position: relative; height: 260px; overflow: hidden; background: var(--surface-3); }
-.carousel-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); pointer-events: none;
-  /* scroll parallax via the individual properties, so the hover transform below still composes */
-  scale: 1.12; translate: 0 calc((var(--py, 0.5) - 0.5) * -36px); }
-@media (prefers-reduced-motion: reduce) { .carousel-img-wrap img { scale: 1; translate: none; } }
-.carousel-card:hover:not(.is-dragging) .carousel-img-wrap img { transform: scale(1.05); }
-.carousel-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%); }
-.carousel-index { position: absolute; bottom: 14px; right: 18px; font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; letter-spacing: 0.02em; color: rgba(255,255,255,0.12); pointer-events: none; }
-.carousel-info { padding: 24px 0 28px; border-bottom: 1px solid var(--border); }
-
-.carousel-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-strong); background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
-.carousel-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(164,224,75,0.06); }
-
-.dot-btn { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); border: none; cursor: pointer; transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease; }
-.dot-btn.active { background: var(--accent); width: 20px; border-radius: 3px; }
 </style>

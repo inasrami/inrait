@@ -1,166 +1,383 @@
 <template>
-  <section ref="heroSection" class="relative flex items-end w-full min-h-[min(900px,100svh)] overflow-hidden bg-bg-primary hero-section">
-    <img class="hero-project-image" src="/images/wall.webp" alt="Lime green curly braces forming a stylised code symbol" />
-    <div class="hero-project-overlay" />
-
-    <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 pb-12 md:pb-16">
-      <div class="hero-content-grid">
+  <section ref="hero" class="hero-section">
+    <div class="hero-stage">
+      <div ref="content" class="hero-content">
         <h1
-          class="flex flex-col p-0 m-0 text-left uppercase hero-headline"
-          :class="isBG ? 'hero-headline--cyrillic' : ''"
+          class="hero-headline"
+          :class="{ 'hero-headline--cyrillic': isBG }"
         >
-          <span class="block text-text-primary mb-[-2%]">{{ t('hero.line1') }}</span>
-          <span class="block accent-text mb-[-2%]">{{ t('hero.line2') }}</span>
-          <span class="block text-text-primary">{{ t('hero.line3') }}</span>
+          {{ t('hero.title') }}
         </h1>
 
-        <div class="hero-copy">
-          <p class="text-text-primary text-lg md:text-xl leading-relaxed mb-8 max-w-[450px]">
-            {{ t('hero.sub') }}
-          </p>
-          <div class="flex flex-col sm:flex-row gap-3 w-full max-w-[450px]">
-            <RouterLink to="/contact" class="flex-1 py-4 text-lg font-medium text-center btn-primary">
-              {{ t('hero.cta') }}
-            </RouterLink>
-            <a href="#work" class="flex-1 py-4 text-lg font-medium text-center transition-colors btn-outline hero-work-link" @click.prevent="scrollToWork">
-              {{ t('hero.ctaWork') }}
-            </a>
-          </div>
+        <p class="hero-copy">{{ t('hero.sub') }}</p>
+
+        <div class="hero-actions">
+          <RouterLink
+            :to="localizedPath('/contact')"
+            class="btn-primary"
+          >
+            {{ t('hero.cta') }}
+          </RouterLink>
+
+          <a
+            href="#work"
+            class="btn-outline hero-work-link"
+            @click.prevent="scrollToWork"
+          >
+            {{ t('hero.ctaWork') }}
+          </a>
         </div>
       </div>
+
+      <figure class="hero-preview">
+        <div class="preview-browser" aria-hidden="true">
+          <div class="browser-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span>barbersunity.com</span>
+          <span class="browser-spacer"></span>
+        </div>
+
+        <img
+          :src="previewSrc"
+          :alt="isBG
+            ? 'Начална страница на Barbers Unity'
+            : 'Barbers Unity homepage'"
+          width="1911"
+          height="993"
+          fetchpriority="high"
+          decoding="async"
+        />
+
+        <figcaption class="preview-caption">
+          <span>Barbers Unity</span>
+          <a :href="localizedPath('/work/barbers-unity')">
+            {{ isBG ? 'Виж проекта ↗' : 'View project ↗' }}
+          </a>
+        </figcaption>
+      </figure>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
-import { useScrollProgress } from '../composables/useScrollProgress.js'
 
-const { t, isBG } = useLanguage()
-const heroSection = ref(null)
-useScrollProgress(heroSection, { mode: 'leave', prop: '--hero-progress' })
+defineProps({
+  previewSrc: {
+    type: String,
+    default: '/images/barbers-unity-homepage.jpg',
+  },
+})
+
+const { t, isBG, localizedPath } = useLanguage()
+const hero = ref(null)
+const content = ref(null)
+
+let frame = 0
+let motionQuery
+let mobileQuery
+
+const clamp = (value) => Math.min(1, Math.max(0, value))
+
+function updateAnimation() {
+  frame = 0
+
+  const element = hero.value
+  if (!element) return
+
+  const reduced = motionQuery.matches
+  const mobile = mobileQuery.matches
+  const rect = element.getBoundingClientRect()
+
+  // The animation completes within approximately one viewport.
+  const distance = Math.max(
+    1,
+    Math.min(rect.height * 0.55, window.innerHeight * 0.85),
+  )
+
+  const progress = reduced ? 1 : clamp(-rect.top / distance)
+  const eased = 1 - Math.pow(1 - progress, 3)
+
+  element.style.setProperty(
+    '--copy-y',
+    `${reduced ? 0 : -eased * (mobile ? 20 : 70)}px`,
+  )
+  element.style.setProperty(
+    '--copy-opacity',
+    reduced || mobile ? '1' : String(1 - eased),
+  )
+  element.style.setProperty(
+    '--preview-y',
+    `${reduced ? 0 : (1 - eased) * (mobile ? 20 : 100)}px`,
+  )
+  element.style.setProperty(
+    '--preview-rotate',
+    `${reduced || mobile ? 0 : (1 - eased) * 12}deg`,
+  )
+  element.style.setProperty(
+    '--preview-scale',
+    reduced || mobile ? '1' : String(0.92 + eased * 0.08),
+  )
+
+  // Avoid invisible keyboard-focusable links after the text fades.
+  if (content.value) {
+    content.value.inert = !reduced && !mobile && eased > 0.97
+  }
+}
+
+function scheduleUpdate() {
+  if (!frame) frame = requestAnimationFrame(updateAnimation)
+}
 
 function scrollToWork() {
-  document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })
+  document.getElementById('work')?.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
+      .matches ? 'auto' : 'smooth',
+  })
 }
+
+onMounted(() => {
+  motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+  mobileQuery = window.matchMedia('(max-width: 639px)')
+
+  window.addEventListener('scroll', scheduleUpdate, { passive: true })
+  window.addEventListener('resize', scheduleUpdate)
+  motionQuery.addEventListener('change', scheduleUpdate)
+  mobileQuery.addEventListener('change', scheduleUpdate)
+
+  updateAnimation()
+})
+
+onUnmounted(() => {
+  cancelAnimationFrame(frame)
+  window.removeEventListener('scroll', scheduleUpdate)
+  window.removeEventListener('resize', scheduleUpdate)
+  motionQuery?.removeEventListener('change', scheduleUpdate)
+  mobileQuery?.removeEventListener('change', scheduleUpdate)
+})
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
-
-/* Physical SVG Noise Texture */
-.bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-.hero-project-image {
-  display: none;
-}
-
-.hero-project-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: rgba(0,0,0,0.48);
-}
-
 .hero-section {
+  --copy-y: 0px;
+  --copy-opacity: 1;
+  --preview-y: 100px;
+  --preview-rotate: 12deg;
+  --preview-scale: 0.92;
+
+  position: relative;
   isolation: isolate;
+  overflow: clip;
+  background: var(--bg, #000);
 }
 
 .hero-section::before {
   content: '';
   position: absolute;
-  inset: -6px;
-  z-index: 0;
-  background: url('/images/wall.webp') center center / contain no-repeat;
-  background-attachment: fixed;
-  filter: blur(6px) saturate(0.78) contrast(1.06);
-  transform: scale(1.02);
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    rgba(164, 224, 75, 0.065),
+    transparent 60%
+  );
 }
 
-.hero-content-grid {
-  display: grid;
-  min-width: 0;
-  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
-  align-items: end;
-  gap: 64px;
-  translate: 0 calc(var(--hero-progress, 0) * -56px);
-  opacity: calc(1 - var(--hero-progress, 0) * 1.1);
+.hero-stage {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(100px, 13vh, 160px) 32px 48px;
+  perspective: 1400px;
 }
 
-/* Tight, massive typography left-aligned */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: var(--copy-opacity);
+  transform: translateY(var(--copy-y));
+}
+
+.hero-content[inert] {
+  pointer-events: none;
+}
+
 .hero-headline {
-  min-width: 0;
-  max-width: 100%;
-  overflow-wrap: anywhere;
-  font-family: 'Bebas Neue', sans-serif;
-  /* Adjusted fluid scaling (9vw instead of 13vw) so the long "AND SYSTEMS" line fits on smaller screens without overflowing */
-  font-size: clamp(52px, 9vw, 170px);
-  letter-spacing: 0.02em;
-  line-height: 0.90;
+  max-width: 960px;
+  margin: 0;
+  color: var(--text, #f5f5f7);
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(52px, 7.5vw, 96px);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 1.02;
   text-wrap: balance;
 }
 
 .hero-headline--cyrillic {
-  font-family: 'Oswald', 'Arial Narrow', sans-serif;
-  font-size: clamp(40px, 7vw, 170px);
-  letter-spacing: 0em;
-  line-height: 1;
-  font-weight: 700;
+  font-size: clamp(46px, 7vw, 88px);
+  letter-spacing: -0.05em;
 }
 
 .hero-copy {
-  position: relative;
-  min-width: 0;
-  max-width: 450px;
-  padding: 0;
+  max-width: 560px;
+  margin: 24px 0 0;
+  color: var(--text-muted, #888);
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.5;
 }
 
-.hero-work-link { color: var(--text-primary); background: rgba(0,0,0,0.22); border-color: rgba(255,255,255,0.42); }
-.hero-work-link:hover { background: rgba(255,255,255,0.9); color: #000; }
-.hero-copy .btn-primary, .hero-copy .btn-outline { min-width: 0; white-space: normal; }
-
-/* Stylish outline text for the accent line to create depth */
-.accent-text {
-  color: transparent;
-  -webkit-text-stroke: 2px var(--accent);
-  transition: color 0.3s ease;
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
 }
 
-.accent-text:hover {
-  color: var(--accent);
-}
-
-.btn-primary, .btn-outline {
+.hero-actions a {
+  min-width: 164px;
+  padding: 14px 20px;
   border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
 }
 
-@media (max-width: 1024px) {
-  .hero-headline {
-    line-height: 0.9;
-  }
+.hero-work-link {
+  color: var(--text, #f5f5f7);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hero-work-link:hover {
+  color: #000;
+  background: #f5f5f7;
+}
+
+.hero-preview {
+  position: relative;
+  width: min(100%, 1040px);
+  margin: 64px auto 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: #111;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.45);
+  transform-origin: center top;
+  transform:
+    translateY(var(--preview-y))
+    rotateX(var(--preview-rotate))
+    scale(var(--preview-scale));
+}
+
+.preview-browser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 38px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #999;
+  font-size: 11px;
+}
+
+.browser-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.browser-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #444;
+}
+
+.browser-spacer {
+  width: 28px;
+}
+
+.hero-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.preview-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  color: var(--text, #f5f5f7);
+  font-size: 13px;
+}
+
+.preview-caption a {
+  color: var(--accent, #a4e04b);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--accent, #a4e04b);
+  outline-offset: 5px;
 }
 
 @media (max-width: 639px) {
-  .hero-section { display: flex; min-height: 720px; padding-top: 0; }
-  .hero-project-overlay { inset: 0; height: auto; background: rgba(0,0,0,0.5); }
-  .hero-content-grid { display: flex; flex-direction: column; align-items: stretch; gap: 34px; }
+  .hero-section {
+    --preview-y: 20px;
+    --preview-rotate: 0deg;
+    --preview-scale: 1;
+  }
+
+  .hero-stage {
+    padding: 96px 20px 32px;
+    perspective: none;
+  }
+
   .hero-headline {
-    font-size: clamp(38px, 14vw, 82px);
-    line-height: 0.88;
+    font-size: clamp(44px, 11vw, 64px);
   }
 
   .hero-headline--cyrillic {
-    font-size: clamp(34px, 12vw, 76px);
+    font-size: clamp(38px, 10vw, 58px);
   }
 
-  .hero-copy { max-width: none; }
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions a {
+    flex: 1 1 140px;
+    min-width: 0;
+  }
+
+  .hero-preview {
+    margin-top: 40px;
+    border-radius: 9px;
+  }
+
+  .preview-caption {
+    padding: 14px;
+    font-size: 12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-content-grid { translate: none; opacity: 1; }
+  .hero-content {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-preview {
+    transform: none;
+  }
 }
 </style>

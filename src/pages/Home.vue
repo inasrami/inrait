@@ -1,13 +1,9 @@
 <template>
   <div>
     <HeroSection />
-    <PhilosophySection />
-    <ServicesSection />
-    <IntegrationsSection />
     <ProjectsSection />
-    <ComparisonTable />
+    <ServicesSection />
     <AboutSection />
-    <TechSpecs />
     <ProcessSection />
     <FaqSection />
     <CtaSection />
@@ -16,18 +12,14 @@
 </template>
 
 <script setup>
-import SectionRail from '../components/SectionRail.vue'
 import { useSeo }          from '../composables/useSeo.js'
 import { useLanguage }     from '../composables/useLanguage.js'
 import { useJsonLd, localBusinessSchema, webSiteSchema, breadcrumbSchema } from '../composables/Usejsonld.js'
+import SectionRail         from '../components/SectionRail.vue'
 import HeroSection         from '../components/HeroSection.vue'
-import PhilosophySection   from '../components/PhilosophySection.vue'
 import ServicesSection     from '../components/ServicesSection.vue'
-import IntegrationsSection from '../components/IntegrationsSection.vue'
 import ProjectsSection     from '../components/ProjectsSection.vue'
-import ComparisonTable     from '../components/Comparisontable.vue'
 import AboutSection        from '../components/AboutSection.vue'
-import TechSpecs           from '../components/TechSpecs.vue'
 import ProcessSection      from '../components/ProcessSection.vue'
 import FaqSection          from '../components/Faqsection.vue'
 import CtaSection          from '../components/CtaSection.vue'

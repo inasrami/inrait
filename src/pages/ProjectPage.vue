@@ -1,168 +1,112 @@
 <template>
-  <div v-if="project" class="px-6 pt-24 pb-40">
-
-    <!-- Back button -->
-    <div class="max-w-[1080px] mx-auto mb-16">
-      <RouterLink
-        to="/"
-        class="inline-flex items-center gap-2 text-text-muted text-[14px] hover:text-text-main transition-colors"
-        style="cursor: pointer;"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  <main v-if="project" class="project-page px-6">
+    <div class="project-container">
+      <RouterLink :to="localizedPath('/')" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
         {{ t('projects.backToWork') }}
       </RouterLink>
-    </div>
 
-    <!-- Hero -->
-    <div class="max-w-[1080px] mx-auto mb-16">
-      <div class="flex items-center gap-3 mb-6">
-  <div class="chip">{{ project.tag }}</div>
-  <span v-if="project.isNew" class="badge-new">
-    <span class="badge-dot"></span>{{ t('projects.newBadge') }}
-  </span>
-</div>
+      <header class="project-header">
+        <h1 class="font-display">{{ project.title }}</h1>
+        <p>{{ copy.overview }}</p>
+      </header>
 
-      <h1
-        class="mb-6 font-display"
-        style="font-size: clamp(56px, 10vw, 120px); letter-spacing: 0.02em; line-height: 0.95;"
-      >
-        {{ project.title.toUpperCase() }}
-      </h1>
+      <figure class="project-image">
+        <img
+          v-if="project.image"
+          :src="project.image"
+          :alt="`${t('projects.previewAlt')}: ${project.title}`"
+          :width="project.imageWidth"
+          :height="project.imageHeight"
+          fetchpriority="high"
+        />
+      </figure>
 
-      <p class="text-[22px] text-text-muted max-w-[600px]" style="font-weight: 300; line-height: 1.5; letter-spacing: -0.01em;">
-        {{ project.tagline }}
-      </p>
-    </div>
-
-    <!-- Full-width image -->
-    <div class="max-w-[1200px] mx-auto mb-24 rounded-3xl overflow-hidden" style="border: 1px solid var(--border); aspect-ratio: 16/7; background: var(--surface-3);">
-      <img
-        v-if="project.image"
-        :src="project.image"
-        :alt="project.title"
-        class="object-cover object-top w-full h-full"
-      />
-      <div v-else class="flex items-center justify-center w-full h-full" style="color: var(--text-dim); font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">
-        {{ project.title }} Preview
-      </div>
-    </div>
-
-    <!-- Project details -->
-    <div class="max-w-[1080px] mx-auto">
-
-      <!-- Meta row -->
-      <div class="grid grid-cols-2 gap-8 py-10 mb-20 md:grid-cols-4" style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-        <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaYear') }}</div>
-          <div class="font-semibold text-[16px]">{{ project.year }}</div>
-        </div>
-        <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaCategory') }}</div>
-          <div class="font-semibold text-[16px]">{{ project.tag }}</div>
-        </div>
-        <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaStack') }}</div>
-          <div class="flex flex-wrap gap-1 mt-1">
-            <span v-for="tech in project.stack" :key="tech" class="chip" style="font-size: 11px;">{{ tech }}</span>
-          </div>
-        </div>
-        <div>
-          <div class="text-[11px] uppercase tracking-widest text-text-dim mb-2">{{ t('projects.metaLive') }}</div>
-          <a
-            :href="project.url"
-            target="_blank"
-            rel="noopener"
-            class="inline-flex items-center gap-1 text-[14px] font-medium hover:underline"
-            :style="`color: ${project.color}; cursor: pointer;`"
-          >
-            {{ t('servicesPage.visitSite') }}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      <div class="project-details">
+        <ul class="project-features">
+          <li v-for="feature in copy.features?.slice(0, 3)" :key="feature">{{ feature }}</li>
+        </ul>
+        <p class="project-year">{{ project.year }}</p>
+        <div class="project-actions">
+          <a v-if="project.liveUrl" :href="project.liveUrl" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            {{ t('projects.visitLive') }}
           </a>
+          <a v-else-if="project.sourceUrl" :href="project.sourceUrl" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            {{ t('projects.viewSource') }}
+          </a>
+          <RouterLink :to="localizedPath('/contact')" class="contact-link">{{ t('cta.start') }}</RouterLink>
         </div>
       </div>
-
-      <!-- Case study body -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-16">
-
-        <div class="fade-up">
-          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.overview') }}</h2>
-          <p class="text-text-muted text-[17px] leading-relaxed">{{ project.description }}</p>
-        </div>
-
-        <div class="fade-up" style="transition-delay: 0.1s;">
-          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.challenge') }}</h2>
-          <p class="text-text-muted text-[17px] leading-relaxed">{{ project.challenge }}</p>
-        </div>
-
-        <div class="fade-up" style="transition-delay: 0.15s;">
-          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.solution') }}</h2>
-          <p class="text-text-muted text-[17px] leading-relaxed">{{ project.solution }}</p>
-        </div>
-
-        <div class="fade-up" style="transition-delay: 0.2s;">
-          <h2 class="mb-4 text-[20px] font-semibold">{{ t('projects.outcome') }}</h2>
-          <p class="text-text-muted text-[17px] leading-relaxed">{{ project.outcome }}</p>
-        </div>
-
-      </div>
-
-      <!-- Bottom CTA -->
-      <div class="mt-32 text-center fade-up">
-        <div class="mb-16 divider" />
-        <h2 class="font-display text-[clamp(40px,7vw,80px)] mb-8" style="letter-spacing: 0.02em;">
-          {{ t('cta.line1') }}<br/><span style="color: var(--accent);">{{ t('projects.likeThis') }}</span>
-        </h2>
-        <RouterLink to="/contact" class="btn-primary text-[16px] px-10 py-5">
-          {{ t('cta.start') }}
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </RouterLink>
-      </div>
-
     </div>
-  </div>
+  </main>
 
-  <!-- 404 state -->
-  <div v-else class="flex items-center justify-center min-h-screen px-6 text-center">
-    <div>
-      <h1 class="font-display text-[120px] text-accent" style="letter-spacing: 0.02em;">404</h1>
-      <p class="text-text-muted text-[18px] mb-8">{{ t('projects.notFound') }}</p>
-      <RouterLink to="/" class="btn-primary">{{ t('notFound.home') }}</RouterLink>
-    </div>
-  </div>
+  <main v-else class="not-found">
+    <h1>404</h1>
+    <p>{{ t('projects.notFound') }}</p>
+    <RouterLink :to="localizedPath('/')" class="btn-primary">{{ t('notFound.home') }}</RouterLink>
+  </main>
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { getProject } from '../data/Projects.js'
-import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
 import { useLanguage } from '../composables/useLanguage.js'
 import { useJsonLd, breadcrumbSchema, projectSchema } from '../composables/Usejsonld.js'
 
-const route   = useRoute()
-const { t } = useLanguage()
+const route = useRoute()
+const { t, lang, localizedPath } = useLanguage()
 const project = computed(() => getProject(route.params.slug))
+const copy = computed(() => project.value?.localized?.[lang.value] ?? project.value ?? {})
 
-useFadeUp()
-
-// Set once during setup so the SEO tags and JSON-LD end up in the prerendered HTML.
-// App.vue keys the page by full path, so this component is re-created for each project.
 const current = project.value
 if (current) {
+  const description = current.localized?.[lang.value]?.description ?? current.description
   useSeo({
-    title:       current.title,
-    description: current.description,
-    canonical:   `/work/${current.slug}`,
-    image:       current.image,
+    title: current.title,
+    description,
+    canonical: `/work/${current.slug}`,
+    image: current.image,
   })
   useJsonLd([
     breadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: 'Work', url: '/#work' },
+      { name: t('projects.label'), url: '/#work' },
       { name: current.title, url: `/work/${current.slug}` },
     ]),
-    projectSchema(current),
+    projectSchema({ ...current, description }),
   ])
 }
 </script>
+
+<style scoped>
+.project-page { min-height: 100vh; padding-top: 104px; padding-bottom: 72px; }
+.project-container { max-width: 1080px; margin: 0 auto; }
+.back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 13px; }
+.back-link:hover, .contact-link:hover { color: var(--accent); }
+.project-header { margin: 28px 0 24px; }
+.project-header h1 { margin: 0 0 8px; font-size: clamp(36px, 8vw, 72px); font-weight: 400; letter-spacing: 0.02em; line-height: 1; }
+.project-header p { max-width: 650px; margin: 0; color: var(--text-muted); font-size: clamp(16px, 2.2vw, 20px); line-height: 1.5; }
+.project-image { overflow: hidden; aspect-ratio: 16 / 8; margin: 0; background: var(--surface-3); border: 1px solid var(--border); border-radius: 12px; }
+.project-image img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.project-details { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 22px; }
+.project-features { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; padding: 0; list-style: none; }
+.project-features li { color: var(--text-muted); font-size: 13px; }
+.project-features li::before { margin-right: 8px; color: var(--accent); content: '•'; }
+.project-year { flex: 0 0 auto; margin: 0; color: var(--text-dim); font-size: 12px; }
+.project-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 18px; }
+.project-actions .btn-primary { padding: 11px 16px; font-size: 13px; }
+.contact-link { color: var(--text-muted); font-size: 13px; font-weight: 600; }
+.not-found { display: flex; min-height: 70vh; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px; text-align: center; }
+.not-found h1 { margin: 0; color: var(--accent); font-size: 80px; }
+.not-found p { margin: 0; color: var(--text-muted); }
+@media (max-width: 740px) {
+  .project-details { align-items: flex-start; flex-direction: column; }
+  .project-features { flex-direction: column; }
+  .project-actions { flex-wrap: wrap; }
+}
+</style>

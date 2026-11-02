@@ -52,6 +52,7 @@
           <div
             v-for="(service, i) in SERVICES"
             :key="service.id"
+            :id="service.id"
             class="service-card card-entrance"
             :class="{ 'service-card--selected': isSelected(service.id) }"
             :style="`animation-delay: ${i * 0.07}s`"
@@ -60,7 +61,7 @@
             <div class="service-index">0{{ i + 1 }}</div>
 
             <!-- Card header - click toggles service selection -->
-            <div class="card-header" @click="toggleService(service.id)" data-cursor>
+            <button type="button" class="card-header" @click="toggleService(service.id)" :aria-pressed="isSelected(service.id)" data-cursor>
 
               <Transition name="badge">
                 <div v-if="isSelected(service.id)" class="selected-badge">
@@ -96,11 +97,11 @@
                   <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
               </div>
-            </div>
+            </button>
 
             <div class="service-meta">
               <span><span class="comparison-label">{{ t('servicesPage.timeline') }}</span> {{ service.timeline }}</span>
-              <button class="details-toggle" type="button" @click.stop="toggleDetails(service.id)">
+              <button class="details-toggle" type="button" @click.stop="toggleDetails(service.id)" :aria-expanded="openDetails === service.id" :aria-controls="`details-${service.id}`">
                 {{ openDetails === service.id ? t('servicesPage.hideDetails') : t('servicesPage.viewDetails') }}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" :class="{ 'chevron--open': openDetails === service.id }">
                   <polyline points="6 9 12 15 18 9" />
@@ -117,6 +118,7 @@
                   type="button"
                   class="addon-chip"
                   :class="{ 'addon-chip--checked': isAddonSelected(addon.id) }"
+                  :aria-pressed="isAddonSelected(addon.id)"
                   @click.stop="toggleAddon(addon.id, service.id)"
                 >
                   <span class="addon-chip-mark">{{ isAddonSelected(addon.id) ? '✓' : '+' }}</span>
@@ -127,7 +129,7 @@
             </div>
 
             <Transition name="details">
-              <div v-if="openDetails === service.id" class="service-details">
+              <div v-if="openDetails === service.id" :id="`details-${service.id}`" class="service-details">
                 <div class="comparison-item comparison-item--wide">
                   <span class="comparison-label">{{ t('servicesPage.bestFor') }}</span>
                   <span class="comparison-value">{{ service.bestFor }}</span>
@@ -218,7 +220,7 @@
       </div>
     </Transition>
 
-    <div :style="hasSelection ? 'height: 96px' : 'height: 40px'" />
+    <div :style="hasSelection ? 'height: calc(96px + var(--cookie-banner-height, 0px))' : 'height: 40px'" />
   </div>
 </template>
 
@@ -365,6 +367,7 @@ const hasSelection = computed(() =>
 .card-header {
   position: relative; display: flex; align-items: flex-start;
   grid-column: 2; gap: 14px; padding: 28px 0 16px;
+  width: 100%; color: inherit; background: transparent; border: 0; font: inherit; text-align: left;
   user-select: none; cursor: pointer; transition: background 0.2s ease;
 }
 .card-header:hover { background: rgba(255,255,255,0.02); }
@@ -487,7 +490,7 @@ const hasSelection = computed(() =>
 .services-footer-note { display: flex; justify-content: center; gap: 8px; padding: 0 24px 38px; color: var(--text-dim); font-size: 12px; text-align: center; }
 
 .quote-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  position: fixed; bottom: var(--cookie-banner-height, 0px); left: 0; right: 0; z-index: 50;
   background: rgba(8,8,8,0.94); backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px); border-top: 1px solid var(--border-strong);
   padding: 14px 0;
@@ -529,4 +532,7 @@ const hasSelection = computed(() =>
   .price-actions { width: 100%; justify-content: flex-start; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .card-entrance { opacity: 1; animation: none; }
+}
 </style>

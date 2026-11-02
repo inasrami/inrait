@@ -19,7 +19,7 @@
         <a
           v-for="link in navLinks"
           :key="link.id"
-          :href="`/#${link.id}`"
+          :href="`${localizedPath('/', isBG ? 'bg' : 'en')}#${link.id}`"
           class="nav-link"
           :class="{ 'nav-link--active': activeSection === link.id }"
           @click.prevent="scrollToSection(link.id)"
@@ -56,12 +56,13 @@
 
       <!-- Mobile right: lang + burger -->
       <div class="flex items-center gap-3 md:hidden">
-        <button class="lang-btn" @click="switchLanguage" style="cursor: pointer;">
+        <button class="lang-btn" @click="switchLanguage" style="cursor: pointer;"
+          :aria-label="`Switch to ${isBG ? 'English' : 'Bulgarian'}`">
 
           <span class="lang-code">{{ isBG ? 'BG' : 'EN' }}</span>
         </button>
         <button class="flex flex-col gap-[5px] p-2" style="cursor: pointer;"
-          @click="mobileOpen = !mobileOpen" aria-label="Toggle menu">
+          @click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen" aria-controls="mobile-menu" :aria-label="t('nav.toggleMenu')">
           <span class="block w-5 h-[1.5px] bg-white transition-all duration-300 origin-center"
             :style="mobileOpen ? 'transform: rotate(45deg) translate(5px, 5px)' : ''" />
           <span class="block w-5 h-[1.5px] bg-white transition-all duration-300"
@@ -77,7 +78,7 @@
   <!-- Mobile overlay -->
   <Teleport to="body">
     <Transition name="mobile-menu">
-      <div v-if="mobileOpen" class="mobile-menu" @click.self="mobileOpen = false">
+      <div v-if="mobileOpen" id="mobile-menu" class="mobile-menu" @click.self="mobileOpen = false">
         <div class="flex flex-col items-center gap-8 text-center">
           <a
             v-for="link in navLinks"
@@ -110,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { useLanguage } from '../composables/useLanguage.js'
 
@@ -151,19 +152,19 @@ function destroyObservers() {
   activeSection.value = ''
 }
 
-function scrollToSection(id) {
+async function scrollToSection(id) {
   mobileOpen.value = false
-  if (route.path !== '/') {
-    router.push('/').then(() => {
-      setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 350)
-    })
-  } else {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-  }
+  if (route.path !== '/' && route.path !== '/bg') await router.push(localizedPath('/', isBG.value ? 'bg' : 'en'))
+  await nextTick()
+  document.getElementById(id)?.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+  })
 }
 
 function handleLogoClick() {
-  if (route.path === '/') window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (route.path === '/' || route.path === '/bg') {
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  }
 }
 
 function switchLanguage() {
@@ -181,14 +182,17 @@ function switchLanguage() {
 
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
-  if (route.path === '/') initObservers()
+  if (route.path === '/' || route.path === '/bg') initObservers()
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
   destroyObservers()
 })
-watch(() => route.path, (path) => {
-  if (path === '/') setTimeout(initObservers, 400)
+watch(() => route.path, async (path) => {
+  if (path === '/' || path === '/bg') {
+    await nextTick()
+    initObservers()
+  }
   else destroyObservers()
 })
 </script>
@@ -259,4 +263,15 @@ watch(() => route.path, (path) => {
 
 .mobile-menu-enter-active, .mobile-menu-leave-active { transition: opacity 0.3s ease; }
 .mobile-menu-enter-from, .mobile-menu-leave-to { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-nav,
+  .nav-brand img,
+  .lang-btn,
+  .mobile-nav-item,
+  .mobile-menu-enter-active,
+  .mobile-menu-leave-active {
+    transition: none;
+  }
+}
 </style>

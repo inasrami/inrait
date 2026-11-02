@@ -1,158 +1,37 @@
 <template>
-  <section id="about" class="relative px-6 py-36 overflow-hidden">
-
-    <div class="max-w-[1080px] mx-auto relative z-10">
-
-      <!-- Header row -->
-      <div class="flex flex-wrap items-start justify-between gap-6 mb-20">
-        <div>
-          <h2 class="font-display fade-up text-[clamp(48px,8vw,80px)]"
-            style="letter-spacing:0.02em; line-height:1; transition-delay:0.05s;">
-            {{ t('about.title') }}
-          </h2>
-        </div>
-
-      
-      </div>
-
-      <!-- Studio statement -->
-      <p class="fade-up text-[clamp(18px,2.5vw,26px)] leading-relaxed mb-20 max-w-3xl"
-        style="font-weight:300; letter-spacing:-0.01em; transition-delay:0.08s;">
-        {{ t('about.statement') }}
-      </p>
-
-      <!-- Values grid -->
-      <div ref="valuesGrid" class="grid grid-cols-1 gap-4 mb-16 sm:grid-cols-2 lg:grid-cols-4">
-        <div
-          v-for="(val, i) in values"
-          :key="val.title"
-          class="value-card fade-up"
-          :style="`--i:${i}; transition-delay:${0.1 + i * 0.07}s`"
-        >
-          <div class="mb-5 value-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="var(--accent)" stroke-width="1.75"
-              stroke-linecap="round" stroke-linejoin="round">
-              <g v-html="valueIcons[i]" />
-            </svg>
-          </div>
-          <h3 class="font-semibold text-[15px] mb-2" style="letter-spacing:-0.01em;">{{ val.title }}</h3>
-          <p class="text-[13px] text-text-muted leading-relaxed">{{ val.body }}</p>
-        </div>
-      </div>
-
-      <!-- Bottom strip: location + CTA -->
-      <div class="about-strip fade-up" style="transition-delay:0.45s;">
-        <div class="flex items-center gap-3 text-text-muted text-[14px]">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-            <circle cx="12" cy="10" r="3"/>
-          </svg>
-          {{ t('about.location') }}
-        </div>
-        <RouterLink to="/contact" class="btn-outline text-[13px] py-[10px] px-5" style="cursor: pointer;">
-          {{ t('about.startProject') }}
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/>
-            <polyline points="12 5 19 12 12 19"/>
-          </svg>
-        </RouterLink>
-      </div>
-
+  <section id="about" class="about-section px-6">
+    <div class="about-container">
+      <h2 class="font-display">{{ t('about.title') }}</h2>
+      <p class="about-intro">{{ t('about.statement') }}</p>
+      <ul class="about-values">
+        <li v-for="value in values" :key="value.title">
+          <h3>{{ value.title }}</h3>
+          <p>{{ value.body }}</p>
+        </li>
+      </ul>
     </div>
   </section>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { RouterLink } from 'vue-router'
-import { useFadeUp } from '../composables/useFadeUp'
+import { computed } from 'vue'
 import { useLanguage } from '../composables/useLanguage.js'
-import { useScrollProgressMany } from '../composables/useScrollProgress.js'
 
-useFadeUp()
 const { t } = useLanguage()
-const valuesGrid = ref(null)
-useScrollProgressMany(valuesGrid, '.value-card', { mode: 'enter', start: 0.95, end: 0.55, prop: '--value-progress' })
-
-const values = computed(() => t('about.values'))
-
-const valueIcons = [
-  '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
-  '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
-  '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>',
-  '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
-]
+const values = computed(() => t('about.values').slice(0, 3))
 </script>
 
 <style scoped>
-.availability-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 18px;
-  border-radius: 100px;
-  border: 1px solid rgba(164,224,75,0.25);
-  background: rgba(164,224,75,0.05);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--accent);
-  white-space: nowrap;
-  align-self: flex-start;
-  margin-top: 6px;
-}
-
-.avail-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  flex-shrink: 0;
-  animation: pulse-dot 2.5s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 6px var(--accent); }
-  50%       { box-shadow: 0 0 14px var(--accent); }
-}
-
-.value-card {
-  padding: 28px 4px 24px;
-  border-top: 1px solid var(--border-strong);
-  border-bottom: 1px solid var(--border);
-  transition: border-color 0.25s ease, transform 0.25s ease;
-  --value-reveal: clamp(0, calc(var(--value-progress, 1) * 1.5 - var(--i, 0) * 0.12), 1);
-  translate: 0 calc((1 - var(--value-reveal)) * 32px);
-  scale: calc(0.97 + var(--value-reveal) * 0.03);
-}
-
-.value-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-3px);
-}
-
-.value-icon {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-left: 2px solid var(--accent);
-}
-
-.about-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 20px 0;
-  border-top: 1px solid var(--border-strong);
-  border-bottom: 1px solid var(--border);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .value-card { --value-progress: 1 !important; }
+.about-section { padding-top: 56px; padding-bottom: 60px; }
+.about-container { max-width: 1080px; margin: 0 auto; }
+h2 { margin: 0 0 14px; font-size: clamp(32px, 5vw, 48px); font-weight: 400; letter-spacing: 0.02em; line-height: 1.05; }
+.about-intro { max-width: 660px; margin: 0 0 28px; color: var(--text-muted); font-size: clamp(16px, 2vw, 19px); line-height: 1.55; }
+.about-values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
+.about-values li { padding-top: 14px; border-top: 1px solid var(--border-strong); }
+.about-values h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+.about-values p { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+@media (max-width: 600px) {
+  .about-section { padding-top: 44px; padding-bottom: 48px; }
+  .about-values { grid-template-columns: 1fr; gap: 14px; }
 }
 </style>

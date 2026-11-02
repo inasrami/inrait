@@ -95,14 +95,6 @@ export function webSiteSchema() {
     description: 'Web engineering studio based in Sofia, Bulgaria.',
     publisher: { '@id': `${SITE_URL}/#business` },
     inLanguage: ['en', 'bg'],
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   }
 }
 

@@ -38,8 +38,8 @@
             <div class="flex flex-col gap-3">
               <RouterLink to="/services" class="footer-link">{{ t('footer.navServices') }}</RouterLink>
               <RouterLink to="/blog" class="footer-link">{{ t('footer.navBlog') }}</RouterLink>
-              <a href="/#philosophy" class="footer-link">{{ t('footer.navPhilo') }}</a>
-              <a href="/#specs" class="footer-link">{{ t('footer.navStack') }}</a>
+              <a href="/#about" class="footer-link">{{ t('footer.navAbout') }}</a>
+              <RouterLink to="/integrations" class="footer-link">{{ t('footer.navIntegrations') }}</RouterLink>
               <a href="/#process" class="footer-link">{{ t('footer.navProcess') }}</a>
               <RouterLink to="/contact" class="footer-link">{{ t('footer.navContact') }}</RouterLink>
             </div>
