@@ -15,6 +15,8 @@
       </div>
     </section>
 
+    <p class="pricing-note max-w-[1080px] mx-auto px-6">{{ t('servicesPage.pricingNote') }}</p>
+
     <!-- Bundle discount banner - shown when 2+ services selected -->
     <Transition name="banner">
       <div v-if="currentDiscount" class="discount-banner">
@@ -30,7 +32,7 @@
                 -{{ currentDiscount.percent }}% {{ t('servicesPage.bannerLabel') }}
               </div>
               <div class="text-[12px] text-black/60">
-                {{ selectedServices.length >= 3 ? t('servicesPage.bannerMax') : t('servicesPage.bannerNext') }}
+                {{ pricingServiceCount >= 3 ? t('servicesPage.bannerMax') : t('servicesPage.bannerNext') }}
               </div>
             </div>
           </div>
@@ -149,9 +151,12 @@
             <!-- Price row + add-ons toggle - @click.stop prevents header toggle -->
             <div class="price-row" @click.stop>
               <div>
-                <div class="price-label-sm">{{ t('servicesPage.basePrice') }}</div>
-                <div class="font-display text-[32px] leading-none" style="letter-spacing:0.02em; color:var(--accent);">
+                <div v-if="service.basePrice !== null" class="price-label-sm">{{ t('servicesPage.basePrice') }}</div>
+                <div v-if="service.basePrice !== null" class="font-display text-[32px] leading-none" style="letter-spacing:0.02em; color:var(--accent);">
                   €{{ service.basePrice.toLocaleString() }}<span v-if="service.priceUnit === 'month'" class="price-unit">{{ t('servicesPage.perMonth') }}</span>
+                </div>
+                <div v-else class="font-semibold text-[14px] leading-tight text-accent">
+                  {{ t('servicesPage.quotedSeparately') }}
                 </div>
               </div>
               <div class="price-actions">
@@ -199,10 +204,11 @@
                 <span class="text-[11px] text-text-dim line-through">€{{ subtotal.toLocaleString() }}</span>
                 <span class="discount-badge">-{{ currentDiscount.percent }}%</span>
               </div>
-              <div class="font-display text-[28px] leading-none text-accent" style="letter-spacing:0.02em;">
+              <div v-if="discountedTotal > 0" class="font-display text-[28px] leading-none text-accent" style="letter-spacing:0.02em;">
                 ~€{{ discountedTotal.toLocaleString() }}
               </div>
-              <div class="text-[9px] text-text-dim mt-0.5 uppercase tracking-widest">{{ t('servicesPage.estimate') }}</div>
+              <div v-if="discountedTotal > 0" class="text-[9px] text-text-dim mt-0.5 uppercase tracking-widest">{{ t('servicesPage.estimate') }}</div>
+              <div v-if="hasQuoteOnlySelection" class="summary-quoted-total">{{ t('servicesPage.quotedSeparately') }}</div>
             </div>
             <RouterLink
               :to="{ path: '/contact', query: { services: selectedServices.join(','), addons: selectedAddons.join(',') } }"
@@ -250,6 +256,8 @@ useJsonLd([
 const selectedServices = ref([])
 const selectedAddons   = ref([])
 const openDetails      = ref(null)
+const pricingServiceCount = computed(() => selectedServices.value.filter(id => serviceById(id)?.basePrice !== null).length)
+const hasQuoteOnlySelection = computed(() => selectedServices.value.some(id => serviceById(id)?.quoteOnly))
 
 function isSelected(id)      { return selectedServices.value.includes(id) }
 function isAddonSelected(id) { return selectedAddons.value.includes(id) }
@@ -297,7 +305,7 @@ const subtotal = computed(() => {
 })
 
 // currentDiscount is null when < 2 services selected - banner only shows when not null
-const currentDiscount = computed(() => getBundleDiscount(selectedServices.value.length))
+const currentDiscount = computed(() => getBundleDiscount(pricingServiceCount.value))
 
 const discountedTotal = computed(() => {
   if (!currentDiscount.value) return subtotal.value
@@ -311,6 +319,7 @@ const hasSelection = computed(() =>
 
 <style scoped>
 .services-page { min-height: 100vh; }
+.pricing-note { margin-top: -12px; margin-bottom: 28px; color: var(--text-dim); font-size: 12px; line-height: 1.6; }
 .price-unit { margin-left: 6px; font-family: inherit; font-size: 13px; letter-spacing: 0; color: var(--text-dim, rgba(255,255,255,0.5)); }
 .services-hero { border-bottom: 1px solid var(--border); }
 .services-kicker { margin-bottom: 14px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
@@ -503,6 +512,7 @@ const hasSelection = computed(() =>
   font-weight: 500; color: var(--text-muted); background: rgba(255,255,255,0.05);
   border: 1px solid var(--border-strong); border-radius: 100px; padding: 5px 8px 5px 12px;
 }
+.summary-quoted-total { margin-top: 3px; color: var(--text-muted); font-size: 11px; }
 .addon-count-chip {
   display: inline-flex; align-items: center; font-size: 11px; font-weight: 600;
   color: var(--accent); background: rgba(164,224,75,0.08);

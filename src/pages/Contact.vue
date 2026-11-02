@@ -218,7 +218,9 @@ function queryIds(value) {
 function prefillFromEstimator() {
   const serviceIds = queryIds(route.query.services)
   const addonIds = queryIds(route.query.addons)
-  const selectedServices = SERVICES.value.filter(service => serviceIds.includes(service.id))
+  const selectedServices = serviceIds
+    .map(id => SERVICES.value.find(service => service.id === id))
+    .filter(Boolean)
   const selectedAddons = SERVICES.value
     .flatMap(service => service.addons)
     .filter(addon => addonIds.includes(addon.id))
@@ -231,7 +233,9 @@ function prefillFromEstimator() {
 
   const lines = [
     `${t('contact.estimateServices')}`,
-    ...selectedServices.map(service => `- ${service.title}`),
+    ...selectedServices.map(service => (
+      `- ${service.title}${service.quoteOnly ? ` — ${t('servicesPage.quotedSeparately')}` : ''}`
+    )),
   ]
 
   if (selectedAddons.length) {

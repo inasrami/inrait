@@ -92,6 +92,7 @@ export function calcQuote({
   discount = { mode: 'auto', custom: 0 }, vatMode = 'none', depositPercent = 0,
 }) {
   const lines = []
+  const quotedServices = []
   let discountBase = 0
   let serviceCount = 0
 
@@ -99,13 +100,17 @@ export function calcQuote({
     const servicePicked = serviceIds.includes(svc.id)
 
     if (servicePicked) {
-      serviceCount += 1
-      const unit = toCents(svc.basePrice)
-      lines.push({
-        type: 'service', id: svc.id, label: svc.title, qty: 1, unit, total: unit,
-        deliverables: svc.deliverables || [], timeline: svc.timeline || '',
-      })
-      discountBase += unit
+      if (svc.basePrice === null) {
+        quotedServices.push(svc.title)
+      } else {
+        serviceCount += 1
+        const unit = toCents(svc.basePrice)
+        lines.push({
+          type: 'service', id: svc.id, label: svc.title, qty: 1, unit, total: unit,
+          deliverables: svc.deliverables || [], timeline: svc.timeline || '',
+        })
+        discountBase += unit
+      }
     }
 
     for (const addon of svc.addons || []) {
@@ -159,7 +164,7 @@ export function calcQuote({
   const balance = { net: net - depNet, vat: vat - depVat, total: total - deposit.total }
 
   return {
-    lines, serviceCount, subtotal, discountPercent, discountIsBundle, discountCents,
+    lines, quotedServices, serviceCount, subtotal, discountPercent, discountIsBundle, discountCents,
     net, vatRate, vat, total, depositPercent: depPct, deposit, balance,
   }
 }

@@ -34,24 +34,24 @@
           <div class="browser-dots">
             <span></span><span></span><span></span>
           </div>
-          <span>barbersunity.com</span>
+          <span>themeridian.eu.cc</span>
           <span class="browser-spacer"></span>
         </div>
 
         <img
           :src="previewSrc"
           :alt="isBG
-            ? 'Начална страница на Barbers Unity'
-            : 'Barbers Unity homepage'"
-          width="1911"
-          height="993"
+            ? 'Начална страница на The Meridian'
+            : 'The Meridian homepage'"
+          width="1600"
+          height="1041"
           fetchpriority="high"
           decoding="async"
         />
 
         <figcaption class="preview-caption">
-          <span>Barbers Unity</span>
-          <a :href="localizedPath('/work/barbers-unity')">
+          <span>The Meridian</span>
+          <a :href="localizedPath('/work/meridian')">
             {{ isBG ? 'Виж проекта ↗' : 'View project ↗' }}
           </a>
         </figcaption>
@@ -68,7 +68,7 @@ import { useLanguage } from '../composables/useLanguage.js'
 defineProps({
   previewSrc: {
     type: String,
-    default: '/images/barbers-unity-homepage.jpg',
+    default: '/images/meridian.webp',
   },
 })
 

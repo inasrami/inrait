@@ -71,7 +71,7 @@
                     <span class="svc-name">{{ svc.title }} <em class="svc-tag">{{ svc.tag }}</em></span>
                     <span class="svc-sub">{{ svc.timeline }}</span>
                   </span>
-                  <span class="svc-price">{{ money(toCents(svc.basePrice)) }}</span>
+                  <span class="svc-price">{{ svc.basePrice === null ? 'Quoted separately' : money(toCents(svc.basePrice)) }}</span>
                   <span class="check" :class="{ 'check--on': isSelected(svc.id) }">
                     <svg v-if="isSelected(svc.id)" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </span>
@@ -328,12 +328,19 @@
           <div class="card sum">
             <div class="card-kicker">Summary</div>
 
-            <p v-if="!quote.lines.length" class="empty">Pick at least one service to see the price.</p>
+            <p v-if="!quote.lines.length && !quote.quotedServices.length" class="empty">Pick at least one service to see the price.</p>
 
             <ul v-else class="sum-lines">
               <li v-for="(ln, i) in quote.lines" :key="i" :class="`sum-line sum-line--${ln.type}`">
                 <span>{{ ln.type === 'addon' ? '+ ' : '' }}{{ ln.label }}<em v-if="ln.qty > 1"> × {{ ln.qty }}</em></span>
                 <b>{{ money(ln.total) }}</b>
+              </li>
+            </ul>
+
+            <ul v-if="quote.quotedServices.length" class="sum-lines sum-lines--quoted">
+              <li v-for="name in quote.quotedServices" :key="name" class="sum-line">
+                <span>{{ name }}</span>
+                <b>Quoted separately</b>
               </li>
             </ul>
 

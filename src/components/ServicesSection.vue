@@ -16,8 +16,10 @@
           <h3>{{ service.title }}</h3>
           <p class="service-description">{{ service.body }}</p>
           <p class="service-price">
-            {{ t('services.from') }} <strong>€{{ service.basePrice.toLocaleString() }}</strong>
-            <span v-if="service.priceUnit === 'month'"> {{ t('servicesPage.perMonth') }}</span>
+            <template v-if="service.basePrice !== null">
+              {{ t('services.from') }} <strong>€{{ service.basePrice.toLocaleString() }}</strong>
+            </template>
+            <strong v-else>{{ t('services.requestQuote') }}</strong>
           </p>
           <button
             type="button"
@@ -30,14 +32,15 @@
           </button>
           <div v-show="expandedId === service.id" :id="`service-details-${service.id}`" class="service-details">
             <ul>
-              <li v-for="item in service.deliverables.slice(0, 3)" :key="item">{{ item }}</li>
+              <li v-for="item in service.details" :key="item">{{ item }}</li>
             </ul>
-            <RouterLink :to="{ path: localizedPath('/contact'), query: { services: service.id } }" class="quote-link">
+            <RouterLink :to="{ path: localizedPath('/contact'), query: { services: service.serviceIds.join(',') } }" class="quote-link">
               {{ t('services.quote') }}
             </RouterLink>
           </div>
         </article>
       </div>
+      <p class="pricing-note">{{ t('services.pricingNote') }}</p>
     </div>
   </section>
 </template>
@@ -52,8 +55,40 @@ const { t, localizedPath } = useLanguage()
 const { SERVICES } = useServices()
 const expandedId = ref(null)
 
-const featuredServiceIds = ['website', 'booking', 'automation']
-const topServices = computed(() => featuredServiceIds.map(id => SERVICES.value.find(service => service.id === id)).filter(Boolean))
+const topServices = computed(() => {
+  const serviceById = id => SERVICES.value.find(service => service.id === id)
+  const onepager = serviceById('onepager')
+  const website = serviceById('website')
+  const booking = serviceById('booking')
+  const automation = serviceById('automation')
+
+  return [
+    ...(onepager ? [{
+      ...onepager,
+      body: t('services.homeDescriptions.onepager'),
+      details: onepager.deliverables,
+      serviceIds: ['onepager'],
+    }] : []),
+    ...(website ? [{
+      ...website,
+      body: t('services.homeDescriptions.website'),
+      details: website.deliverables,
+      serviceIds: ['website'],
+    }] : []),
+    ...(booking && automation ? [{
+      id: 'booking-automation',
+      title: t('services.bookingAutomationTitle'),
+      body: t('services.homeDescriptions.bookingAutomation'),
+      basePrice: null,
+      details: [
+        t('services.homeDescriptions.bookingSetup'),
+        t('services.homeDescriptions.customBooking'),
+        t('services.homeDescriptions.workflows'),
+      ],
+      serviceIds: ['booking', 'automation', 'ai'],
+    }] : []),
+  ]
+})
 
 function toggleDetails(id) {
   expandedId.value = expandedId.value === id ? null : id
@@ -74,6 +109,7 @@ function toggleDetails(id) {
 .service-description { min-height: 42px; margin: 8px 0 16px; color: var(--text-muted); font-size: 13px; line-height: 1.55; }
 .service-price { margin: auto 0 14px; color: var(--text-dim); font-size: 12px; }
 .service-price strong { color: var(--text-primary); font-size: 14px; }
+.pricing-note { max-width: 760px; margin: 22px 0 0; color: var(--text-dim); font-size: 12px; line-height: 1.6; }
 .details-button { width: 100%; padding: 9px 12px; color: var(--text-primary); font-size: 13px; font-weight: 600; background: transparent; border: 1px solid var(--border-strong); border-radius: 6px; cursor: pointer; }
 .details-button:hover, .details-button[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); }
 .service-details { padding-top: 14px; }

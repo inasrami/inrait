@@ -12,7 +12,7 @@ import { useLanguage } from '../composables/useLanguage.js'
 // ─── Static data (never changes per language) ─────────────────────────────────
 
 const ADDON_IDS = {
-  onepager:    ['one-seo',     'one-i18n',      'one-anim'],
+  onepager:    ['one-i18n',     'one-anim'],
   website:     ['website-cms',  'website-blog',  'website-seo',  'website-i18n',  'website-anim'],
   booking:     ['booking-pay',  'booking-sms',   'booking-gcal', 'booking-multi', 'booking-promo'],
   ecommerce:   ['eco-payment',  'eco-inventory', 'eco-reviews',  'eco-analytics', 'eco-discounts'],
@@ -23,7 +23,7 @@ const ADDON_IDS = {
 }
 
 const ADDON_PRICES = {
-  onepager:    [79.99, 99.99, 99.99],
+  onepager:    [99.99, 99.99],
   website:     [199.99, 149.99, 179.99, 99.99, 99.99],
   booking:     [249.99, 199.99, 149.99, 349.99, 179.99],
   ecommerce:   [199.99, 249.99, 179.99, 219.99, 159.99],
@@ -34,14 +34,14 @@ const ADDON_PRICES = {
 }
 
 const BASE_PRICES = {
-  onepager:    350,
-  website:     699.99,
-  booking:     1199.99,
+  onepager:    290,
+  website:     590,
+  booking:     null,
   ecommerce:   1999.99,
-  automation:  599.99,
+  automation:  null,
   identity:    449.99,
   marketing:   399.99,
-  ai:          1299.99,
+  ai:          null,
   social:      150,
 }
 
@@ -101,6 +101,7 @@ export function buildServices(translate) {
       hero:         HERO_FLAGS[key],
       icon:         ICONS[key],
       basePrice:    BASE_PRICES[key],
+      quoteOnly:    BASE_PRICES[key] === null,
       priceUnit:    PRICE_UNITS[key] ?? null,
       title:        data.title,
       tag:          data.tag,

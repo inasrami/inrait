@@ -141,18 +141,20 @@ export function serviceListSchema(services) {
         name: svc.title,
         description: svc.body,
         provider: { '@id': `${SITE_URL}/#business` },
-        offers: {
-          '@type': 'Offer',
-          priceCurrency: 'EUR',
-          price: svc.basePrice,
-          priceSpecification: {
-            '@type': 'UnitPriceSpecification',
-            price: svc.basePrice,
+        ...(svc.basePrice !== null ? {
+          offers: {
+            '@type': 'Offer',
             priceCurrency: 'EUR',
-            ...(svc.priceUnit === 'month' ? { unitText: 'MON' } : {}),
-            description: 'Starting price - final cost agreed after consultation',
+            price: svc.basePrice,
+            priceSpecification: {
+              '@type': 'UnitPriceSpecification',
+              price: svc.basePrice,
+              priceCurrency: 'EUR',
+              ...(svc.priceUnit === 'month' ? { unitText: 'MON' } : {}),
+              description: 'Starting price - final cost agreed after consultation',
+            },
           },
-        },
+        } : {}),
       },
     })),
   }
