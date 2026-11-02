@@ -67,7 +67,7 @@ export default {
     social: {
       title: 'Social Media Manager',
       tag:   'Monthly',
-      body:  'I plan and publish content for your social channels to help keep them active while you focus on the business.',
+      body:  'We plan and publish content for your social channels to help keep them active while you focus on the business.',
       bestFor: 'Small businesses that want a steady social presence without hiring in-house.',
       timeline: 'Monthly',
       deliverables: ['Monthly content planning', 'Posting and scheduling on your channels', 'Community replies and monthly summary'],
@@ -198,7 +198,7 @@ export default {
 
   services: {
     label:          'Services',
-    title:          'What I build',
+    title:          'What we build',
     viewAll:        'Full service catalogue',
     from:           'From',
     requestQuote:   'Request a quote',
@@ -299,16 +299,15 @@ export default {
   },
 
   about: {
-    label:        'The Studio',
-    title:        'About INRAIT',
-    available:    'Open for projects',
-    statement:    'INRAIT is my studio for building websites and systems around the way your business works.',
-    location:     'Sofia, Bulgaria · Serving clients across the EU · Remote-ready',
-    startProject: 'Get a quote',
-    values: [
-      { title: 'Direct communication', body: 'Work with me directly.' },
-      { title: 'Clear scope', body: 'Agree on the work before it begins.' },
-      { title: 'Full ownership', body: 'Your project belongs to you.' },
+    label:        'ABOUT INRAIT',
+    headline:     'Your project.\nOur full attention.',
+    statement:    'We design and build websites and systems around your business.',
+    caption:      'Digital studio · Sofia',
+    contactLink:  'Let’s talk',
+    benefits: [
+      { title: 'Direct communication', body: 'Stay connected with us throughout the project.' },
+      { title: 'Clear scope', body: 'Agreed work. Clear expectations.' },
+      { title: 'Full ownership', body: 'Your website. Your code.' },
     ],
   },
 
@@ -321,7 +320,7 @@ export default {
     industriesSub: 'We engineer specialized digital solutions tailored to the operational needs of modern businesses.',
     idealFor: 'Ideal for:',
     industries: [
-      { title: 'Service & Appointment', idealFor: 'Barbershops, salons, and personal care', value: 'I build booking tools to help manage appointments and schedules, so you can focus on your clients.' },
+      { title: 'Service & Appointment', idealFor: 'Barbershops, salons, and personal care', value: 'We build booking tools to help manage appointments and schedules, so you can focus on your clients.' },
       { title: 'Automotive & Dealerships', idealFor: 'Auto retailers, detailers, and showrooms', value: 'High-performance showcase sites designed to highlight inventory with crisp, responsive layouts that drive inquiries and test drives.' },
       { title: 'Boutique Hospitality', idealFor: 'Boutique hotels, guesthouses, and unique stays', value: 'Digital experiences that capture your unique atmosphere, paired with seamless direct-booking flows that reduce reliance on third-party platforms.' },
       { title: 'Wellness & Specialized Retail', idealFor: 'Herbal dispensaries, wellness brands, e-commerce', value: 'From ground-up visual brand identity to high-converting online stores, we create digital storefronts that build trust and scale your sales.' },
@@ -340,7 +339,7 @@ export default {
     steps: [
       { title: 'Discuss', body: 'Set goals and agree on the scope.' },
       { title: 'Design', body: 'Plan the structure and visual direction.' },
-      { title: 'Build', body: 'I develop the agreed website or system.' },
+      { title: 'Build', body: 'We develop the agreed website or system.' },
       { title: 'Launch', body: 'Review the work and publish it.' },
     ],
   },
@@ -386,7 +385,7 @@ export default {
     label:        'Get In Touch',
     line1:        'CONTACT',
     line2:        '',
-    sub:          'Tell me briefly about your project. I’ll follow up to clarify the details.',
+    sub:          'Tell us briefly about your project. We’ll follow up to clarify the details.',
     name:         'Your name',
     namePh:       'Alex Johnson',
     email:        'Email address',
@@ -399,17 +398,17 @@ export default {
     budget:       'Budget range',
     budgetPh:     'Select budget',
     budgetUnsure: 'Not sure yet',
-    message:      'Tell me about the project',
+    message:      'Tell us about the project',
     messagePh:    "What problem are you solving? Who is it for? What's the timeline?",
     estimateServices: 'Services selected in the estimator:',
     estimateAddons:   'Optional add-ons selected:',
     send:         'Send enquiry',
     sending:      'Sending…',
-    sent:         "Your enquiry was sent. I'll be in touch.",
+    sent:         'Your enquiry was sent. We’ll be in touch.',
     errorFill:    'Enter your name, email, and project description, and confirm consent.',
     errorEmail:   'Please enter a valid email address.',
     errorWebsite: 'Enter a valid website address or leave the field blank.',
-    errorFail:    'Something went wrong while sending. Please email me directly at inrait.web@gmail.com.',
+    errorFail:    'Something went wrong while sending. Please email us directly at inrait.web@gmail.com.',
     consent:      'I agree that INRAIT may use these details to respond to my enquiry. See the',
     privacyLink:  'privacy policy',
     sendAnother:  'Send another message',
@@ -420,9 +419,9 @@ export default {
     locationLabel:'Location',
     locationVal:  'Sofia, Bulgaria · Remote-Ready',
     availTitle:   'Currently available',
-    availBody:    'After your enquiry, I may ask a few follow-up questions, then send a proposed scope, timeframe, and estimate.',
+    availBody:    'After your enquiry, we may ask a few follow-up questions, then send a proposed scope, timeframe, and estimate.',
     nextTitle:    'What happens next?',
-    nextBody:     'I’ll review your enquiry, clarify the details with you, and send a proposal with the scope, timeframe, and estimate.',
+    nextBody:     'We’ll review your enquiry, clarify the details with you, and send a proposal with the scope, timeframe, and estimate.',
     setupNote:    'To activate email sending, replace',
     setupLink:    'emailjs.com',
     budgets: [
@@ -439,7 +438,7 @@ export default {
     title:            'SERVICES',
     sub:              'Select services to add to your enquiry.',
     disclaimerStrong: 'All prices shown are starting estimates only.',
-    disclaimerBody:   'Final pricing depends on scope, features, integrations, and content. I confirm it after a conversation; displayed prices are starting estimates.',
+    disclaimerBody:   'Final pricing depends on scope, features, integrations, and content. We confirm it after a conversation; displayed prices are starting estimates.',
     bannerLabel:      'applied to your estimate',
     bannerMax:        'Maximum bundle discount unlocked.',
     bannerNext:       'Add one more priced service to unlock 15% off.',
@@ -519,10 +518,10 @@ export default {
   },
 
   seo: {
-    home:         { title: 'Websites and business systems', description: 'I build websites and systems for enquiries, bookings, and workflow automation around your business needs, with direct communication from the first idea to launch.' },
+    home:         { title: 'Websites and business systems', description: 'We build websites and systems for enquiries, bookings, and workflow automation around your business needs, with direct communication from the first idea to launch.' },
     services:     { title: 'Services & Pricing', description: 'Web engineering, booking systems, e-commerce, automation, design and photography - view all INRAIT services.' },
     integrations: { title: 'Integrations', description: 'Every courier, payment gateway, ERP, marketing tool and sales channel INRAIT can connect your store or workflow to.' },
-    contact:      { title: 'Request a project estimate', description: 'Tell me about your project. I’ll clarify your needs and send a proposal with the scope, timeframe, and estimate.' },
+    contact:      { title: 'Request a project estimate', description: 'Tell us about your project. We’ll clarify your needs and send a proposal with the scope, timeframe, and estimate.' },
     privacy:      { title: 'Privacy Policy', description: 'INRAIT privacy policy - how we collect, use, and protect your personal data under GDPR and Bulgarian law.' },
     blog:         { title: 'Blog', description: 'Practical articles on web engineering, workflow automation, and digital strategy.' },
     notFound:     { title: '404 - Page Not Found', description: 'The page you are looking for does not exist. Return to the INRAIT homepage.' },
@@ -574,7 +573,7 @@ export default {
       },
       {
         q: 'Do I need to provide content and images?',
-        a: 'You can provide your own text and photos. I can advise on content structure.',
+        a: 'You can provide your own text and photos. We can advise on content structure.',
       },
       {
         q: 'What happens after the site launches?',
@@ -582,11 +581,11 @@ export default {
       },
       {
         q: 'What if I\'m not sure what I need?',
-        a: 'Tell me what you need to improve. I’ll suggest a suitable scope.',
+        a: 'Tell us what you need to improve. We’ll suggest a suitable scope.',
       },
       {
         q: 'Do you work with clients outside Bulgaria?',
-        a: 'Yes. I work remotely across the EU in English or Bulgarian.',
+        a: 'Yes. We work remotely across the EU in English or Bulgarian.',
       },
     ],
     ctaTitle: 'Still have questions?',
