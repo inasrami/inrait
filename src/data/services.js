@@ -37,7 +37,7 @@ const BASE_PRICES = {
   onepager:    290,
   website:     590,
   booking:     null,
-  ecommerce:   1999.99,
+  ecommerce:   999.99,
   automation:  null,
   identity:    449.99,
   marketing:   399.99,

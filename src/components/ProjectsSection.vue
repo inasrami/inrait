@@ -9,6 +9,10 @@
       <div id="project-grid" class="project-grid">
         <article v-for="project in visibleProjects" :key="project.id" class="project-card">
           <div class="project-image">
+            <span v-if="project.isNew" class="badge-new badge-new--card" aria-label="New project">
+              <span class="badge-dot" aria-hidden="true"></span>
+              New
+            </span>
             <img
               :src="project.image"
               :alt="`${t('projects.previewAlt')}: ${project.title}`"
@@ -126,20 +130,22 @@ const dialogElement = ref(null)
 const closeButton = ref(null)
 const selectedProject = ref(null)
 const showAllProjects = ref(false)
-const featuredProjectCount = 2
 let returnFocusElement = null
 let previousOverflow = ''
 let scrollLockActive = false
 
 const displayProjects = computed(() => {
-  const featuredIds = ['barbers-unity', 'hotel-prestige']
-  return [
-    ...featuredIds.map(id => projects.find(project => project.id === id)).filter(Boolean),
-    ...projects.filter(project => !featuredIds.includes(project.id)),
-  ]
+  const newProjects = projects.filter(project => project.isNew)
+  const otherProjects = projects.filter(project => !project.isNew)
+  return [...newProjects, ...otherProjects]
 })
+
+const featuredProjectCount = computed(() => {
+  return projects.filter(project => project.isNew).length
+})
+
 const visibleProjects = computed(() => (
-  showAllProjects.value ? displayProjects.value : displayProjects.value.slice(0, featuredProjectCount)
+  showAllProjects.value ? displayProjects.value : displayProjects.value.slice(0, featuredProjectCount.value)
 ))
 
 function localized(project) {
@@ -197,7 +203,7 @@ onUnmounted(() => {
 .projects-heading h2 { font-size: clamp(34px, 5vw, 48px); font-weight: 400; letter-spacing: 0.02em; line-height: 1; }
 .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
 .project-card { min-width: 0; }
-.project-image { overflow: hidden; aspect-ratio: 16 / 9; background: var(--surface-3); }
+.project-image { position: relative; overflow: hidden; aspect-ratio: 16 / 9; background: var(--surface-3); }
 .project-image img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .project-copy { padding-top: 14px; }
 .project-copy h3 { margin: 0; font-size: clamp(20px, 2.4vw, 26px); font-weight: 600; letter-spacing: -0.03em; }
