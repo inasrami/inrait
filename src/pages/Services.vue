@@ -235,7 +235,7 @@ import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useSeo } from '../composables/useSeo.js'
 import { useJsonLd, breadcrumbSchema, serviceListSchema } from '../composables/Usejsonld.js'
-import { useServices, getBundleDiscount } from '../data/services.js'
+import { useServices, calculateEstimate } from '../data/services.js'
 import { useFadeUp } from '../composables/useFadeUp'
 import { useLanguage } from '../composables/useLanguage.js'
 
@@ -291,26 +291,10 @@ function toggleDetails(id) {
   openDetails.value = closing ? null : id
 }
 
-const subtotal = computed(() => {
-  let total = 0
-  selectedServices.value.forEach(id => {
-    total += serviceById(id)?.basePrice ?? 0
-  })
-  SERVICES.value.forEach(svc => {
-    svc.addons.forEach(addon => {
-      if (isAddonSelected(addon.id)) total += addon.price
-    })
-  })
-  return total
-})
-
-// currentDiscount is null when < 2 services selected - banner only shows when not null
-const currentDiscount = computed(() => getBundleDiscount(pricingServiceCount.value))
-
-const discountedTotal = computed(() => {
-  if (!currentDiscount.value) return subtotal.value
-  return subtotal.value - Math.round(subtotal.value * currentDiscount.value.percent / 100)
-})
+const estimate = computed(() => calculateEstimate(SERVICES.value, selectedServices.value, selectedAddons.value))
+const subtotal = computed(() => estimate.value.subtotal)
+const currentDiscount = computed(() => estimate.value.discount)
+const discountedTotal = computed(() => estimate.value.total)
 
 const hasSelection = computed(() =>
   selectedServices.value.length > 0 || selectedAddons.value.length > 0

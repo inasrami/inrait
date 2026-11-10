@@ -139,3 +139,16 @@ export function getBundleDiscount(serviceCount) {
     .reverse()
     .find(d => serviceCount >= d.minServices) ?? null
 }
+
+// Shared by the service picker and contact summary so their estimates agree.
+export function calculateEstimate(catalogue, serviceIds = [], addonIds = []) {
+  const services = catalogue.filter(service => serviceIds.includes(service.id))
+  const addons = services.flatMap(service => service.addons)
+    .filter(addon => addonIds.includes(addon.id))
+  const subtotal = services.reduce((total, service) => total + (service.basePrice ?? 0), 0)
+    + addons.reduce((total, addon) => total + addon.price, 0)
+  const discount = getBundleDiscount(services.filter(service => service.basePrice !== null).length)
+  const total = subtotal - (discount ? Math.round(subtotal * discount.percent / 100) : 0)
+  return { services, addons, subtotal, discount, total,
+    hasQuoteOnly: services.some(service => service.quoteOnly) }
+}
