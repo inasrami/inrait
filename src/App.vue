@@ -6,7 +6,8 @@
 
     <RouterView v-slot="{ Component }">
       <Transition name="page" mode="out-in">
-        <component :is="Component" :key="$route.fullPath" />
+        <!-- Keep the contact draft alive when switching locale aliases. -->
+        <component :is="Component" :key="$route.name === 'contact' ? 'contact' : $route.fullPath" />
       </Transition>
     </RouterView>
 

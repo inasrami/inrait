@@ -23,6 +23,23 @@
             <h2>{{ t('contact.message') }}</h2>
           </div>
 
+          <section v-if="hasEstimate" class="estimate-summary" aria-labelledby="estimate-heading">
+            <h3 id="estimate-heading">{{ t('contact.estimateTitle') }}</h3>
+            <ul>
+              <li v-for="service in estimate.services" :key="service.id">
+                <span>{{ service.title }}</span>
+                <span>{{ service.quoteOnly ? t('servicesPage.quotedSeparately') : `€${service.basePrice.toLocaleString()}` }}<template v-if="service.priceUnit === 'month'"> {{ t('servicesPage.perMonth') }}</template></span>
+              </li>
+              <li v-for="addon in estimate.addons" :key="addon.id">
+                <span>+ {{ addon.label }}</span><span>€{{ addon.price.toLocaleString() }}</span>
+              </li>
+            </ul>
+            <p v-if="estimate.discount">{{ t('contact.bundleDiscount') }}: −{{ estimate.discount.percent }}%</p>
+            <p v-if="estimate.total > 0" class="estimate-total">{{ t('servicesPage.basePrice') }}: ~€{{ estimate.total.toLocaleString() }}</p>
+            <p v-if="estimate.hasQuoteOnly">{{ t('contact.quoteOnlyNote') }}</p>
+            <p>{{ t('servicesPage.pricingNote') }}</p>
+          </section>
+
           <form @submit.prevent="handleSubmit" @invalid.capture="handleInvalid" @input="errorMsg = ''" class="flex flex-col gap-6">
 
             <div class="form-trap" aria-hidden="true">
@@ -54,7 +71,7 @@
               <label class="form-label" for="project-budget">{{ t('contact.budget') }}</label>
               <select v-model="form.budget" id="project-budget" name="budget" class="form-input">
                 <option value="">{{ t('contact.budgetPh') }}</option>
-                <option v-for="(opt, i) in t('contact.budgets')" :key="i" :value="opt">{{ opt }}</option>
+                <option v-for="(opt, i) in t('contact.budgets')" :key="i" :value="`budget-${i}`">{{ opt }}</option>
                 <option value="unsure">{{ t('contact.budgetUnsure') }}</option>
               </select>
             </div>
@@ -184,13 +201,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { useFadeUp } from '../composables/useFadeUp.js'
 import { useSeo } from '../composables/useSeo.js'
 import { useLanguage } from '../composables/useLanguage.js'
 import { useJsonLd, breadcrumbSchema } from '../composables/Usejsonld.js'
-import { useServices } from '../data/services.js'
+import { useServices, calculateEstimate } from '../data/services.js'
 
 useFadeUp()
 const { t } = useLanguage()
@@ -215,38 +232,37 @@ function queryIds(value) {
     .filter(Boolean)
 }
 
-function prefillFromEstimator() {
-  const serviceIds = queryIds(route.query.services)
-  const addonIds = queryIds(route.query.addons)
-  const selectedServices = serviceIds
-    .map(id => SERVICES.value.find(service => service.id === id))
-    .filter(Boolean)
-  const selectedAddons = SERVICES.value
-    .flatMap(service => service.addons)
-    .filter(addon => addonIds.includes(addon.id))
-
-  if (!selectedServices.length && !selectedAddons.length) return
-
-  if (selectedServices.length === 1) {
-    form.type = selectedServices[0].id
-  }
-
+const estimate = computed(() => calculateEstimate(
+  SERVICES.value, queryIds(route.query.services), queryIds(route.query.addons)
+))
+const hasEstimate = computed(() => estimate.value.services.length > 0)
+const estimateMessage = computed(() => {
+  if (!hasEstimate.value) return ''
   const lines = [
-    `${t('contact.estimateServices')}`,
-    ...selectedServices.map(service => (
-      `- ${service.title}${service.quoteOnly ? ` — ${t('servicesPage.quotedSeparately')}` : ''}`
-    )),
+    t('contact.estimateServices'),
+    ...estimate.value.services.map(service =>
+      `- ${service.title}${service.quoteOnly ? ` — ${t('servicesPage.quotedSeparately')}` : ''}`),
   ]
-
-  if (selectedAddons.length) {
+  if (estimate.value.addons.length) {
     lines.push('', t('contact.estimateAddons'))
-    lines.push(...selectedAddons.map(addon => `- ${addon.label}`))
+    lines.push(...estimate.value.addons.map(addon => `- ${addon.label}`))
   }
+  return `${lines.join('\n')}\n\n`
+})
 
-  form.message = `${lines.join('\n')}\n\n`
-}
+// Translate only untouched generated copy; never replace a visitor's draft.
+watch(estimateMessage, (message, previous) => {
+  if (!submitted.value && (form.message === previous || (!previous && !form.message))) {
+    form.message = message
+  }
+}, { immediate: true })
+watch(() => estimate.value.services.map(service => service.id).join(','), () => {
+  if (!form.type && estimate.value.services.length === 1) form.type = estimate.value.services[0].id
+}, { immediate: true })
 
-onMounted(prefillFromEstimator)
+const budgetLabel = computed(() => form.budget === 'unsure'
+  ? t('contact.budgetUnsure')
+  : t('contact.budgets')[Number(form.budget.replace('budget-', ''))] || 'Not specified')
 
 // Access the environment variables here
 const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID
@@ -280,7 +296,7 @@ async function handleSubmit() {
       from_name:    form.name,
       from_email:   form.email,
       project_type: SERVICES.value.find(service => service.id === form.type)?.title || (form.type === 'unsure' ? t('contact.typeUnsure') : 'Not specified'),
-      budget:       form.budget === 'unsure' ? t('contact.budgetUnsure') : form.budget || 'Not specified',
+      budget:       form.budget ? budgetLabel.value : 'Not specified',
       existing_website: form.existingWebsite,
       message:      form.message,
     })
@@ -328,9 +344,17 @@ function loadScript(src) {
 .form-kicker { display: block; margin-bottom: 12px; color: var(--accent); font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
 .form-heading h2 { max-width: 380px; color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 400; letter-spacing: 0.02em; line-height: 0.95; }
 .form-heading p { max-width: 400px; margin-top: 12px; color: var(--text-muted); font-size: 14px; line-height: 1.65; }
+.estimate-summary { margin-bottom: 28px; padding: 18px; border: 1px solid var(--border-strong); border-radius: 8px; color: #aaa; font-size: 13px; line-height: 1.6; }
+.estimate-summary h3 { color: var(--text); font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+.estimate-summary ul { list-style: none; padding: 0; }
+.estimate-summary li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.estimate-summary li span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.estimate-summary li span:last-child { flex-shrink: 0; max-width: 45%; text-align: right; }
+.estimate-summary p { margin-top: 12px; }
+.estimate-summary .estimate-total { color: var(--accent); font-size: 20px; font-weight: 600; }
 .form-group { display: flex; flex-direction: column; gap: 8px; }
 .form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
-.form-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); }
+.form-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; }
 .form-input {
   background: rgba(0,0,0,0.2);
   border: 1px solid var(--border-strong);
@@ -345,7 +369,7 @@ function loadScript(src) {
   resize: none;
   width: 100%;
 }
-.form-input::placeholder { color: var(--text-dim); }
+.form-input::placeholder { color: #999; }
 .form-input:focus { border-color: var(--accent); background: rgba(164,224,75,0.035); box-shadow: 0 0 0 3px rgba(164,224,75,0.08); }
 .form-input[type="select"], select.form-input { cursor: pointer; }
 .form-input option { background: #111; color: var(--text); }
